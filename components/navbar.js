@@ -23,7 +23,7 @@ export default function Navbar() {
             <img
               src="Sustainable logo.png"
               alt="Sustainable Shine Logo"
-              className="w-50"
+              width={200}
             />
           </Link>
 
