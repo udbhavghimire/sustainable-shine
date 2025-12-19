@@ -21,7 +21,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <img
-              src="Sustainable logo.png"
+              src="/Sustainable logo.png"
               alt="Sustainable Shine Logo"
               width={200}
             />
