@@ -15,6 +15,7 @@ export default function Services() {
       ],
       price: "From $120",
       popular: false,
+      image: "/general clean.png",
     },
     {
       icon: "✨",
@@ -29,6 +30,7 @@ export default function Services() {
       ],
       price: "From $150",
       popular: true,
+      image: "/deep cleaning.jpg",
     },
     {
       icon: "🔑",
@@ -43,6 +45,7 @@ export default function Services() {
       ],
       price: "From $320",
       popular: false,
+      image: "/end of lease.jpg",
     },
     {
       icon: "🏢",
@@ -57,6 +60,8 @@ export default function Services() {
       ],
       price: "Custom Quote",
       popular: false,
+      image:
+        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
     },
     {
       icon: "🪟",
@@ -71,6 +76,8 @@ export default function Services() {
       ],
       price: "From $79",
       popular: false,
+      image:
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
     },
     {
       icon: "🛋️",
@@ -85,6 +92,8 @@ export default function Services() {
       ],
       price: "From $119",
       popular: false,
+      image:
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
     },
   ];
 
@@ -116,15 +125,25 @@ export default function Services() {
               }`}
             >
               {service.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
                   <span className="bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
                     Most Popular
                   </span>
                 </div>
               )}
 
-              {/* Icon */}
-              <div className="text-5xl mb-4">{service.icon}</div>
+              {/* Image */}
+              <div className="relative h-48 mb-6 -mx-8 -mt-8 rounded-t-2xl overflow-hidden">
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 text-5xl bg-white/90 backdrop-blur-sm rounded-full w-16 h-16 flex items-center justify-center shadow-lg">
+                  {service.icon}
+                </div>
+              </div>
 
               {/* Title */}
               <h3 className="text-2xl font-bold text-gray-900 mb-3">
