@@ -1,34 +1,49 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Individual Before/After Slider Component
-function BeforeAfterSlider({ before, after, title, location, index }) {
-  const [sliderPosition, setSliderPosition] = useState(50);
+function BeforeAfterSlider({
+  before,
+  after,
+  title,
+  location,
+  index,
+  isVisible,
+}) {
+  const [sliderPosition, setSliderPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
 
-  // Auto-slide effect - plays once then stops
+  // Start animation when component becomes visible
+  useEffect(() => {
+    if (isVisible && !animationComplete && !isDragging) {
+      setIsAutoPlaying(true);
+    }
+  }, [isVisible, animationComplete, isDragging]);
+
+  // Continuous auto-slide effect - loops forever
   useEffect(() => {
     if (!isAutoPlaying || isDragging) return;
 
-    let position = 0; // Start from 0 (showing all before)
+    let position = 0;
+    let direction = 1; // 1 for forward, -1 for backward
 
     const interval = setInterval(() => {
-      position += 1;
+      position += direction * 1.2;
 
+      // Reverse direction at boundaries
       if (position >= 100) {
-        // Reached 100% (showing all after), stop the animation
-        setSliderPosition(100);
-        setIsAutoPlaying(false);
-        setAnimationComplete(true);
-        clearInterval(interval);
-        return;
+        position = 100;
+        direction = -1;
+      } else if (position <= 0) {
+        position = 0;
+        direction = 1;
       }
 
       setSliderPosition(position);
-    }, 30); // Smooth animation speed
+    }, 30);
 
     return () => clearInterval(interval);
   }, [isAutoPlaying, isDragging, index]);
@@ -75,13 +90,11 @@ function BeforeAfterSlider({ before, after, title, location, index }) {
             draggable="false"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          {!animationComplete && (
-            <div className="absolute top-4 left-4 z-10">
-              <span className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold shadow-lg text-sm">
-                ❌ BEFORE
-              </span>
-            </div>
-          )}
+          <div className="absolute top-4 left-4 z-10 transition-opacity duration-300">
+            <span className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold shadow-lg text-sm">
+              ❌ BEFORE
+            </span>
+          </div>
         </div>
 
         {/* After Image (Overlay with clip) */}
@@ -164,27 +177,52 @@ function BeforeAfterSlider({ before, after, title, location, index }) {
 }
 
 export default function OurWork() {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+
+  // Intersection Observer to detect when section is in viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      {
+        threshold: 0.3, // Trigger when 30% of the section is visible
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
   const projects = [
     {
-      title: "Kitchen Deep Clean",
+      title: "Window Cleaning",
       location: "Sydney CBD",
       before: "/before.png",
       after: "/after.png",
-      description:
-        "Complete kitchen transformation with grease removal and sanitization",
     },
     {
-      title: "Living Room Revival",
+      title: "Bathroom Cleaning",
       location: "North Shore",
       before: "/before-1.png",
       after: "/after-1.png",
-      description:
-        "Full room cleaning including carpet, furniture, and surface sanitization",
     },
   ];
 
   return (
-    <section className="section-padding bg-gradient-to-br from-gray-50 to-white">
+    <section
+      ref={sectionRef}
+      className="section-padding bg-gradient-to-br from-gray-50 to-white"
+    >
       <div className="container-custom">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -211,6 +249,7 @@ export default function OurWork() {
                 title={project.title}
                 location={project.location}
                 index={index}
+                isVisible={isVisible}
               />
             ))}
           </div>
