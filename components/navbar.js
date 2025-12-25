@@ -38,7 +38,7 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
-            <a href="#booking" className="btn-primary">
+            <a href="/booking" className="btn-primary">
               Book Now
             </a>
           </div>
@@ -87,7 +87,7 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              href="#booking"
+              href="/booking"
               className="block mt-4 text-center btn-primary"
               onClick={() => setIsOpen(false)}
             >
