@@ -1,9 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function BookingCalculator() {
-  const [serviceType, setServiceType] = useState("general");
+  const searchParams = useSearchParams();
+  const serviceParam = searchParams.get("service");
+
+  const [serviceType, setServiceType] = useState(serviceParam || "general");
   const [frequency, setFrequency] = useState("once"); // once, weekly, fortnightly, monthly
   const [bedrooms, setBedrooms] = useState(1);
   const [bathrooms, setBathrooms] = useState(1);

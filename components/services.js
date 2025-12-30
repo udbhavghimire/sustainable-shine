@@ -16,6 +16,7 @@ export default function Services() {
       price: "From $150",
       popular: false,
       image: "/general clean.png",
+      serviceType: "general",
     },
     {
       icon: "✨",
@@ -31,6 +32,7 @@ export default function Services() {
       price: "From $220",
       popular: true,
       image: "/deep cleaning.jpg",
+      serviceType: "deep",
     },
     {
       icon: "🔑",
@@ -46,54 +48,7 @@ export default function Services() {
       price: "From $320",
       popular: false,
       image: "/end of lease.jpg",
-    },
-    {
-      icon: "🏢",
-      title: "Office Cleaning",
-      description:
-        "Professional commercial cleaning services for offices, retail spaces, and business premises.",
-      features: [
-        "After Hours Available",
-        "Desk & Surface Cleaning",
-        "Restroom Sanitization",
-        "Trash Removal",
-      ],
-      price: "Custom Quote",
-      popular: false,
-      image:
-        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
-    },
-    {
-      icon: "🪟",
-      title: "Window Cleaning",
-      description:
-        "Crystal clear windows inside and out. Professional window cleaning for homes and businesses.",
-      features: [
-        "Streak-Free Finish",
-        "High-Rise Capable",
-        "Frame & Sill Cleaning",
-        "Screen Cleaning",
-      ],
-      price: "From $79",
-      popular: false,
-      image:
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
-    },
-    {
-      icon: "🛋️",
-      title: "Carpet & Upholstery",
-      description:
-        "Professional steam cleaning to remove stains, odors, and allergens from carpets and furniture.",
-      features: [
-        "Steam Cleaning",
-        "Stain Removal",
-        "Odor Elimination",
-        "Fast Drying",
-      ],
-      price: "From $119",
-      popular: false,
-      image:
-        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+      serviceType: "endOfLease",
     },
   ];
 
@@ -181,7 +136,7 @@ export default function Services() {
                   </span>
                 </div>
                 <a
-                  href="#booking"
+                  href={`/booking?service=${service.serviceType}`}
                   className={`block w-full text-center py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
                     service.popular
                       ? "bg-emerald-500 hover:bg-emerald-600 text-white"
