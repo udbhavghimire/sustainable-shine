@@ -1,6 +1,7 @@
 "use client";
 
-export default function CTA() {
+export default function CTA({ city }) {
+  const cityName = city?.name || "Sydney";
   return (
     <section className="section-padding bg-gradient-to-br from-emerald-500 to-emerald-700 relative overflow-hidden">
       {/* Background Decoration */}
@@ -33,7 +34,7 @@ export default function CTA() {
 
           {/* Description */}
           <p className="text-xl text-emerald-50 mb-10 leading-relaxed">
-            Join thousands of satisfied customers across Sydney. Book your
+            Join thousands of satisfied customers across {cityName}. Book your
             professional cleaning service today and experience the Sustainable
             Shine difference. Same-day service available!
           </p>

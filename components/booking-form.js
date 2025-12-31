@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-export default function BookingForm() {
+export default function BookingForm({ city }) {
+  const cityName = city?.name || "Sydney";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -59,7 +60,7 @@ export default function BookingForm() {
               Book Now
             </span>
             <h2 className="heading-2 text-gray-900 mt-4 mb-6">
-              Get Your Free Quote Today
+              Get Your Free Quote Today in {cityName}
             </h2>
             <p className="text-xl text-gray-600 mb-8">
               Fill out the form and we'll get back to you within 30 minutes

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export default function Footer() {
+export default function Footer({ city }) {
   const currentYear = new Date().getFullYear();
 
   const serviceLinks = [
@@ -22,14 +22,14 @@ export default function Footer() {
   ];
 
   const serviceAreas = [
-    "Bondi",
-    "Parramatta",
-    "Manly",
-    "Surry Hills",
-    "Chatswood",
-    "Newtown",
-    "Sydney CBD",
-    "North Shore",
+    { name: "Bondi", slug: "bondi" },
+    { name: "Parramatta", slug: "parramatta" },
+    { name: "Manly", slug: "manly" },
+    { name: "Surry Hills", slug: "surry_hills" },
+    { name: "Chatswood", slug: "chatswood" },
+    { name: "Newtown", slug: "newtown" },
+    { name: "Penrith", slug: "penrith" },
+    { name: "Cronulla", slug: "cronulla" },
   ];
 
   return (
@@ -180,17 +180,22 @@ export default function Footer() {
             <h3 className="text-white font-bold text-lg mb-6">Service Areas</h3>
             <ul className="space-y-3">
               {serviceAreas.map((area, index) => (
-                <li key={index} className="text-gray-400">
-                  {area}
+                <li key={index}>
+                  <Link
+                    href={`/${area.slug}`}
+                    className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                  >
+                    {area.name}
+                  </Link>
                 </li>
               ))}
             </ul>
-            <a
-              href="#booking"
+            <Link
+              href="/#booking"
               className="inline-block mt-4 text-emerald-400 hover:text-emerald-300 font-semibold"
             >
               View All Areas →
-            </a>
+            </Link>
           </div>
         </div>
       </div>

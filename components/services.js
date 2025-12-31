@@ -1,6 +1,7 @@
 "use client";
 
-export default function Services() {
+export default function Services({ city }) {
+  const cityName = city?.name || "Sydney";
   const services = [
     {
       icon: "🏠",
@@ -65,8 +66,8 @@ export default function Services() {
           </h2>
           <p className="text-xl text-gray-600">
             From regular maintenance to specialized deep cleans, we offer
-            comprehensive cleaning services tailored to your requirements in
-            Sydney.
+            comprehensive cleaning services tailored to your requirements in{" "}
+            {cityName}.
           </p>
         </div>
 

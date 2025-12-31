@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 
-export default function FAQ() {
+export default function FAQ({ city }) {
   const [openIndex, setOpenIndex] = useState(0);
+  const cityName = city?.name || "Sydney";
+  const nearbyAreas =
+    city?.nearbyAreas?.join(", ") ||
+    "North Shore, Eastern Suburbs, Inner West, Western Sydney, and the CBD";
 
   const faqs = [
     {
-      question: "What areas do you service in Sydney?",
-      answer:
-        "We provide cleaning services across all Sydney suburbs including North Shore, Eastern Suburbs, Inner West, Western Sydney, and the CBD. We also service the Greater Sydney area. Contact us to confirm if we service your specific location.",
+      question: `What areas do you service in ${cityName}?`,
+      answer: `We provide cleaning services across ${cityName} and surrounding areas including ${nearbyAreas}. We also service the Greater Sydney area. Contact us to confirm if we service your specific location.`,
     },
     {
       question: "Are your cleaning products eco-friendly and safe?",
@@ -84,8 +87,9 @@ export default function FAQ() {
             Frequently Asked Questions
           </h2>
           <p className="text-xl text-gray-600">
-            Everything you need to know about our cleaning services in Sydney.
-            Can't find the answer you're looking for? Feel free to contact us.
+            Everything you need to know about our cleaning services in{" "}
+            {cityName}. Can't find the answer you're looking for? Feel free to
+            contact us.
           </p>
         </div>
 

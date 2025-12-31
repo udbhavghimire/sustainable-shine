@@ -1,6 +1,7 @@
 "use client";
 
-export default function About() {
+export default function About({ city }) {
+  const cityName = city?.name || "Sydney";
   const values = [
     {
       icon: (
@@ -94,14 +95,14 @@ export default function About() {
               About Us
             </span>
             <h2 className="heading-2 text-gray-900 mt-4 mb-6">
-              Sydney's Most Trusted Cleaning Company
+              {cityName}'s Most Trusted Cleaning Company
             </h2>
             <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
               <p>
                 For over a decade, Sustainable Shine has been providing
-                exceptional cleaning services to homes and businesses across
-                Sydney. We believe that a clean space shouldn't come at the cost
-                of our environment.
+                exceptional cleaning services to homes and businesses across{" "}
+                {cityName}. We believe that a clean space shouldn't come at the
+                cost of our environment.
               </p>
               <p>
                 Our team of dedicated professionals uses eco-friendly products

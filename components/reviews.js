@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 
-export default function Reviews() {
+export default function Reviews({ city }) {
+  const cityName = city?.name || "Sydney";
   const [activeIndex, setActiveIndex] = useState(0);
 
   const reviews = [
@@ -91,7 +92,7 @@ export default function Reviews() {
           </h2>
           <p className="text-xl text-gray-600">
             Don't just take our word for it - hear from our satisfied customers
-            across Sydney
+            across {cityName}
           </p>
         </div>
 

@@ -10,6 +10,7 @@ function BeforeAfterSlider({
   location,
   index,
   isVisible,
+  cityName,
 }) {
   const [sliderPosition, setSliderPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -176,9 +177,10 @@ function BeforeAfterSlider({
   );
 }
 
-export default function OurWork() {
+export default function OurWork({ city }) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
+  const cityName = city?.name || "Sydney";
 
   // Intersection Observer to detect when section is in viewport
   useEffect(() => {
@@ -250,6 +252,7 @@ export default function OurWork() {
                 location={project.location}
                 index={index}
                 isVisible={isVisible}
+                cityName={cityName}
               />
             ))}
           </div>

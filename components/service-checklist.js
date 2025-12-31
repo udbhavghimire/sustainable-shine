@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export default function ServiceChecklist() {
+export default function ServiceChecklist({ city }) {
   const services = [
     {
       title: "General Clean",

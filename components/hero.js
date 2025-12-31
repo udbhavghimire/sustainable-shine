@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 
-export default function Hero() {
+export default function Hero({ city }) {
+  // Default to Sydney if no city provided
+  const cityName = city?.name || "Sydney";
+  const cityFullName = city?.fullName || "Sydney";
   return (
     <section
       id="home"
@@ -14,18 +17,18 @@ export default function Hero() {
           <div className="space-y-8">
             <div className="inline-block">
               <span className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">
-                ✨ Sydney's #1 Eco-Friendly Cleaning Service
+                ✨ {cityName}'s #1 Eco-Friendly Cleaning Service
               </span>
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-              Professional Cleaning Services in Sydney{" "}
+              Professional Cleaning Services in {cityName}
             </h1>
 
             <p className="text-xl text-gray-600 leading-relaxed">
-              Professional cleaning services in Sydney that care for your home
-              and the environment. From general and deep cleaning to
-              end-of-lease, we’ve got you covered.
+              Professional cleaning services in {cityFullName} that care for
+              your home and the environment. From general and deep cleaning to
+              end-of-lease, we've got you covered.
             </p>
 
             {/* Features */}
@@ -127,8 +130,8 @@ export default function Hero() {
           <div className="relative">
             <div className="relative h-[500px] md:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="hero2.jpeg"
-                alt="Professional cleaning service in Sydney"
+                src="/hero2.jpeg"
+                alt={`Professional cleaning service in ${cityName}`}
                 className="w-full h-full object-cover"
               />
             </div>
