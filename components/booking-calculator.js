@@ -35,6 +35,11 @@ export default function BookingCalculator() {
   const [flexibleDateTime, setFlexibleDateTime] = useState("");
   const [access, setAccess] = useState("");
 
+  // Submission states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   const GST_RATE = 0.1; // 10% GST
 
   // Add-ons list
@@ -796,6 +801,132 @@ export default function BookingCalculator() {
 
   const priceDetails = calculatePrice();
 
+  // Form validation
+  const validateForm = () => {
+    if (!selectedDate) {
+      setSubmitError("Please select a preferred date");
+      return false;
+    }
+    if (!firstName || !lastName) {
+      setSubmitError("Please enter your full name");
+      return false;
+    }
+    if (!email) {
+      setSubmitError("Please enter your email address");
+      return false;
+    }
+    if (!phone) {
+      setSubmitError("Please enter your phone number");
+      return false;
+    }
+    if (!address) {
+      setSubmitError("Please enter your address");
+      return false;
+    }
+    return true;
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    // Reset previous states
+    setSubmitError("");
+    setSubmitSuccess(false);
+
+    // Validate form
+    if (!validateForm()) {
+      // Scroll to top to show error
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Prepare add-on details for email
+      const addOnDetails = {};
+      Object.keys(selectedAddOns).forEach((key) => {
+        if (selectedAddOns[key]) {
+          const addOn = addOnsData.find((a) => a.id === key);
+          if (addOn) {
+            const quantity = addOnQuantities[key] || 1;
+            addOnDetails[key] = {
+              name: addOn.name,
+              price: addOn.price,
+              quantity: quantity,
+              totalPrice: addOn.price * quantity,
+            };
+          }
+        }
+      });
+
+      // Prepare booking data
+      const bookingData = {
+        serviceType,
+        frequency,
+        bedrooms,
+        bathrooms,
+        kitchen,
+        livingDining,
+        laundry,
+        storey,
+        selectedAddOns,
+        addOnDetails,
+        selectedDate,
+        firstName,
+        lastName,
+        email,
+        phone,
+        smsReminders,
+        hasPet,
+        hearAboutUs,
+        specialNotes,
+        address,
+        aptNo,
+        cleanlinessLevel,
+        parking,
+        flexibleDateTime,
+        access,
+        priceDetails,
+      };
+
+      // Send to API
+      const response = await fetch("/api/send-booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitSuccess(true);
+        // Scroll to top to show success message
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // Optionally reset form after successful submission
+        // You can uncomment these if you want to clear the form
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 3000);
+      } else {
+        setSubmitError(
+          result.error || "Failed to submit booking. Please try again."
+        );
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      setSubmitError(
+        "An error occurred while submitting your booking. Please try again."
+      );
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const serviceTypes = [
     { value: "general", label: "General Cleaning", icon: "🧹" },
     { value: "deep", label: "Deep Cleaning", icon: "🫧" },
@@ -820,6 +951,68 @@ export default function BookingCalculator() {
             package and see the cost in real-time.
           </p>
         </div>
+
+        {/* Success Message */}
+        {submitSuccess && (
+          <div className="mb-8 bg-emerald-50 border-2 border-emerald-500 rounded-2xl p-6 shadow-lg">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <svg
+                  className="w-8 h-8 text-emerald-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-emerald-900 mb-2">
+                  Booking Request Sent Successfully! 🎉
+                </h3>
+                <p className="text-emerald-800">
+                  Thank you for your booking request! We've received your
+                  details and will contact you shortly to confirm your
+                  appointment.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {submitError && (
+          <div className="mb-8 bg-red-50 border-2 border-red-500 rounded-2xl p-6 shadow-lg">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <svg
+                  className="w-8 h-8 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-red-900 mb-2">
+                  Error Submitting Booking
+                </h3>
+                <p className="text-red-800">{submitError}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-8 items-start">
           {/* Left Side - Configuration */}
@@ -1721,6 +1914,66 @@ export default function BookingCalculator() {
                   <option value="other">Other</option>
                 </select>
               </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting || submitSuccess}
+                className={`w-full py-5 px-8 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg ${
+                  isSubmitting || submitSuccess
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transform hover:scale-[1.02]"
+                }`}
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Sending Booking Request...
+                  </span>
+                ) : submitSuccess ? (
+                  <span className="flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 mr-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Booking Sent Successfully!
+                  </span>
+                ) : (
+                  "Submit Booking Request"
+                )}
+              </button>
+              <p className="text-sm text-gray-600 text-center mt-4">
+                By submitting, you agree to receive communication from
+                Sustainable Shine regarding your booking.
+              </p>
             </div>
           </div>
 
