@@ -1506,32 +1506,35 @@ export default function BookingCalculator() {
                   </div>
                 </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Ex: example@xyz.com"
-                    className="w-full md:w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
+                {/* Email and Phone */}
+                <div className="flex flex-col md:flex-row gap-4">
+                  {/* Email */}
+                  <div className="flex-1">
+                    <label className="block text-gray-900 font-semibold mb-2">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Ex: example@xyz.com"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
 
-                {/* Phone */}
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-2">
-                    Phone No
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Phone No."
-                    className="w-full md:w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                  />
+                  {/* Phone */}
+                  <div className="flex-1">
+                    <label className="block text-gray-900 font-semibold mb-2">
+                      Phone No
+                    </label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Phone No."
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
 
                 {/* SMS Reminders Checkbox */}

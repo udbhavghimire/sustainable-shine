@@ -2,6 +2,8 @@ import Navbar from "@/components/navbar";
 import BookingCalculator from "@/components/booking-calculator";
 import Footer from "@/components/footer";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title:
     "Book Your Cleaning Service - Instant Quote Calculator | Sustainable Shine",
