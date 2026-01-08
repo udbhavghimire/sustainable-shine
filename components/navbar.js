@@ -17,10 +17,12 @@ export default function Navbar() {
   ];
 
   // Get all suburbs for dropdown
-  const suburbs = Object.entries(sydneySuburbs).map(([slug, data]) => ({
-    slug,
-    name: data.name,
-  }));
+  const suburbs = Object.entries(sydneySuburbs)
+    .map(([slug, data]) => ({
+      slug,
+      name: data.name,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <nav className="fixed w-full bg-white/95 backdrop-blur-sm shadow-md z-50">
