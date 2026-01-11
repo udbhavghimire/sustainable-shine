@@ -28,8 +28,10 @@ export default function BookingCalculator() {
   const [hasPet, setHasPet] = useState("");
   const [hearAboutUs, setHearAboutUs] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
-  const [address, setAddress] = useState("");
-  const [aptNo, setAptNo] = useState("");
+  const [unitNumber, setUnitNumber] = useState("");
+  const [street, setStreet] = useState("");
+  const [suburb, setSuburb] = useState("");
+  const [postcode, setPostcode] = useState("");
   const [cleanlinessLevel, setCleanlinessLevel] = useState("");
   const [parking, setParking] = useState("");
   const [flexibleDateTime, setFlexibleDateTime] = useState("");
@@ -819,8 +821,16 @@ export default function BookingCalculator() {
       setSubmitError("Please enter your phone number");
       return false;
     }
-    if (!address) {
-      setSubmitError("Please enter your address");
+    if (!street) {
+      setSubmitError("Please enter your street address");
+      return false;
+    }
+    if (!suburb) {
+      setSubmitError("Please enter your suburb");
+      return false;
+    }
+    if (!postcode) {
+      setSubmitError("Please enter your postcode");
       return false;
     }
     return true;
@@ -880,8 +890,10 @@ export default function BookingCalculator() {
         hasPet,
         hearAboutUs,
         specialNotes,
-        address,
-        aptNo,
+        unitNumber,
+        street,
+        suburb,
+        postcode,
         cleanlinessLevel,
         parking,
         flexibleDateTime,
@@ -1749,6 +1761,64 @@ export default function BookingCalculator() {
               </div>
             </div>
 
+            {/* Address Details Section */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Address Details
+              </h2>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    Unit Number
+                  </label>
+                  <input
+                    type="text"
+                    value={unitNumber}
+                    onChange={(e) => setUnitNumber(e.target.value)}
+                    placeholder="e.g., Unit 5, Apt 2B (optional)"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    Street <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
+                    placeholder="e.g., 123 Main Street"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    Suburb <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={suburb}
+                    onChange={(e) => setSuburb(e.target.value)}
+                    placeholder="e.g., Sydney"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    Postcode <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={postcode}
+                    onChange={(e) => setPostcode(e.target.value)}
+                    placeholder="e.g., 2000"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Pet and Referral Section */}
             <div className="bg-gray-50 rounded-2xl shadow-lg p-6 space-y-6">
               {/* Do You have Pet */}
@@ -1799,40 +1869,6 @@ export default function BookingCalculator() {
                   rows={5}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none resize-none"
                 />
-              </div>
-            </div>
-
-            {/* Address Details Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Address Details
-              </h2>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-2">
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Type Address"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-2">
-                    Apt. No.
-                  </label>
-                  <input
-                    type="text"
-                    value={aptNo}
-                    onChange={(e) => setAptNo(e.target.value)}
-                    placeholder="#"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
               </div>
             </div>
 

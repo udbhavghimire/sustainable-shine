@@ -228,7 +228,7 @@ export default function Footer({ city }) {
                 href="mailto:info@sustainableshine.com.au"
                 className="text-gray-400 hover:text-emerald-400 transition-colors"
               >
-                support@sustainableshine.com.au
+                info@sustainableshine.com.au
               </a>
             </div>
           </div>
