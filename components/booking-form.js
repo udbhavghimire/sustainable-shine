@@ -92,7 +92,7 @@ export default function BookingForm({ city }) {
                     href="tel:+61234567890"
                     className="text-lg text-emerald-600 hover:underline"
                   >
-                    +61 2 3456 7890
+                    +61 452 422 059
                   </a>
                 </div>
               </div>
