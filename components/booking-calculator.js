@@ -912,8 +912,27 @@ export default function BookingCalculator() {
 
       const result = await response.json();
 
+      // Log full response for debugging
+      console.log("📦 Full API Response:", result);
+
       if (result.success) {
         setSubmitSuccess(true);
+
+        // Log Django save status for debugging
+        if (!result.django_saved) {
+          console.error(
+            "⚠️ Booking email sent but NOT saved to database!",
+            "\nError Details:",
+            result.django_error
+          );
+          // You might want to show this to the user
+          alert(
+            "⚠️ Your booking request was received and emailed, but there was an issue saving it to our system. We will contact you shortly."
+          );
+        } else {
+          console.log("✅ Booking saved successfully to database");
+        }
+
         // Scroll to top to show success message
         window.scrollTo({ top: 0, behavior: "smooth" });
 
