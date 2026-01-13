@@ -74,6 +74,8 @@ export default function AdminDashboard() {
 
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
+      console.log(`Updating booking ${bookingId} to status: ${newStatus}`);
+
       const response = await fetch(
         `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/update_status/`,
         {
@@ -85,17 +87,26 @@ export default function AdminDashboard() {
         }
       );
 
+      const responseData = await response.text();
+      console.log("Status update response:", response.status, responseData);
+
       if (response.ok) {
         await fetchBookings();
         await fetchStatistics();
-        // Show success feedback (optional)
         console.log(`✅ Status updated to: ${newStatus}`);
       } else {
-        alert("Failed to update status. Please try again.");
+        console.error("Failed to update status:", {
+          status: response.status,
+          statusText: response.statusText,
+          body: responseData,
+        });
+        alert(
+          `Failed to update status: ${response.status} ${response.statusText}\n${responseData}`
+        );
       }
     } catch (error) {
       console.error("Error updating status:", error);
-      alert("Error updating status. Please check your connection.");
+      alert(`Error updating status: ${error.message}`);
     }
   };
 
@@ -108,6 +119,8 @@ export default function AdminDashboard() {
       return;
 
     try {
+      console.log(`Deleting booking ${bookingId}`);
+
       const response = await fetch(
         `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/`,
         {
@@ -115,16 +128,26 @@ export default function AdminDashboard() {
         }
       );
 
-      if (response.ok) {
+      const responseData = await response.text();
+      console.log("Delete response:", response.status, responseData);
+
+      if (response.ok || response.status === 204) {
         await fetchBookings();
         await fetchStatistics();
         console.log("✅ Booking deleted successfully");
       } else {
-        alert("Failed to delete booking. Please try again.");
+        console.error("Failed to delete booking:", {
+          status: response.status,
+          statusText: response.statusText,
+          body: responseData,
+        });
+        alert(
+          `Failed to delete booking: ${response.status} ${response.statusText}`
+        );
       }
     } catch (error) {
       console.error("Error deleting booking:", error);
-      alert("Error deleting booking. Please check your connection.");
+      alert(`Error deleting booking: ${error.message}`);
     }
   };
 
