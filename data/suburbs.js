@@ -123,19 +123,14 @@ function generateSlug(name) {
     .replace(/[^a-z0-9-]/g, "");
 }
 
-// Auto-generate description
-function generateDescription(name) {
-  return `Professional eco-friendly cleaning services in ${name}. Specializing in general cleaning, deep cleaning, and end-of-lease cleaning for homes and offices. Licensed, insured, and 100% satisfaction guaranteed.`;
-}
-
 // Auto-generate meta title
 function generateMetaTitle(name) {
-  return `Professional Cleaning Services ${name} | Sustainable Shine`;
+  return `Professional House Cleaning Services in ${name} - Book Today!`;
 }
 
 // Auto-generate meta description
 function generateMetaDescription(name) {
-  return `Expert cleaning services in ${name}, Sydney. Eco-friendly products, same-day service, 100% satisfaction guaranteed. Book your cleaner today for general, deep, or end-of-lease cleaning.`;
+  return `Looking for professional house cleaning services in ${name}? Sustainable Shine offers spotless, eco-friendly home cleaning at great prices. Call now!`;
 }
 
 // Auto-generate keywords
@@ -150,7 +145,7 @@ export const sydneySuburbs = suburbsData.reduce((acc, suburb) => {
     name: suburb.name,
     fullName: `${suburb.name}, Sydney`,
     postcode: suburb.postcode,
-    description: generateDescription(suburb.name),
+    description: generateMetaDescription(suburb.name),
     metaTitle: generateMetaTitle(suburb.name),
     metaDescription: generateMetaDescription(suburb.name),
     keywords: generateKeywords(suburb.name),

@@ -376,7 +376,7 @@ export async function POST(request) {
     `;
 
     // Send email using Resend
-    const data = await resend.emails.send({
+    const emailData = await resend.emails.send({
       from: "Sustainable Shine Bookings <onboarding@resend.dev>",
       to: ["info@sustainableshine.com.au"],
       replyTo: bookingData.email, // Allow direct reply to customer
@@ -386,7 +386,84 @@ export async function POST(request) {
       html: htmlContent,
     });
 
-    return NextResponse.json({ success: true, data });
+    // Send booking data to Django backend API
+    try {
+      const djangoResponse = await fetch(
+        "https://sustainable-shine-backend.onrender.com/api/bookings/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            // Customer Information
+            first_name: bookingData.firstName,
+            last_name: bookingData.lastName,
+            email: bookingData.email,
+            phone: bookingData.phone,
+            sms_reminders: bookingData.smsReminders || false,
+
+            // Service Details
+            service_type: bookingData.serviceType,
+            frequency: bookingData.frequency || "once",
+            preferred_date: bookingData.selectedDate || null,
+
+            // Property Details
+            address: bookingData.address,
+            apt_no: bookingData.aptNo || "",
+            bedrooms: bookingData.bedrooms,
+            bathrooms: bookingData.bathrooms,
+            storey: bookingData.storey,
+            laundry: bookingData.laundry,
+
+            // Additional Information
+            has_pet: bookingData.hasPet || "no",
+            cleanliness_level: bookingData.cleanlinessLevel || null,
+            parking: bookingData.parking || "",
+            access: bookingData.access || "",
+            flexible_date_time: bookingData.flexibleDateTime || "no",
+            hear_about_us: bookingData.hearAboutUs || "",
+            special_notes: bookingData.specialNotes || "",
+
+            // Add-ons
+            selected_addons: bookingData.selectedAddOns || {},
+            addon_details: bookingData.addOnDetails || {},
+
+            // Pricing
+            price_details: {
+              base: bookingData.priceDetails.base,
+              addons: bookingData.priceDetails.addOns,
+              addons_extra: bookingData.priceDetails.addOnsExtra,
+              discount: bookingData.priceDetails.discount,
+              subtotal: bookingData.priceDetails.subtotal,
+              gst: bookingData.priceDetails.gst,
+              total: bookingData.priceDetails.total,
+            },
+
+            // Metadata
+            booking_source: "website",
+            submitted_at: new Date().toISOString(),
+          }),
+        }
+      );
+
+      if (!djangoResponse.ok) {
+        console.error(
+          "Django API Error:",
+          djangoResponse.status,
+          await djangoResponse.text()
+        );
+      } else {
+        const djangoData = await djangoResponse.json();
+        console.log("Booking saved to Django:", djangoData);
+      }
+    } catch (djangoError) {
+      // Log the error but don't fail the entire request
+      // Email was already sent successfully
+      console.error("Error saving to Django backend:", djangoError);
+    }
+
+    return NextResponse.json({ success: true, data: emailData });
   } catch (error) {
     console.error("Error sending email:", error);
     return NextResponse.json(
