@@ -72,83 +72,29 @@ export default function AdminDashboard() {
     }
   };
 
-  const updateBookingStatus = async (bookingId, newStatus) => {
-    try {
-      console.log(`Updating booking ${bookingId} to status: ${newStatus}`);
-
-      const response = await fetch(
-        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/update_status/`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
-
-      const responseData = await response.text();
-      console.log("Status update response:", response.status, responseData);
-
-      if (response.ok) {
-        await fetchBookings();
-        await fetchStatistics();
-        console.log(`✅ Status updated to: ${newStatus}`);
-      } else {
-        console.error("Failed to update status:", {
-          status: response.status,
-          statusText: response.statusText,
-          body: responseData,
-        });
-        alert(
-          `Failed to update status: ${response.status} ${response.statusText}\n${responseData}`
-        );
-      }
-    } catch (error) {
-      console.error("Error updating status:", error);
-      alert(`Error updating status: ${error.message}`);
-    }
+  const updateBookingStatus = (bookingId, newStatus) => {
+    // Update status in frontend only (not persisted to Django)
+    setBookings((prevBookings) =>
+      prevBookings.map((booking) =>
+        booking.id === bookingId ? { ...booking, status: newStatus } : booking
+      )
+    );
+    console.log(`✅ Status updated to: ${newStatus} (frontend only)`);
   };
 
-  const deleteBooking = async (bookingId) => {
+  const deleteBooking = (bookingId) => {
     if (
       !confirm(
-        "Are you sure you want to delete this booking? This action cannot be undone."
+        "Are you sure you want to remove this booking from the view? (Note: This only removes it from the frontend, not from the database)"
       )
     )
       return;
 
-    try {
-      console.log(`Deleting booking ${bookingId}`);
-
-      const response = await fetch(
-        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      const responseData = await response.text();
-      console.log("Delete response:", response.status, responseData);
-
-      if (response.ok || response.status === 204) {
-        await fetchBookings();
-        await fetchStatistics();
-        console.log("✅ Booking deleted successfully");
-      } else {
-        console.error("Failed to delete booking:", {
-          status: response.status,
-          statusText: response.statusText,
-          body: responseData,
-        });
-        alert(
-          `Failed to delete booking: ${response.status} ${response.statusText}`
-        );
-      }
-    } catch (error) {
-      console.error("Error deleting booking:", error);
-      alert(`Error deleting booking: ${error.message}`);
-    }
+    // Remove booking from frontend only (not deleted from Django)
+    setBookings((prevBookings) =>
+      prevBookings.filter((booking) => booking.id !== bookingId)
+    );
+    console.log("✅ Booking removed from view (frontend only)");
   };
 
   const getFilteredBookings = () => {
@@ -330,25 +276,27 @@ function LeadsSection({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <StatCard
           title="Total Bookings"
-          value={statistics?.total_bookings || 0}
+          value={bookings.length}
           icon="📊"
           color="blue"
         />
         <StatCard
           title="Pending"
-          value={statistics?.status_breakdown?.pending || 0}
+          value={
+            bookings.filter((b) => b.status === "pending" || !b.status).length
+          }
           icon="⏳"
           color="yellow"
         />
         <StatCard
           title="Confirmed"
-          value={statistics?.status_breakdown?.confirmed || 0}
+          value={bookings.filter((b) => b.status === "confirmed").length}
           icon="✅"
           color="green"
         />
         <StatCard
           title="Completed"
-          value={statistics?.status_breakdown?.completed || 0}
+          value={bookings.filter((b) => b.status === "completed").length}
           icon="🎉"
           color="purple"
         />
