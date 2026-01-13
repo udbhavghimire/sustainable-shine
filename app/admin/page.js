@@ -86,16 +86,26 @@ export default function AdminDashboard() {
       );
 
       if (response.ok) {
-        fetchBookings();
-        fetchStatistics();
+        await fetchBookings();
+        await fetchStatistics();
+        // Show success feedback (optional)
+        console.log(`✅ Status updated to: ${newStatus}`);
+      } else {
+        alert("Failed to update status. Please try again.");
       }
     } catch (error) {
       console.error("Error updating status:", error);
+      alert("Error updating status. Please check your connection.");
     }
   };
 
   const deleteBooking = async (bookingId) => {
-    if (!confirm("Are you sure you want to delete this booking?")) return;
+    if (
+      !confirm(
+        "Are you sure you want to delete this booking? This action cannot be undone."
+      )
+    )
+      return;
 
     try {
       const response = await fetch(
@@ -106,11 +116,15 @@ export default function AdminDashboard() {
       );
 
       if (response.ok) {
-        fetchBookings();
-        fetchStatistics();
+        await fetchBookings();
+        await fetchStatistics();
+        console.log("✅ Booking deleted successfully");
+      } else {
+        alert("Failed to delete booking. Please try again.");
       }
     } catch (error) {
       console.error("Error deleting booking:", error);
+      alert("Error deleting booking. Please check your connection.");
     }
   };
 
@@ -461,14 +475,18 @@ function LeadsSection({
                         ${booking.price_details?.total?.toFixed(2) || "0.00"}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td
+                      className="px-6 py-4 whitespace-nowrap"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <select
                         value={booking.status || "pending"}
                         onChange={(e) => {
                           e.stopPropagation();
                           updateBookingStatus(booking.id, e.target.value);
                         }}
-                        className="text-xs px-2 py-1 rounded-full font-semibold border-0 focus:ring-2 focus:ring-emerald-500"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xs px-2 py-1 rounded-full font-semibold border-0 focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                         style={{
                           backgroundColor:
                             booking.status === "confirmed"
@@ -494,13 +512,16 @@ function LeadsSection({
                         <option value="cancelled">Cancelled</option>
                       </select>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteBooking(booking.id);
                         }}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-900 hover:underline transition-colors"
                       >
                         Delete
                       </button>
