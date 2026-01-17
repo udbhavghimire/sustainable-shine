@@ -3,6 +3,221 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
+// Calendar Picker Component
+function CalendarPicker({ selectedDate, onDateSelect }) {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Get days in month
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    return { daysInMonth, startingDayOfWeek, year, month };
+  };
+
+  const { daysInMonth, startingDayOfWeek, year, month } =
+    getDaysInMonth(currentMonth);
+
+  // Generate calendar days
+  const calendarDays = [];
+
+  // Add empty cells for days before month starts
+  for (let i = 0; i < startingDayOfWeek; i++) {
+    calendarDays.push(null);
+  }
+
+  // Add days of the month
+  for (let day = 1; day <= daysInMonth; day++) {
+    calendarDays.push(day);
+  }
+
+  const handleDateClick = (day) => {
+    const clickedDate = new Date(year, month, day);
+    clickedDate.setHours(0, 0, 0, 0);
+
+    // Don't allow selecting past dates
+    if (clickedDate < today) return;
+
+    // Format date as YYYY-MM-DD for input compatibility
+    const formattedDate = `${year}-${String(month + 1).padStart(
+      2,
+      "0"
+    )}-${String(day).padStart(2, "0")}`;
+    onDateSelect(formattedDate);
+  };
+
+  const navigateMonth = (direction) => {
+    const newMonth = new Date(currentMonth);
+    newMonth.setMonth(currentMonth.getMonth() + direction);
+    setCurrentMonth(newMonth);
+  };
+
+  const jumpToMonth = (monthIndex) => {
+    const newMonth = new Date(currentMonth);
+    newMonth.setMonth(monthIndex);
+    setCurrentMonth(newMonth);
+    setShowMonthPicker(false);
+  };
+
+  const isDateSelected = (day) => {
+    if (!selectedDate || !day) return false;
+    const selected = new Date(selectedDate);
+    return (
+      selected.getDate() === day &&
+      selected.getMonth() === month &&
+      selected.getFullYear() === year
+    );
+  };
+
+  const isDateDisabled = (day) => {
+    if (!day) return true;
+    const date = new Date(year, month, day);
+    date.setHours(0, 0, 0, 0);
+    return date < today;
+  };
+
+  const canGoPrevious = () => {
+    const prevMonth = new Date(currentMonth);
+    prevMonth.setMonth(currentMonth.getMonth() - 1);
+    prevMonth.setDate(1);
+    prevMonth.setHours(0, 0, 0, 0);
+
+    const todayFirstOfMonth = new Date(today);
+    todayFirstOfMonth.setDate(1);
+
+    return prevMonth >= todayFirstOfMonth;
+  };
+
+  return (
+    <div className="w-full max-w-sm">
+      {/* Calendar Header */}
+      <div className="flex items-center justify-between mb-3 bg-gray-50 rounded-lg p-2 border border-gray-200">
+        <button
+          onClick={() => navigateMonth(-1)}
+          disabled={!canGoPrevious()}
+          className={`p-1 hover:bg-gray-200 rounded transition-colors ${
+            !canGoPrevious() ? "opacity-30 cursor-not-allowed" : ""
+          }`}
+          aria-label="Previous month"
+        >
+          <svg
+            className="w-4 h-4 text-gray-700"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
+        <span className="text-sm font-semibold text-gray-900">
+          {monthNames[month]} {year}
+        </span>
+
+        <button
+          onClick={() => navigateMonth(1)}
+          className="p-1 hover:bg-gray-200 rounded transition-colors"
+          aria-label="Next month"
+        >
+          <svg
+            className="w-4 h-4 text-gray-700"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Calendar Grid */}
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
+        {/* Day Headers */}
+        <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
+          {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => (
+            <div
+              key={idx}
+              className="text-center py-2 text-xs font-medium text-gray-600"
+            >
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar Days */}
+        <div className="grid grid-cols-7 bg-white">
+          {calendarDays.map((day, index) => (
+            <button
+              key={index}
+              onClick={() => day && handleDateClick(day)}
+              disabled={isDateDisabled(day)}
+              className={`
+                aspect-square p-1 text-xs transition-colors
+                ${!day ? "invisible" : ""}
+                ${
+                  isDateDisabled(day)
+                    ? "text-gray-300 cursor-not-allowed bg-gray-100"
+                    : isDateSelected(day)
+                    ? "cursor-pointer"
+                    : "hover:bg-emerald-100 cursor-pointer"
+                }
+                ${
+                  isDateSelected(day)
+                    ? "bg-emerald-500 text-white font-semibold hover:bg-emerald-600"
+                    : "text-gray-700"
+                }
+                ${
+                  day === today.getDate() &&
+                  month === today.getMonth() &&
+                  year === today.getFullYear() &&
+                  !isDateSelected(day)
+                    ? "font-semibold text-emerald-600"
+                    : ""
+                }
+              `}
+            >
+              {day}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function BookingCalculator() {
   const searchParams = useSearchParams();
   const serviceParam = searchParams.get("service");
@@ -1680,16 +1895,10 @@ export default function BookingCalculator() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 Select Date
               </h2>
-              <div className="relative">
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  min={new Date().toISOString().split("T")[0]}
-                  className="w-full md:w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-gray-700"
-                  placeholder="Select a date"
-                />
-              </div>
+              <CalendarPicker
+                selectedDate={selectedDate}
+                onDateSelect={setSelectedDate}
+              />
             </div>
 
             {/* Customer Details Section */}
