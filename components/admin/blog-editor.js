@@ -140,10 +140,20 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
         .map((tag) => tag.trim())
         .filter((tag) => tag);
 
+      // Transform data to match backend API format
       const blogData = {
-        ...formData,
+        title: formData.title,
         slug: slug,
-        tags: tagsArray,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        category: formData.category,
+        tags_list: tagsArray, // Backend expects tags_list, not tags
+        featured_image: formData.featured_image || formData.image || "",
+        author_name: formData.author || "", // Backend expects author_name, not author
+        status: formData.status,
+        featured: formData.featured,
+        meta_title: formData.meta_title || "",
+        meta_description: formData.meta_description || "",
       };
 
       await onSave(blogData);

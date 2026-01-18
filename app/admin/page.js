@@ -166,7 +166,24 @@ export default function AdminDashboard() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to save blog post");
+        // Handle Django REST Framework validation errors
+        let errorMessage = "Failed to save blog post";
+        if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (typeof errorData === 'object') {
+          // Extract field-specific errors from Django REST Framework
+          const fieldErrors = Object.entries(errorData)
+            .map(([field, errors]) => {
+              const errorList = Array.isArray(errors) ? errors : [errors];
+              return `${field}: ${errorList.join(", ")}`;
+            })
+            .join("; ");
+          if (fieldErrors) {
+            errorMessage = fieldErrors;
+          }
+        }
+        console.error("Backend validation errors:", errorData);
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
