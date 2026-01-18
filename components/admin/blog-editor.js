@@ -64,6 +64,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
 
   const handleTitleChange = (e) => {
     const title = e.target.value;
+    // Always auto-generate slug from title
     setFormData({
       ...formData,
       title,
@@ -164,37 +165,22 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
           </div>
         )}
 
-        {/* Title and Slug */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Title *
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={handleTitleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              placeholder="Enter blog title"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Slug *
-            </label>
-            <input
-              type="text"
-              value={formData.slug}
-              onChange={(e) =>
-                setFormData({ ...formData, slug: e.target.value })
-              }
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              placeholder="blog-post-slug"
-            />
-          </div>
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Title *
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={handleTitleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            placeholder="Enter blog title"
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Slug will be auto-generated from the title
+          </p>
         </div>
 
         {/* Excerpt */}
