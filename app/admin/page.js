@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import BlogEditor from "@/components/admin/blog-editor";
+import BlogList from "@/components/admin/blog-list";
+import LeadsSection from "@/components/admin/leads-section";
+
+const API_BASE_URL = "https://sustainable-shine-backend.onrender.com/api";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -14,6 +19,13 @@ export default function AdminDashboard() {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [bookingDetails, setBookingDetails] = useState(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [apiError, setApiError] = useState(false);
+  
+  // Blog state
+  const [blogs, setBlogs] = useState([]);
+  const [isLoadingBlogs, setIsLoadingBlogs] = useState(false);
+  const [showBlogEditor, setShowBlogEditor] = useState(false);
+  const [editingBlog, setEditingBlog] = useState(null);
 
   // Check authentication
   useEffect(() => {
@@ -24,6 +36,7 @@ export default function AdminDashboard() {
       setIsLoading(false);
       fetchBookings();
       fetchStatistics();
+      fetchBlogs();
     }
   }, []);
 
@@ -36,24 +49,48 @@ export default function AdminDashboard() {
   const fetchBookings = async () => {
     try {
       const response = await fetch(
-        "https://sustainable-shine-backend.onrender.com/api/bookings/"
+        "https://sustainable-shine-backend.onrender.com/api/bookings/",
+        {
+          headers: {
+            "Accept": "application/json",
+          },
+        }
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       setBookings(data.results || []);
+      setApiError(false);
     } catch (error) {
       console.error("Error fetching bookings:", error);
+      setBookings([]);
+      setApiError(true);
     }
   };
 
   const fetchStatistics = async () => {
     try {
       const response = await fetch(
-        "https://sustainable-shine-backend.onrender.com/api/bookings/statistics/"
+        "https://sustainable-shine-backend.onrender.com/api/bookings/statistics/",
+        {
+          headers: {
+            "Accept": "application/json",
+          },
+        }
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       setStatistics(data);
     } catch (error) {
       console.error("Error fetching statistics:", error);
+      setStatistics(null);
     }
   };
 
@@ -61,15 +98,138 @@ export default function AdminDashboard() {
     setIsLoadingDetails(true);
     try {
       const response = await fetch(
-        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/detailed/`
+        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/detailed/`,
+        {
+          headers: {
+            "Accept": "application/json",
+          },
+        }
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       setBookingDetails(data.data);
     } catch (error) {
       console.error("Error fetching booking details:", error);
+      setBookingDetails(null);
     } finally {
       setIsLoadingDetails(false);
     }
+  };
+
+  // Blog Management Functions
+  const fetchBlogs = async () => {
+    setIsLoadingBlogs(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/blog/`, {
+        headers: {
+          "Accept": "application/json",
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setBlogs(data.results || data || []);
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+      setBlogs([]);
+      // Show user-friendly error
+      if (error.message === "Failed to fetch") {
+        console.warn("Backend server may be starting up or unavailable. Please wait a moment and refresh.");
+      }
+    } finally {
+      setIsLoadingBlogs(false);
+    }
+  };
+
+  const saveBlog = async (blogData) => {
+    try {
+      const url = editingBlog
+        ? `${API_BASE_URL}/blog/${editingBlog.slug}/`
+        : `${API_BASE_URL}/blog/`;
+      
+      const method = editingBlog ? "PATCH" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(blogData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to save blog post");
+      }
+
+      const data = await response.json();
+      
+      // Refresh blogs list
+      await fetchBlogs();
+      
+      // Close editor
+      setShowBlogEditor(false);
+      setEditingBlog(null);
+      
+      alert(editingBlog ? "Blog post updated successfully!" : "Blog post created successfully!");
+    } catch (error) {
+      console.error("Error saving blog:", error);
+      throw error;
+    }
+  };
+
+  const deleteBlog = async (slug) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/blog/${slug}/`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete blog post");
+      }
+
+      await fetchBlogs();
+      alert("Blog post deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+      alert("Failed to delete blog post. Please try again.");
+    }
+  };
+
+  const changeBlogStatus = async (slug, newStatus) => {
+    try {
+      const endpoint = newStatus === "published" ? "publish" : "unpublish";
+      const response = await fetch(`${API_BASE_URL}/blog/${slug}/${endpoint}/`, {
+        method: "PATCH",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${endpoint} blog post`);
+      }
+
+      await fetchBlogs();
+      alert(`Blog post ${newStatus === "published" ? "published" : "unpublished"} successfully!`);
+    } catch (error) {
+      console.error("Error changing blog status:", error);
+      alert("Failed to update blog status. Please try again.");
+    }
+  };
+
+  const handleEditBlog = (blog) => {
+    setEditingBlog(blog);
+    setShowBlogEditor(true);
+  };
+
+  const handleCancelBlogEdit = () => {
+    setShowBlogEditor(false);
+    setEditingBlog(null);
   };
 
   const updateBookingStatus = (bookingId, newStatus) => {
@@ -229,6 +389,35 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* API Error Banner */}
+        {apiError && (
+          <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-yellow-700">
+                  <strong>Backend Connection Issue:</strong> Unable to connect to the server. 
+                  The backend might be starting up (Render free tier takes ~30 seconds to wake up).
+                  <button 
+                    onClick={() => {
+                      fetchBookings();
+                      fetchStatistics();
+                      fetchBlogs();
+                    }}
+                    className="ml-2 underline font-medium hover:text-yellow-800"
+                  >
+                    Click here to retry
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {activeTab === "leads" && (
           <LeadsSection
             bookings={getFilteredBookings()}
@@ -248,673 +437,60 @@ export default function AdminDashboard() {
           />
         )}
 
-        {activeTab === "blogs" && <BlogsSection />}
-      </main>
-    </div>
-  );
-}
-
-function LeadsSection({
-  bookings,
-  statistics,
-  filter,
-  setFilter,
-  sortBy,
-  setSortBy,
-  updateBookingStatus,
-  deleteBooking,
-  selectedBooking,
-  bookingDetails,
-  isLoadingDetails,
-  setSelectedBooking,
-  handleViewBooking,
-  refreshData,
-}) {
-  return (
-    <div className="space-y-6">
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Bookings"
-          value={bookings.length}
-          icon="📊"
-          color="blue"
-        />
-        <StatCard
-          title="Pending"
-          value={
-            bookings.filter((b) => b.status === "pending" || !b.status).length
-          }
-          icon="⏳"
-          color="yellow"
-        />
-        <StatCard
-          title="Confirmed"
-          value={bookings.filter((b) => b.status === "confirmed").length}
-          icon="✅"
-          color="green"
-        />
-        <StatCard
-          title="Completed"
-          value={bookings.filter((b) => b.status === "completed").length}
-          icon="🎉"
-          color="purple"
-        />
-      </div>
-
-      {/* Filters and Controls */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-wrap gap-4 items-center justify-between">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                filter === "all"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setFilter("today")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                filter === "today"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Today
-            </button>
-            <button
-              onClick={() => setFilter("tomorrow")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                filter === "tomorrow"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Tomorrow
-            </button>
-            <button
-              onClick={() => setFilter("week")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                filter === "week"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              This Week
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">
-              Sort by:
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            >
-              <option value="date-desc">Date (Newest)</option>
-              <option value="date-asc">Date (Oldest)</option>
-              <option value="created-desc">Created (Recent)</option>
-            </select>
-
-            <button
-              onClick={refreshData}
-              className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-all"
-            >
-              Refresh
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Bookings Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Service Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {bookings.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="6"
-                    className="px-6 py-12 text-center text-gray-500"
-                  >
-                    No bookings found
-                  </td>
-                </tr>
-              ) : (
-                bookings.map((booking) => (
-                  <tr
-                    key={booking.id}
-                    className="hover:bg-gray-50 cursor-pointer"
-                    onClick={() => handleViewBooking(booking)}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {booking.full_name ||
-                          `${booking.first_name} ${booking.last_name}`}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {booking.suburb || booking.postcode || "N/A"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {booking.selected_date
-                          ? new Date(booking.selected_date).toLocaleDateString()
-                          : "Not set"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 capitalize">
-                        {booking.service_type?.replace(/_/g, " ")}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        ${booking.price_details?.total?.toFixed(2) || "0.00"}
-                      </div>
-                    </td>
-                    <td
-                      className="px-6 py-4 whitespace-nowrap"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <select
-                        value={booking.status || "pending"}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          updateBookingStatus(booking.id, e.target.value);
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xs px-2 py-1 rounded-full font-semibold border-0 focus:ring-2 focus:ring-emerald-500 cursor-pointer"
-                        style={{
-                          backgroundColor:
-                            booking.status === "confirmed"
-                              ? "#d1fae5"
-                              : booking.status === "completed"
-                              ? "#e0e7ff"
-                              : booking.status === "cancelled"
-                              ? "#fee2e2"
-                              : "#fef3c7",
-                          color:
-                            booking.status === "confirmed"
-                              ? "#065f46"
-                              : booking.status === "completed"
-                              ? "#3730a3"
-                              : booking.status === "cancelled"
-                              ? "#991b1b"
-                              : "#92400e",
-                        }}
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                      </select>
-                    </td>
-                    <td
-                      className="px-6 py-4 whitespace-nowrap text-sm font-medium"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteBooking(booking.id);
-                        }}
-                        className="text-red-600 hover:text-red-900 hover:underline transition-colors"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Booking Details Modal */}
-      {selectedBooking && (
-        <BookingDetailsModal
-          booking={selectedBooking}
-          bookingDetails={bookingDetails}
-          isLoading={isLoadingDetails}
-          onClose={() => {
-            setSelectedBooking(null);
-            setBookingDetails(null);
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-function StatCard({ title, value, icon, color }) {
-  const colorClasses = {
-    blue: "bg-blue-50 text-blue-600",
-    yellow: "bg-yellow-50 text-yellow-600",
-    green: "bg-green-50 text-green-600",
-    purple: "bg-purple-50 text-purple-600",
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
-        </div>
-        <div className={`text-4xl ${colorClasses[color]} rounded-lg p-3`}>
-          {icon}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BookingDetailsModal({ booking, bookingDetails, isLoading, onClose }) {
-  const details = bookingDetails || {};
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Booking Details</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {isLoading ? (
-          <div className="p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading details...</p>
-          </div>
-        ) : (
-          <div className="p-6 space-y-6">
-            {/* Status Badge */}
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-sm text-gray-500">
-                  Booking ID: #{booking.id}
-                </span>
-              </div>
-              <span
-                className="px-4 py-2 rounded-full text-sm font-semibold"
-                style={{
-                  backgroundColor:
-                    booking.status === "confirmed"
-                      ? "#d1fae5"
-                      : booking.status === "completed"
-                      ? "#e0e7ff"
-                      : booking.status === "cancelled"
-                      ? "#fee2e2"
-                      : "#fef3c7",
-                  color:
-                    booking.status === "confirmed"
-                      ? "#065f46"
-                      : booking.status === "completed"
-                      ? "#3730a3"
-                      : booking.status === "cancelled"
-                      ? "#991b1b"
-                      : "#92400e",
-                }}
-              >
-                {booking.status?.charAt(0).toUpperCase() +
-                  booking.status?.slice(1)}
-              </span>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Customer Information */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  👤 Customer Information
-                </h3>
-                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                  <p>
-                    <span className="font-medium">Name:</span>{" "}
-                    {details.customer_information?.name ||
-                      `${booking.first_name} ${booking.last_name}`}
-                  </p>
-                  <p>
-                    <span className="font-medium">Email:</span>{" "}
-                    {details.customer_information?.email || booking.email}
-                  </p>
-                  <p>
-                    <span className="font-medium">Phone:</span>{" "}
-                    {details.customer_information?.phone || booking.phone}
-                  </p>
-                  <p>
-                    <span className="font-medium">SMS Reminders:</span>{" "}
-                    {details.customer_information?.sms_reminders ? "Yes" : "No"}
-                  </p>
-                </div>
-              </div>
-
-              {/* Service Details */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  📋 Service Details
-                </h3>
-                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                  <p>
-                    <span className="font-medium">Service Type:</span>{" "}
-                    {details.service_details?.service_type ||
-                      booking.service_type}
-                  </p>
-                  <p>
-                    <span className="font-medium">Frequency:</span>{" "}
-                    {details.service_details?.frequency || booking.frequency}
-                  </p>
-                  <p>
-                    <span className="font-medium">Preferred Date:</span>{" "}
-                    {details.service_details?.preferred_date ||
-                    booking.selected_date
-                      ? new Date(
-                          details.service_details?.preferred_date ||
-                            booking.selected_date
-                        ).toLocaleDateString()
-                      : "Not set"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Property Details */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                🏠 Property Details
-              </h3>
-              <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-                <p>
-                  <span className="font-medium">Address:</span>
-                  <br />
-                  {details.property_details?.address ||
-                    booking.full_address ||
-                    booking.street}
-                </p>
-                <p>
-                  <span className="font-medium">Suburb:</span>
-                  <br />
-                  {details.property_details?.suburb || booking.suburb}
-                </p>
-                <p>
-                  <span className="font-medium">Postcode:</span>
-                  <br />
-                  {details.property_details?.postcode || booking.postcode}
-                </p>
-                <p>
-                  <span className="font-medium">Bedrooms:</span>
-                  <br />
-                  {details.property_details?.bedrooms || booking.bedrooms}
-                </p>
-                <p>
-                  <span className="font-medium">Bathrooms:</span>
-                  <br />
-                  {details.property_details?.bathrooms || booking.bathrooms}
-                </p>
-                <p>
-                  <span className="font-medium">Storeys:</span>
-                  <br />
-                  {details.property_details?.storeys || booking.storey}
-                </p>
-                <p>
-                  <span className="font-medium">Laundries:</span>
-                  <br />
-                  {details.property_details?.laundries || booking.laundry}
-                </p>
-                <p>
-                  <span className="font-medium">Kitchen:</span>
-                  <br />
-                  {details.property_details?.kitchen || booking.kitchen}
-                </p>
-                <p>
-                  <span className="font-medium">Living/Dining:</span>
-                  <br />
-                  {details.property_details?.living_dining ||
-                    booking.living_dining}
-                </p>
-              </div>
-            </div>
-
-            {/* Additional Information */}
-            {details.additional_information && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  ℹ️ Additional Information
-                </h3>
-                <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-2 gap-4">
-                  {details.additional_information.has_pet && (
-                    <p>
-                      <span className="font-medium">Has Pet:</span>
-                      <br />
-                      {details.additional_information.has_pet}
-                    </p>
-                  )}
-                  {details.additional_information.cleanliness_level && (
-                    <p>
-                      <span className="font-medium">Cleanliness Level:</span>
-                      <br />
-                      {details.additional_information.cleanliness_level}
-                    </p>
-                  )}
-                  {details.additional_information.parking && (
-                    <p>
-                      <span className="font-medium">Parking:</span>
-                      <br />
-                      {details.additional_information.parking}
-                    </p>
-                  )}
-                  {details.additional_information.access && (
-                    <p>
-                      <span className="font-medium">Access:</span>
-                      <br />
-                      {details.additional_information.access}
-                    </p>
-                  )}
-                  {details.additional_information.flexible_date_time && (
-                    <p>
-                      <span className="font-medium">Flexible Date/Time:</span>
-                      <br />
-                      {details.additional_information.flexible_date_time}
-                    </p>
-                  )}
-                  {details.additional_information.hear_about_us && (
-                    <p>
-                      <span className="font-medium">Heard About Us:</span>
-                      <br />
-                      {details.additional_information.hear_about_us}
-                    </p>
-                  )}
-                </div>
-                {details.additional_information.special_notes && (
-                  <div className="mt-4 bg-white border border-gray-200 rounded-lg p-4">
-                    <p className="font-medium mb-2">Special Notes:</p>
-                    <p className="text-gray-700 whitespace-pre-wrap">
-                      {details.additional_information.special_notes}
-                    </p>
+        {activeTab === "blogs" && (
+          <>
+            {!showBlogEditor ? (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Blog Management</h2>
+                    <p className="text-gray-600 mt-1">Create and manage your blog posts</p>
                   </div>
-                )}
-              </div>
-            )}
-
-            {/* Add-ons */}
-            {details.add_ons &&
-              Object.keys(details.add_ons.selected || {}).length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    ✨ Add-ons
-                  </h3>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <ul className="space-y-2">
-                      {Object.entries(details.add_ons.selected).map(
-                        ([key, value]) => {
-                          if (value && details.add_ons.details?.[key]) {
-                            const addon = details.add_ons.details[key];
-                            return (
-                              <li key={key} className="flex justify-between">
-                                <span>
-                                  {addon.name}{" "}
-                                  {addon.quantity > 1
-                                    ? `(x${addon.quantity})`
-                                    : ""}
-                                </span>
-                                <span className="font-medium">
-                                  ${addon.totalPrice}
-                                </span>
-                              </li>
-                            );
-                          }
-                          return null;
-                        }
-                      )}
-                    </ul>
-                  </div>
+                  <button
+                    onClick={() => setShowBlogEditor(true)}
+                    className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-all flex items-center space-x-2"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    <span>Create New Post</span>
+                  </button>
                 </div>
-              )}
-
-            {/* Pricing */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                💰 Pricing Details
-              </h3>
-              <div className="bg-emerald-50 rounded-lg p-4 space-y-2">
-                {details.pricing_details ? (
-                  <>
-                    <div className="flex justify-between">
-                      <span>Base Price:</span>
-                      <span>
-                        ${details.pricing_details.base?.toFixed(2) || "0.00"}
-                      </span>
-                    </div>
-                    {details.pricing_details.addons > 0 && (
-                      <div className="flex justify-between">
-                        <span>Room Surcharges:</span>
-                        <span>
-                          ${details.pricing_details.addons?.toFixed(2)}
-                        </span>
-                      </div>
-                    )}
-                    {details.pricing_details.addons_extra > 0 && (
-                      <div className="flex justify-between">
-                        <span>Add-ons:</span>
-                        <span>
-                          ${details.pricing_details.addons_extra?.toFixed(2)}
-                        </span>
-                      </div>
-                    )}
-                    {details.pricing_details.discount > 0 && (
-                      <div className="flex justify-between text-red-600">
-                        <span>Discount:</span>
-                        <span>
-                          -${details.pricing_details.discount?.toFixed(2)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex justify-between">
-                      <span>Subtotal:</span>
-                      <span>
-                        ${details.pricing_details.subtotal?.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>GST (10%):</span>
-                      <span>${details.pricing_details.gst?.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-xl font-bold text-emerald-600 pt-2 border-t-2 border-emerald-200">
-                      <span>Total:</span>
-                      <span>${details.pricing_details.total?.toFixed(2)}</span>
-                    </div>
-                  </>
+                
+                {isLoadingBlogs ? (
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading blogs...</p>
+                  </div>
                 ) : (
-                  <p className="text-2xl font-bold text-emerald-600">
-                    ${booking.price_details?.total?.toFixed(2) || "0.00"}
-                  </p>
+                  <BlogList
+                    blogs={blogs}
+                    onEdit={handleEditBlog}
+                    onDelete={deleteBlog}
+                    onStatusChange={changeBlogStatus}
+                  />
                 )}
               </div>
-            </div>
-
-            {/* Metadata */}
-            {details.metadata && (
-              <div className="text-sm text-gray-500 border-t pt-4">
-                <p>
-                  Created:{" "}
-                  {new Date(details.metadata.created_at).toLocaleString()}
-                </p>
-                <p>
-                  Last Updated:{" "}
-                  {new Date(details.metadata.updated_at).toLocaleString()}
-                </p>
-              </div>
+            ) : (
+              <BlogEditor
+                blog={editingBlog}
+                onSave={saveBlog}
+                onCancel={handleCancelBlogEdit}
+              />
             )}
-          </div>
+          </>
         )}
-      </div>
-    </div>
-  );
-}
-
-function BlogsSection() {
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-      <div className="max-w-md mx-auto">
-        <div className="text-6xl mb-4">📝</div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Blogs Coming Soon
-        </h2>
-        <p className="text-gray-600">
-          The blog management section is under development. You'll be able to
-          create, edit, and manage blog posts here.
-        </p>
-      </div>
+      </main>
     </div>
   );
 }
