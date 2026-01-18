@@ -131,6 +131,9 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
     setError("");
 
     try {
+      // Ensure slug is always generated from title before submitting
+      const slug = generateSlug(formData.title || "");
+      
       // Convert tags string to array
       const tagsArray = formData.tags
         .split(",")
@@ -139,6 +142,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
 
       const blogData = {
         ...formData,
+        slug: slug,
         tags: tagsArray,
       };
 
