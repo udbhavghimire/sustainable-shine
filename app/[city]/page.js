@@ -40,15 +40,28 @@ export async function generateMetadata({ params }) {
     title: suburbData.metaTitle,
     description: suburbData.metaDescription,
     keywords: suburbData.keywords,
+    
+    // Favicon and Icons
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/favicon.ico", sizes: "16x16", type: "image/x-icon" },
+        { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+      ],
+      shortcut: "/favicon.ico",
+      apple: "/favicon.ico",
+    },
+    
     openGraph: {
       title: suburbData.metaTitle,
       description: suburbData.metaDescription,
       type: "website",
       locale: "en_AU",
       siteName: "Sustainable Shine",
+      url: `https://sustainableshine.com.au/${resolvedParams.city}`,
       images: [
         {
-          url: "/hero2.jpeg",
+          url: "https://sustainableshine.com.au/hero2.jpeg",
           width: 1200,
           height: 630,
           alt: `Professional Cleaning Services in ${suburbData.name}`,
@@ -59,7 +72,7 @@ export async function generateMetadata({ params }) {
       card: "summary_large_image",
       title: suburbData.metaTitle,
       description: suburbData.metaDescription,
-      images: ["/hero2.jpeg"],
+      images: ["https://sustainableshine.com.au/hero2.jpeg"],
     },
     alternates: {
       canonical: `https://sustainableshine.com.au/${resolvedParams.city}`,
@@ -75,6 +88,7 @@ export async function generateMetadata({ params }) {
         "max-snippet": -1,
       },
     },
+    metadataBase: new URL("https://sustainableshine.com.au"),
   };
 }
 

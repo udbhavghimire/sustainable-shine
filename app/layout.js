@@ -19,6 +19,17 @@ export const metadata = {
     "cleaning services Sydney, house cleaning Sydney, deep cleaning Sydney, end of lease cleaning Sydney, office cleaning Sydney, eco-friendly cleaning, professional cleaners Sydney",
   authors: [{ name: "Sustainable Shine Cleaning" }],
 
+  // Favicon and Icons
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.ico", sizes: "16x16", type: "image/x-icon" },
+      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
+
   // Open Graph metadata for Facebook, LinkedIn, WhatsApp
   openGraph: {
     title: "Sustainable Shine Cleaning | Professional Cleaning Services Sydney",
@@ -30,7 +41,7 @@ export const metadata = {
     url: "https://sustainableshine.com.au",
     images: [
       {
-        url: "/Sustainable Shine Logo.avif",
+        url: "https://sustainableshine.com.au/Sustainable Shine Logo.avif",
         width: 1200,
         height: 630,
         alt: "Sustainable Shine Cleaning - Professional Eco-Friendly Cleaning Services Sydney",
@@ -44,7 +55,7 @@ export const metadata = {
     title: "Sustainable Shine Cleaning | Professional Cleaning Services Sydney",
     description:
       "Top-rated eco-friendly cleaning services in Sydney. 5000+ happy clients. Book your free quote today!",
-    images: ["/Sustainable Shine Logo.avif"],
+    images: ["https://sustainableshine.com.au/Sustainable Shine Logo.avif"],
     creator: "@SustainableShine",
     site: "@SustainableShine",
   },
@@ -73,11 +84,20 @@ export const metadata = {
   },
 
   category: "Cleaning Services",
+  
+  // Additional metadata for better indexing
+  metadataBase: new URL("https://sustainableshine.com.au"),
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
+        <meta name="theme-color" content="#10b981" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

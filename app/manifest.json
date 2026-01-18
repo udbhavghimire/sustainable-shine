@@ -1,0 +1,16 @@
+{
+    "name": "Sustainable Shine",
+    "short_name": "Sustainable Shine",
+    "description": "Professional house cleaning services in Sydney",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#10b981",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "48x48",
+            "type": "image/x-icon"
+        }
+    ]
+}
