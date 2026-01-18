@@ -30,6 +30,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
   const [error, setError] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
+  const [imageFile, setImageFile] = useState(null); // Store the actual File object
 
   useEffect(() => {
     if (blog) {
@@ -49,6 +50,11 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
         meta_description: blog.meta_description || "",
       });
       setImagePreview(blog.image || blog.featured_image || "");
+      setImageFile(null); // Reset file when loading existing blog
+    } else {
+      // Reset all states when creating new blog
+      setImageFile(null);
+      setImagePreview("");
     }
   }, [blog]);
 
@@ -93,16 +99,14 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
     setError("");
 
     try {
-      // Convert to base64 for preview and storage
+      // Store the actual File object for upload
+      setImageFile(file);
+      
+      // Convert to base64 for preview
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result;
         setImagePreview(base64String);
-        setFormData({
-          ...formData,
-          image: base64String,
-          featured_image: base64String,
-        });
         setUploadingImage(false);
       };
       reader.onerror = () => {
@@ -118,6 +122,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
 
   const removeImage = () => {
     setImagePreview("");
+    setImageFile(null);
     setFormData({
       ...formData,
       image: "",
@@ -140,23 +145,48 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
         .map((tag) => tag.trim())
         .filter((tag) => tag);
 
-      // Transform data to match backend API format
-      const blogData = {
-        title: formData.title,
-        slug: slug,
-        excerpt: formData.excerpt,
-        content: formData.content,
-        category: formData.category,
-        tags_list: tagsArray, // Backend expects tags_list, not tags
-        featured_image: formData.featured_image || formData.image || "",
-        author_name: formData.author || "", // Backend expects author_name, not author
-        status: formData.status,
-        featured: formData.featured,
-        meta_title: formData.meta_title || "",
-        meta_description: formData.meta_description || "",
-      };
+      // Use FormData if we have an image file, otherwise use JSON
+      let blogData;
+      
+      if (imageFile) {
+        // Use FormData for file uploads (multipart/form-data)
+        const formDataToSend = new FormData();
+        formDataToSend.append("title", formData.title);
+        formDataToSend.append("slug", slug);
+        formDataToSend.append("excerpt", formData.excerpt);
+        formDataToSend.append("content", formData.content);
+        formDataToSend.append("category", formData.category);
+        formDataToSend.append("featured_image", imageFile);
+        formDataToSend.append("author_name", formData.author || "");
+        formDataToSend.append("status", formData.status);
+        formDataToSend.append("featured", formData.featured);
+        formDataToSend.append("meta_title", formData.meta_title || "");
+        formDataToSend.append("meta_description", formData.meta_description || "");
+        
+        // Append tags_list as JSON string (Django REST Framework will parse it)
+        tagsArray.forEach(tag => {
+          formDataToSend.append("tags_list", tag);
+        });
+        
+        blogData = formDataToSend;
+      } else {
+        // Use JSON format when no image is being uploaded
+        blogData = {
+          title: formData.title,
+          slug: slug,
+          excerpt: formData.excerpt,
+          content: formData.content,
+          category: formData.category,
+          tags_list: tagsArray,
+          author_name: formData.author || "",
+          status: formData.status,
+          featured: formData.featured,
+          meta_title: formData.meta_title || "",
+          meta_description: formData.meta_description || "",
+        };
+      }
 
-      await onSave(blogData);
+      await onSave(blogData, !!imageFile); // Pass flag to indicate if it's FormData
     } catch (err) {
       setError(err.message || "Failed to save blog post");
     } finally {

@@ -148,7 +148,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const saveBlog = async (blogData) => {
+  const saveBlog = async (blogData, isFormData = false) => {
     try {
       const url = editingBlog
         ? `${API_BASE_URL}/blog/${editingBlog.slug}/`
@@ -156,13 +156,24 @@ export default function AdminDashboard() {
       
       const method = editingBlog ? "PATCH" : "POST";
 
-      const response = await fetch(url, {
+      // Set up headers and body based on whether we're sending FormData or JSON
+      const fetchOptions = {
         method,
-        headers: {
+      };
+
+      if (isFormData && blogData instanceof FormData) {
+        // For FormData, let the browser set Content-Type with boundary
+        // Don't set Content-Type header manually - browser will set it with boundary
+        fetchOptions.body = blogData;
+      } else {
+        // For JSON data
+        fetchOptions.headers = {
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify(blogData),
-      });
+        };
+        fetchOptions.body = JSON.stringify(blogData);
+      }
+
+      const response = await fetch(url, fetchOptions);
 
       if (!response.ok) {
         const errorData = await response.json();
