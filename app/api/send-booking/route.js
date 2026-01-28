@@ -36,25 +36,25 @@ export async function POST(request) {
             .card-title { font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 16px; color: white; }
             .divider { border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 16px; margin-bottom: 16px; }
             .section-label { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #a7f3d0; }
-            .property-item { display: flex; align-items: center; margin-bottom: 8px; font-size: 14px; }
-            .checkmark { display: inline-block; width: 16px; height: 16px; margin-right: 8px; color: #6ee7b7; }
+            .property-item { display: flex; align-items: center; margin-bottom: 8px; font-size: 14px; line-height: 1.5; }
+            .checkmark { display: inline-block; width: 16px; height: 16px; margin-right: 10px; color: #6ee7b7; flex-shrink: 0; }
             .property-text { color: #ecfdf5; }
             .price-section { border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 16px; margin-bottom: 16px; }
-            .price-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-            .price-label { color: #a7f3d0; }
-            .price-value { font-weight: 600; }
-            .addon-section { padding-bottom: 12px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-            .addon-title { color: #a7f3d0; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
-            .addon-item { display: flex; justify-content: space-between; margin-bottom: 6px; padding-left: 8px; font-size: 12px; }
-            .addon-name { color: #ecfdf5; }
-            .addon-price { font-weight: 600; color: #ecfdf5; }
+            .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
+            .price-label { color: #a7f3d0; flex: 1; }
+            .price-value { font-weight: 600; color: white; text-align: right; min-width: 80px; }
+            .addon-section { padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+            .addon-title { color: #a7f3d0; font-weight: 600; margin-bottom: 10px; font-size: 14px; }
+            .addon-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-left: 8px; font-size: 14px; }
+            .addon-name { color: #ecfdf5; flex: 1; }
+            .addon-price { font-weight: 600; color: white; text-align: right; min-width: 80px; }
             .total-section { border-top: 2px solid rgba(255, 255, 255, 0.3); padding-top: 16px; margin-bottom: 24px; }
-            .total-row { display: flex; justify-content: space-between; align-items: center; }
-            .total-label { font-size: 20px; font-weight: bold; color: white; }
-            .total-value { font-size: 32px; font-weight: bold; color: white; }
+            .total-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+            .total-label { font-size: 20px; font-weight: bold; color: white; flex: 1; }
+            .total-value { font-size: 32px; font-weight: bold; color: white; text-align: right; min-width: 120px; }
             .recurring-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.2); }
-            .recurring-label { font-size: 16px; font-weight: 600; color: #6ee7b7; }
-            .recurring-value { font-size: 24px; font-weight: bold; color: #6ee7b7; }
+            .recurring-label { font-size: 16px; font-weight: 600; color: #6ee7b7; flex: 1; }
+            .recurring-value { font-size: 24px; font-weight: bold; color: #6ee7b7; text-align: right; min-width: 100px; }
             .info-note { font-size: 12px; color: #a7f3d0; background: rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: flex-start; }
             .info-icon { margin-right: 8px; flex-shrink: 0; }
             .details-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
@@ -150,15 +150,15 @@ export async function POST(request) {
                       <span class="addon-name">• ${addon.name}${
                           addon.quantity > 1 ? ` (x${addon.quantity})` : ""
                         }</span>
-                      <span class="addon-price">$${addon.totalPrice}</span>
+                      <span class="addon-price">$${addon.totalPrice.toFixed(2)}</span>
                     </div>`;
                       }
                       return "";
                     })
                     .join("")}
-                  <div class="price-row" style="padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 8px;">
+                  <div class="price-row" style="padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px;">
                     <span class="price-label" style="font-weight: 600;">Add-ons Total</span>
-                    <span class="price-value">$${bookingData.priceDetails.addOnsExtra.toFixed(
+                    <span class="price-value" style="font-weight: 600;">$${bookingData.priceDetails.addOnsExtra.toFixed(
                       2
                     )}</span>
                   </div>
@@ -179,10 +179,10 @@ export async function POST(request) {
                   ).toFixed(2)}</span>
                 </div>
                 <div class="price-row discount-text">
-                  <span style="font-weight: 600;">Discount (${
+                  <span class="price-label" style="font-weight: 600;">Discount (${
                     frequencyLabels[bookingData.frequency]
                   })</span>
-                  <span style="font-weight: 600;">-$${bookingData.priceDetails.discount.toFixed(
+                  <span class="price-value" style="font-weight: 600;">-$${bookingData.priceDetails.discount.toFixed(
                     2
                   )}</span>
                 </div>
