@@ -159,6 +159,7 @@ export default function AdminDashboard() {
       // Set up headers and body based on whether we're sending FormData or JSON
       const fetchOptions = {
         method,
+        credentials: "include", // Include cookies for authentication
       };
 
       if (isFormData && blogData instanceof FormData) {
@@ -217,6 +218,7 @@ export default function AdminDashboard() {
     try {
       const response = await fetch(`${API_BASE_URL}/blog/${slug}/`, {
         method: "DELETE",
+        credentials: "include", // Include cookies for authentication
       });
 
       if (!response.ok) {
@@ -236,6 +238,7 @@ export default function AdminDashboard() {
       const endpoint = newStatus === "published" ? "publish" : "unpublish";
       const response = await fetch(`${API_BASE_URL}/blog/${slug}/${endpoint}/`, {
         method: "PATCH",
+        credentials: "include", // Include cookies for authentication
       });
 
       if (!response.ok) {
@@ -286,12 +289,15 @@ export default function AdminDashboard() {
           headers: {
             Accept: "application/json",
           },
+          credentials: "include", // Include cookies for authentication
         }
       );
 
       if (!response.ok) {
         throw new Error(
-          response.status === 404
+          response.status === 403
+            ? "You don't have permission to delete this lead. Please ensure you're logged in."
+            : response.status === 404
             ? "Lead not found or already deleted"
             : "Failed to delete lead"
         );
