@@ -270,19 +270,47 @@ export default function AdminDashboard() {
     console.log(`✅ Status updated to: ${newStatus} (frontend only)`);
   };
 
-  const deleteBooking = (bookingId) => {
+  const deleteBooking = async (bookingId) => {
     if (
       !confirm(
-        "Are you sure you want to remove this booking from the view? (Note: This only removes it from the frontend, not from the database)"
+        "Are you sure you want to delete this lead? This action cannot be undone."
       )
     )
       return;
 
-    // Remove booking from frontend only (not deleted from Django)
-    setBookings((prevBookings) =>
-      prevBookings.filter((booking) => booking.id !== bookingId)
-    );
-    console.log("✅ Booking removed from view (frontend only)");
+    try {
+      const response = await fetch(
+        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          response.status === 404
+            ? "Lead not found or already deleted"
+            : "Failed to delete lead"
+        );
+      }
+
+      setBookings((prevBookings) =>
+        prevBookings.filter((booking) => booking.id !== bookingId)
+      );
+      if (selectedBooking?.id === bookingId) {
+        setSelectedBooking(null);
+        setBookingDetails(null);
+      }
+      alert("Lead deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting lead:", error);
+      alert(
+        error.message || "Failed to delete lead. Please try again."
+      );
+    }
   };
 
   const getFilteredBookings = () => {
