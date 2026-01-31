@@ -263,14 +263,59 @@ export default function AdminDashboard() {
     setEditingBlog(null);
   };
 
-  const updateBookingStatus = (bookingId, newStatus) => {
-    // Update status in frontend only (not persisted to Django)
-    setBookings((prevBookings) =>
-      prevBookings.map((booking) =>
-        booking.id === bookingId ? { ...booking, status: newStatus } : booking
-      )
-    );
-    console.log(`✅ Status updated to: ${newStatus} (frontend only)`);
+  const updateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      const response = await fetch(
+        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/update_status/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          credentials: "include", // Include cookies for authentication
+          body: JSON.stringify({
+            status: newStatus,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error ||
+            errorData.message ||
+            `Failed to update booking status (${response.status})`
+        );
+      }
+
+      const data = await response.json();
+
+      // Update the status in the frontend state
+      setBookings((prevBookings) =>
+        prevBookings.map((booking) =>
+          booking.id === bookingId ? { ...booking, status: newStatus } : booking
+        )
+      );
+
+      // Also update the selected booking if it's the one being modified
+      if (selectedBooking?.id === bookingId) {
+        setSelectedBooking((prev) => ({ ...prev, status: newStatus }));
+      }
+
+      console.log(`✅ Status updated to: ${newStatus} (saved to database)`);
+      
+      // Optionally show a subtle success message
+      // You could add a toast notification here instead of console.log
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+      alert(
+        `Failed to update booking status: ${error.message}\n\nPlease try again or refresh the page.`
+      );
+      
+      // Optionally refresh the bookings list to restore correct state
+      await fetchBookings();
+    }
   };
 
   const deleteBooking = async (bookingId) => {
