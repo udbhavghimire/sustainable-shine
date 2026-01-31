@@ -34,22 +34,34 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
 
   useEffect(() => {
     if (blog) {
+      // Handle tags - could be array (tags_list) or string (tags)
+      let tagsString = "";
+      if (Array.isArray(blog.tags_list)) {
+        tagsString = blog.tags_list.join(", ");
+      } else if (Array.isArray(blog.tags)) {
+        tagsString = blog.tags.join(", ");
+      } else if (typeof blog.tags === "string") {
+        tagsString = blog.tags;
+      }
+      
       setFormData({
         title: blog.title || "",
         slug: blog.slug || "",
         excerpt: blog.excerpt || "",
         content: blog.content || "",
         category: blog.category || "cleaning-tips",
-        tags: Array.isArray(blog.tags) ? blog.tags.join(", ") : blog.tags || "",
-        featured_image: blog.featured_image || blog.image || "",
-        image: blog.image || blog.featured_image || "",
-        author: blog.author || "",
+        tags: tagsString,
+        featured_image: blog.featured_image || "",
+        image: blog.featured_image || "",
+        author: blog.author_name || blog.author || "",
         status: blog.status || "draft",
         featured: blog.featured || false,
-        meta_title: blog.meta_title || "",
-        meta_description: blog.meta_description || "",
+        meta_title: blog.meta_title || blog.title || "",
+        meta_description: blog.meta_description || blog.excerpt || "",
       });
-      setImagePreview(blog.image || blog.featured_image || "");
+      
+      // Set image preview to the featured_image URL from API
+      setImagePreview(blog.featured_image || "");
       setImageFile(null); // Reset file when loading existing blog
     } else {
       // Reset all states when creating new blog

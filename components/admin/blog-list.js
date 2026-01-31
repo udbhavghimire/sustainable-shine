@@ -282,9 +282,9 @@ function BlogItem({ blog, onEdit, onDelete, onPublish, onUnpublish }) {
           </p>
 
           {/* Tags */}
-          {blog.tags && blog.tags.length > 0 && (
+          {((blog.tags_list && blog.tags_list.length > 0) || (blog.tags && Array.isArray(blog.tags) && blog.tags.length > 0)) && (
             <div className="flex flex-wrap gap-2 mb-3">
-              {blog.tags.slice(0, 5).map((tag, idx) => (
+              {(blog.tags_list || blog.tags).slice(0, 5).map((tag, idx) => (
                 <span
                   key={idx}
                   className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700"
@@ -292,9 +292,9 @@ function BlogItem({ blog, onEdit, onDelete, onPublish, onUnpublish }) {
                   #{tag}
                 </span>
               ))}
-              {blog.tags.length > 5 && (
+              {(blog.tags_list || blog.tags).length > 5 && (
                 <span className="text-xs text-gray-500">
-                  +{blog.tags.length - 5} more
+                  +{(blog.tags_list || blog.tags).length - 5} more
                 </span>
               )}
             </div>
@@ -320,13 +320,13 @@ function BlogItem({ blog, onEdit, onDelete, onPublish, onUnpublish }) {
                     {blog.meta_description || "—"}
                   </p>
                 </div>
-                {(blog.image || blog.featured_image) && (
+                {blog.featured_image && (
                   <div className="md:col-span-2">
                     <p className="font-medium text-gray-700 mb-2">
                       Featured Image
                     </p>
                     <img
-                      src={blog.image || blog.featured_image}
+                      src={blog.featured_image}
                       alt={blog.title}
                       className="w-full max-w-md h-48 object-cover rounded-lg"
                       onError={(e) => {
