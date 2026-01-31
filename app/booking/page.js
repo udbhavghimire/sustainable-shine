@@ -18,6 +18,9 @@ export const metadata = {
       "Get an instant quote for professional cleaning services. Customize your package with our easy calculator.",
     type: "website",
   },
+  alternates: {
+    canonical: "https://sustainableshine.com.au/booking",
+  },
 };
 
 export default function BookingPage() {

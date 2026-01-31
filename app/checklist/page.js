@@ -14,6 +14,9 @@ export const metadata = {
       "Compare our cleaning packages with detailed task breakdowns for all areas of your home.",
     type: "website",
   },
+  alternates: {
+    canonical: "https://sustainableshine.com.au/checklist",
+  },
 };
 
 export default function ChecklistPage() {
