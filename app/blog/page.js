@@ -119,19 +119,35 @@ export default function Blog() {
                 key={blog.slug}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300"
               >
-                {blog.featured_image && (
-                  <div className="aspect-video w-full overflow-hidden bg-gray-100">
+                <div className="aspect-video w-full overflow-hidden bg-gray-100">
+                  {blog.featured_image ? (
                     <img
                       src={blog.featured_image}
                       alt={blog.title}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.style.display = 'none';
+                        console.error("Image failed to load:", blog.featured_image);
+                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect fill='%23e5e7eb' width='800' height='450'/%3E%3Ctext fill='%239ca3af' font-family='sans-serif' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Not Found%3C/text%3E%3C/svg%3E";
                       }}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-emerald-100">
+                      <svg
+                        className="w-20 h-20 text-emerald-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
                 <div className="p-6">
                   <div className="flex items-center space-x-2 mb-3">
                     {blog.category && (
