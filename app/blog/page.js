@@ -119,12 +119,16 @@ export default function Blog() {
                 key={blog.slug}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300"
               >
-                {(blog.image || blog.featured_image) && (
+                {blog.featured_image && (
                   <div className="aspect-video w-full overflow-hidden bg-gray-100">
                     <img
-                      src={blog.image || blog.featured_image}
+                      src={blog.featured_image}
                       alt={blog.title}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.style.display = 'none';
+                      }}
                     />
                   </div>
                 )}

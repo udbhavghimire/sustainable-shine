@@ -139,12 +139,16 @@ export default function BlogPost() {
         {/* Blog post */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {/* Featured image */}
-          {(blog.image || blog.featured_image) && (
+          {blog.featured_image && (
             <div className="aspect-video w-full overflow-hidden bg-gray-100">
               <img
-                src={blog.image || blog.featured_image}
+                src={blog.featured_image}
                 alt={blog.title}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.parentElement.style.display = 'none';
+                }}
               />
             </div>
           )}
