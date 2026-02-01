@@ -6,18 +6,83 @@ import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MenuBar = ({ editor }) => {
+  const fileInputRef = useRef(null);
+  const imageMenuRef = useRef(null);
+  const [showImageMenu, setShowImageMenu] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (imageMenuRef.current && !imageMenuRef.current.contains(event.target)) {
+        setShowImageMenu(false);
+      }
+    };
+
+    if (showImageMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showImageMenu]);
+
   if (!editor) {
     return null;
   }
 
-  const addImage = () => {
+  const addImageFromUrl = () => {
     const url = window.prompt("Enter image URL:");
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
+    setShowImageMenu(false);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      return;
+    }
+
+    setUploadingImage(true);
+
+    // Convert to base64 and insert into editor
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      editor.chain().focus().setImage({ src: base64String }).run();
+      setUploadingImage(false);
+      setShowImageMenu(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    };
+    reader.onerror = () => {
+      alert("Failed to read image file");
+      setUploadingImage(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+    setShowImageMenu(false);
   };
 
   const addLink = () => {
@@ -344,26 +409,92 @@ const MenuBar = ({ editor }) => {
           </svg>
         </button>
       )}
-      <button
-        type="button"
-        onClick={addImage}
-        className="px-3 py-1.5 rounded hover:bg-gray-200 transition-colors"
-        title="Add Image"
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      
+      {/* Image Upload - with dropdown menu */}
+      <div className="relative" ref={imageMenuRef}>
+        <button
+          type="button"
+          onClick={() => setShowImageMenu(!showImageMenu)}
+          className={`px-3 py-1.5 rounded hover:bg-gray-200 transition-colors ${
+            uploadingImage ? "opacity-50 cursor-wait" : ""
+          }`}
+          title="Add Image"
+          disabled={uploadingImage}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
-      </button>
+          {uploadingImage ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-emerald-600"></div>
+          ) : (
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+          )}
+        </button>
+        
+        {/* Image upload menu */}
+        {showImageMenu && (
+          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 min-w-[180px] overflow-hidden">
+            <button
+              type="button"
+              onClick={triggerFileUpload}
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors flex items-center gap-2"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                />
+              </svg>
+              Upload Image
+            </button>
+            <button
+              type="button"
+              onClick={addImageFromUrl}
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors border-t border-gray-200 flex items-center gap-2"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                />
+              </svg>
+              Image from URL
+            </button>
+          </div>
+        )}
+        
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+        />
+      </div>
 
       <div className="w-px h-8 bg-gray-300 mx-1"></div>
 
@@ -433,8 +564,11 @@ export default function RichTextEditor({ content, onChange }) {
       StarterKit,
       Underline,
       Image.configure({
-        inline: true,
+        inline: false,
         allowBase64: true,
+        HTMLAttributes: {
+          class: "rounded-lg max-w-full h-auto my-4",
+        },
       }),
       Link.configure({
         openOnClick: false,
@@ -460,10 +594,19 @@ export default function RichTextEditor({ content, onChange }) {
 
   // Update editor content when prop changes
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content || "");
+    if (editor && content) {
+      const currentContent = editor.getHTML();
+      // Only update if content is actually different (normalize for comparison)
+      const normalizeHTML = (html) => html.replace(/\s+/g, ' ').trim();
+      if (normalizeHTML(content) !== normalizeHTML(currentContent)) {
+        editor.commands.setContent(content);
+      }
     }
   }, [content, editor]);
+
+  if (!editor) {
+    return null;
+  }
 
   return (
     <div className="bg-white">

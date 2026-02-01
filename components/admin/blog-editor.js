@@ -263,6 +263,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
           </label>
           <div className="border border-gray-300 rounded-lg overflow-hidden">
             <RichTextEditor
+              key={blog?.id || 'new-blog'}
               content={formData.content}
               onChange={(content) =>
                 setFormData({ ...formData, content })
