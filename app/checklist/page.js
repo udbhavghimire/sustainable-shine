@@ -235,7 +235,7 @@ export default function ChecklistPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <Navbar />
+   
 
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 text-white py-24 relative overflow-hidden">
