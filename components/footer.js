@@ -158,7 +158,7 @@ export default function Footer({ city }) {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/privacy-policy"
                   className="hover:text-emerald-400 transition-colors duration-300"
                 >
                   Privacy Policy
@@ -166,10 +166,10 @@ export default function Footer({ city }) {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/terms-conditions"
                   className="hover:text-emerald-400 transition-colors duration-300"
                 >
-                  Terms of Service
+                  Terms & Conditions
                 </a>
               </li>
             </ul>

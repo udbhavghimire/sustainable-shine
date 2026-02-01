@@ -70,7 +70,7 @@ export default function BlogPostClient({ params }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-16">
+      <div className="min-h-screen bg-gray-50 pt-32 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
@@ -83,7 +83,7 @@ export default function BlogPostClient({ params }) {
 
   if (error || !blog) {
     return (
-      <div className="min-h-screen bg-gray-50 py-16">
+      <div className="min-h-screen bg-gray-50 pt-20 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg shadow-sm border border-red-200 p-12 text-center">
             <div className="text-6xl mb-4">😔</div>
@@ -120,7 +120,7 @@ export default function BlogPostClient({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-16">
+    <div className="min-h-screen bg-gray-50 pt-20 py-16">
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back button */}
         <Link
