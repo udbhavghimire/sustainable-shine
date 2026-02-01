@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import BlogEditor from "@/components/admin/blog-editor";
 import BlogList from "@/components/admin/blog-list";
 import LeadsSection from "@/components/admin/leads-section";
+import Navbar from "@/components/navbar";
 
 const API_BASE_URL = "https://sustainable-shine-backend.onrender.com/api";
 
@@ -426,8 +427,11 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      {/* Main Navbar */}
+      <Navbar />
+      
+      {/* Admin Header - positioned below navbar */}
+      <header className="bg-white shadow-sm border-b border-gray-200 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -447,7 +451,7 @@ export default function AdminDashboard() {
                 </svg>
               </div>
               <h1 className="text-xl font-bold text-gray-900">
-                Sustainable Shine Admin
+                Admin Dashboard
               </h1>
             </div>
 

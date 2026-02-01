@@ -1,5 +1,4 @@
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
+
 import Link from "next/link";
 
 export const metadata = {
@@ -513,7 +512,7 @@ export default function ChecklistPage() {
         </div>
       </section>
 
-      <Footer />
+     
     </main>
   );
 }
