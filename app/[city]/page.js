@@ -8,6 +8,7 @@ import Reviews from "@/components/reviews";
 import FAQ from "@/components/faq";
 import BookingForm from "@/components/booking-form";
 import CTA from "@/components/cta";
+import FloatingBookingButton from "@/components/floating-booking-button";
 
 import {
   getSuburbData,
@@ -114,7 +115,7 @@ export default async function CityPage({ params }) {
       <FAQ city={suburbData} />
       <BookingForm city={suburbData} />
       <CTA city={suburbData} />
-      
+      <FloatingBookingButton />
 
       {/* Structured Data for SEO */}
       <script

@@ -9,6 +9,7 @@ import Reviews from "@/components/reviews";
 import FAQ from "@/components/faq";
 import BookingForm from "@/components/booking-form";
 import CTA from "@/components/cta";
+import FloatingBookingButton from "@/components/floating-booking-button";
 
 
 export default function Home() {
@@ -25,7 +26,7 @@ export default function Home() {
       <FAQ />
       <BookingForm />
       <CTA />
-      
+      <FloatingBookingButton />
     </main>
   );
 }
