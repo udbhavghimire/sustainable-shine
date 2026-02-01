@@ -8,7 +8,7 @@ import Reviews from "@/components/reviews";
 import FAQ from "@/components/faq";
 import BookingForm from "@/components/booking-form";
 import CTA from "@/components/cta";
-import Footer from "@/components/footer";
+
 import {
   getSuburbData,
   getAllSuburbSlugs,
@@ -114,7 +114,7 @@ export default async function CityPage({ params }) {
       <FAQ city={suburbData} />
       <BookingForm city={suburbData} />
       <CTA city={suburbData} />
-      <Footer city={suburbData} />
+      
 
       {/* Structured Data for SEO */}
       <script

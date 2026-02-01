@@ -9,14 +9,13 @@ import Reviews from "@/components/reviews";
 import FAQ from "@/components/faq";
 import BookingForm from "@/components/booking-form";
 import CTA from "@/components/cta";
-import Footer from "@/components/footer";
+
 
 export default function Home() {
   return (
     <main className="min-h-screen">
       <Navbar />
       <Hero />
-
       <About />
       <Services />
       <HowItWorks />
@@ -26,7 +25,7 @@ export default function Home() {
       <FAQ />
       <BookingForm />
       <CTA />
-      <Footer />
+      
     </main>
   );
 }
