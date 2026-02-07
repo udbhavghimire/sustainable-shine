@@ -17,14 +17,35 @@ export async function generateMetadata({ params }) {
     if (response.ok) {
       const blog = await response.json();
       
+      // Strip HTML tags from content for meta description
+      const stripHtml = (html) => {
+        if (!html) return "";
+        return html.replace(/<[^>]*>/g, "").substring(0, 160);
+      };
+      
+      const description = blog.meta_description || stripHtml(blog.content) || "Read our latest blog post";
+      
       return {
         title: blog.title || "Blog Post | Sustainable Shine",
-        description: blog.meta_description || blog.content?.substring(0, 160) || "Read our latest blog post",
+        description: description,
         keywords: blog.tags?.join(", ") || "",
         openGraph: {
           title: blog.title,
-          description: blog.meta_description || blog.content?.substring(0, 160),
+          description: description,
           type: "article",
+          publishedTime: blog.published_date || blog.created_at,
+          authors: blog.author ? [blog.author] : [],
+          images: blog.featured_image ? [{
+            url: blog.featured_image,
+            width: 1200,
+            height: 630,
+            alt: blog.title,
+          }] : [],
+        },
+        twitter: {
+          card: "summary_large_image",
+          title: blog.title,
+          description: description,
           images: blog.featured_image ? [blog.featured_image] : [],
         },
         alternates: {
