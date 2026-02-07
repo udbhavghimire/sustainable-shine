@@ -6,30 +6,42 @@ import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
+import TextStyle from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
 import { useEffect, useRef, useState } from "react";
 
 const MenuBar = ({ editor }) => {
   const fileInputRef = useRef(null);
   const imageMenuRef = useRef(null);
+  const colorMenuRef = useRef(null);
   const [showImageMenu, setShowImageMenu] = useState(false);
+  const [showColorMenu, setShowColorMenu] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Close menu when clicking outside
+  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (imageMenuRef.current && !imageMenuRef.current.contains(event.target)) {
         setShowImageMenu(false);
       }
+      if (colorMenuRef.current && !colorMenuRef.current.contains(event.target)) {
+        setShowColorMenu(false);
+      }
     };
 
-    if (showImageMenu) {
+    if (showImageMenu || showColorMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showImageMenu]);
+  }, [showImageMenu, showColorMenu]);
 
   if (!editor) {
     return null;
@@ -93,7 +105,7 @@ const MenuBar = ({ editor }) => {
   };
 
   return (
-    <div className="bg-gray-50 border-b border-gray-300 p-2 flex flex-wrap gap-1">
+    <div className="bg-gray-50 border-b border-gray-300 p-2 flex flex-wrap gap-1 sticky top-0 z-10">
       {/* Text Formatting */}
       <button
         type="button"
@@ -138,6 +150,94 @@ const MenuBar = ({ editor }) => {
 
       <div className="w-px h-8 bg-gray-300 mx-1"></div>
 
+      {/* Text Color */}
+      <div className="relative" ref={colorMenuRef}>
+        <button
+          type="button"
+          onClick={() => setShowColorMenu(!showColorMenu)}
+          className="px-3 py-1.5 rounded hover:bg-gray-200 transition-colors"
+          title="Text Color"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+            />
+          </svg>
+        </button>
+        {showColorMenu && (
+          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 p-2 grid grid-cols-5 gap-1">
+            {[
+              { color: "#000000", label: "Black" },
+              { color: "#dc2626", label: "Red" },
+              { color: "#16a34a", label: "Green" },
+              { color: "#2563eb", label: "Blue" },
+              { color: "#9333ea", label: "Purple" },
+              { color: "#ea580c", label: "Orange" },
+              { color: "#0891b2", label: "Cyan" },
+              { color: "#84cc16", label: "Lime" },
+              { color: "#ec4899", label: "Pink" },
+              { color: "#64748b", label: "Gray" },
+            ].map(({ color, label }) => (
+              <button
+                key={color}
+                type="button"
+                onClick={() => {
+                  editor.chain().focus().setColor(color).run();
+                  setShowColorMenu(false);
+                }}
+                className="w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-400 transition-all"
+                style={{ backgroundColor: color }}
+                title={label}
+              />
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                editor.chain().focus().unsetColor().run();
+                setShowColorMenu(false);
+              }}
+              className="col-span-5 mt-1 px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200"
+            >
+              Reset Color
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Highlight */}
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().toggleHighlight().run()}
+        className={`px-3 py-1.5 rounded hover:bg-gray-200 transition-colors ${
+          editor.isActive("highlight") ? "bg-yellow-200 text-gray-900" : ""
+        }`}
+        title="Highlight"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+          />
+        </svg>
+      </button>
+
+      <div className="w-px h-8 bg-gray-300 mx-1"></div>
+
       {/* Headings */}
       <button
         type="button"
@@ -174,6 +274,18 @@ const MenuBar = ({ editor }) => {
         title="Heading 3"
       >
         H3
+      </button>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+        className={`px-3 py-1.5 rounded hover:bg-gray-200 transition-colors font-bold text-sm ${
+          editor.isActive("heading", { level: 4 })
+            ? "bg-emerald-100 text-emerald-700"
+            : ""
+        }`}
+        title="Heading 4"
+      >
+        H4
       </button>
       <button
         type="button"
@@ -510,6 +622,60 @@ const MenuBar = ({ editor }) => {
 
       <div className="w-px h-8 bg-gray-300 mx-1"></div>
 
+      {/* Table */}
+      <button
+        type="button"
+        onClick={() =>
+          editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+        }
+        className="px-3 py-1.5 rounded hover:bg-gray-200 transition-colors"
+        title="Insert Table"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+          />
+        </svg>
+      </button>
+      {editor.isActive("table") && (
+        <>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().addColumnAfter().run()}
+            className="px-2 py-1.5 text-xs rounded hover:bg-gray-200 transition-colors"
+            title="Add Column"
+          >
+            +Col
+          </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().addRowAfter().run()}
+            className="px-2 py-1.5 text-xs rounded hover:bg-gray-200 transition-colors"
+            title="Add Row"
+          >
+            +Row
+          </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().deleteTable().run()}
+            className="px-2 py-1.5 text-xs rounded hover:bg-red-200 text-red-600 transition-colors"
+            title="Delete Table"
+          >
+            Del
+          </button>
+        </>
+      )}
+
+      <div className="w-px h-8 bg-gray-300 mx-1"></div>
+
       {/* Undo/Redo */}
       <button
         type="button"
@@ -563,6 +729,11 @@ export default function RichTextEditor({ content, onChange }) {
     extensions: [
       StarterKit,
       Underline,
+      TextStyle,
+      Color,
+      Highlight.configure({
+        multicolor: false,
+      }),
       Image.configure({
         inline: false,
         allowBase64: true,
@@ -578,6 +749,23 @@ export default function RichTextEditor({ content, onChange }) {
       }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
+      }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: "border-collapse table-auto w-full my-4",
+        },
+      }),
+      TableRow,
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: "border border-gray-300 px-4 py-2 bg-gray-100 font-bold",
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: "border border-gray-300 px-4 py-2",
+        },
       }),
     ],
     content: content || "",
@@ -609,9 +797,66 @@ export default function RichTextEditor({ content, onChange }) {
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-white border border-gray-300 rounded-lg overflow-hidden">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} className="prose max-w-none" />
+      
+      {/* Custom styles for editor */}
+      <style jsx global>{`
+        .ProseMirror table {
+          border-collapse: collapse;
+          table-layout: fixed;
+          width: 100%;
+          margin: 1rem 0;
+          overflow: hidden;
+        }
+        
+        .ProseMirror table td,
+        .ProseMirror table th {
+          border: 2px solid #ddd;
+          padding: 8px 12px;
+          vertical-align: top;
+          box-sizing: border-box;
+          position: relative;
+          min-width: 100px;
+        }
+        
+        .ProseMirror table th {
+          background-color: #f3f4f6;
+          font-weight: bold;
+          text-align: left;
+        }
+        
+        .ProseMirror table .selectedCell:after {
+          z-index: 2;
+          position: absolute;
+          content: "";
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          background: rgba(16, 185, 129, 0.1);
+          pointer-events: none;
+        }
+        
+        .ProseMirror table .column-resize-handle {
+          position: absolute;
+          right: -2px;
+          top: 0;
+          bottom: -2px;
+          width: 4px;
+          background-color: #10b981;
+          pointer-events: none;
+        }
+        
+        .ProseMirror p.is-editor-empty:first-child::before {
+          color: #adb5bd;
+          content: attr(data-placeholder);
+          float: left;
+          height: 0;
+          pointer-events: none;
+        }
+      `}</style>
     </div>
   );
 }

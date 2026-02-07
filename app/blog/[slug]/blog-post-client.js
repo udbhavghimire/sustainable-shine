@@ -228,7 +228,10 @@ export default function BlogPostClient({ params }) {
                 prose-blockquote:border-l-4 prose-blockquote:border-emerald-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
                 prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
                 prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-4 prose-pre:rounded-lg
-                prose-img:rounded-lg prose-img:shadow-md"
+                prose-img:rounded-lg prose-img:shadow-md
+                prose-table:border-collapse prose-table:w-full prose-table:my-4
+                prose-th:border prose-th:border-gray-300 prose-th:px-4 prose-th:py-2 prose-th:bg-gray-100 prose-th:font-bold prose-th:text-left
+                prose-td:border prose-td:border-gray-300 prose-td:px-4 prose-td:py-2"
               dangerouslySetInnerHTML={{ __html: processContent(blog.content) }}
             />
 
