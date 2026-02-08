@@ -215,23 +215,7 @@ export default function BlogPostClient({ params }) {
 
             {/* Blog content */}
             <div
-              className="prose prose-lg max-w-none
-                prose-headings:font-bold prose-headings:text-gray-900 prose-headings:mb-4 prose-headings:mt-8
-                prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg
-                prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
-                prose-a:text-emerald-600 prose-a:underline prose-a:font-medium hover:prose-a:text-emerald-700
-                prose-strong:text-gray-900 prose-strong:font-semibold
-                prose-em:text-gray-700 prose-em:italic
-                prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ul:text-gray-700
-                prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-ol:text-gray-700
-                prose-li:mb-2 prose-li:text-gray-700 prose-li:leading-relaxed
-                prose-blockquote:border-l-4 prose-blockquote:border-emerald-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
-                prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-                prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-4 prose-pre:rounded-lg
-                prose-img:rounded-lg prose-img:shadow-md
-                prose-table:border-collapse prose-table:w-full prose-table:my-4
-                prose-th:border prose-th:border-gray-300 prose-th:px-4 prose-th:py-2 prose-th:bg-gray-100 prose-th:font-bold prose-th:text-left
-                prose-td:border prose-td:border-gray-300 prose-td:px-4 prose-td:py-2"
+              className="prose prose-lg max-w-none"
               dangerouslySetInnerHTML={{ __html: processContent(blog.content) }}
             />
 
