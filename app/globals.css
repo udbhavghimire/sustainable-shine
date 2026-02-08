@@ -412,7 +412,7 @@ body {
   max-width: 65ch;
 }
 
-.prose > * + * {
+.prose>*+* {
   margin-top: 1em;
   margin-bottom: 1em;
 }
