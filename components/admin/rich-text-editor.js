@@ -724,6 +724,8 @@ const MenuBar = ({ editor }) => {
 };
 
 export default function RichTextEditor({ content, onChange }) {
+  console.log('RichTextEditor render - content prop:', content?.substring(0, 100));
+  
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -783,16 +785,27 @@ export default function RichTextEditor({ content, onChange }) {
 
   // Update editor content when prop changes
   useEffect(() => {
+    console.log('RichTextEditor useEffect - content:', content);
+    console.log('RichTextEditor useEffect - editor exists:', !!editor);
+    
     if (editor && content !== undefined && content !== null) {
       const currentContent = editor.getHTML();
+      console.log('Current editor content:', currentContent);
+      
       // Only update if content is actually different (normalize for comparison)
       const normalizeHTML = (html) => html.replace(/\s+/g, ' ').trim();
       const normalizedContent = normalizeHTML(content);
       const normalizedCurrent = normalizeHTML(currentContent);
       
+      console.log('Normalized content:', normalizedContent);
+      console.log('Normalized current:', normalizedCurrent);
+      
       // Update if different, or if current is empty/default and we have content
       if (normalizedContent !== normalizedCurrent || (normalizedContent && !normalizedCurrent)) {
+        console.log('Updating editor with content');
         editor.commands.setContent(content);
+      } else {
+        console.log('Content already matches, skipping update');
       }
     }
   }, [content, editor]);

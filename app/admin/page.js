@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import BlogEditor from "@/components/admin/blog-editor";
 import BlogList from "@/components/admin/blog-list";
 import LeadsSection from "@/components/admin/leads-section";
@@ -11,6 +11,7 @@ const API_BASE_URL = "https://sustainable-shine-backend.onrender.com/api";
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState("leads");
   const [isLoading, setIsLoading] = useState(true);
   const [bookings, setBookings] = useState([]);
@@ -40,6 +41,26 @@ export default function AdminDashboard() {
       fetchBlogs();
     }
   }, []);
+
+  // Handle URL parameters for editing blogs
+  useEffect(() => {
+    const blogSlug = searchParams.get('edit');
+    const tab = searchParams.get('tab');
+    
+    if (tab) {
+      setActiveTab(tab);
+    }
+    
+    if (blogSlug && blogs.length > 0) {
+      const blogToEdit = blogs.find(b => b.slug === blogSlug);
+      if (blogToEdit) {
+        console.log('Loading blog for editing:', blogToEdit);
+        setEditingBlog(blogToEdit);
+        setShowBlogEditor(true);
+        setActiveTab('blogs');
+      }
+    }
+  }, [searchParams, blogs]);
 
   const handleLogout = () => {
     localStorage.removeItem("adminAuth");
@@ -204,9 +225,10 @@ export default function AdminDashboard() {
       // Refresh blogs list
       await fetchBlogs();
       
-      // Close editor
+      // Close editor and clear URL
       setShowBlogEditor(false);
       setEditingBlog(null);
+      router.push('/admin?tab=blogs', { shallow: true });
       
       alert(editingBlog ? "Blog post updated successfully!" : "Blog post created successfully!");
     } catch (error) {
@@ -255,13 +277,18 @@ export default function AdminDashboard() {
   };
 
   const handleEditBlog = (blog) => {
+    console.log('Editing blog:', blog);
     setEditingBlog(blog);
     setShowBlogEditor(true);
+    // Update URL to reflect editing state
+    router.push(`/admin?tab=blogs&edit=${blog.slug}`, { shallow: true });
   };
 
   const handleCancelBlogEdit = () => {
     setShowBlogEditor(false);
     setEditingBlog(null);
+    // Clear URL parameters
+    router.push('/admin?tab=blogs', { shallow: true });
   };
 
   const updateBookingStatus = async (bookingId, newStatus) => {
@@ -558,7 +585,11 @@ export default function AdminDashboard() {
                     <p className="text-gray-600 mt-1">Create and manage your blog posts</p>
                   </div>
                   <button
-                    onClick={() => setShowBlogEditor(true)}
+                    onClick={() => {
+                      setShowBlogEditor(true);
+                      setEditingBlog(null);
+                      router.push('/admin?tab=blogs&new=true', { shallow: true });
+                    }}
                     className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-all flex items-center space-x-2"
                   >
                     <svg
