@@ -215,7 +215,7 @@ export default function BlogPostClient({ params }) {
 
             {/* Blog content */}
             <div
-              className="prose prose-lg max-w-none"
+              className="rich-text"
               dangerouslySetInnerHTML={{ __html: processContent(blog.content) }}
             />
 
