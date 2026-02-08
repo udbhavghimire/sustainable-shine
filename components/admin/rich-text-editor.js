@@ -776,17 +776,22 @@ export default function RichTextEditor({ content, onChange }) {
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      const html = editor.getHTML();
+      onChange(html);
     },
   });
 
   // Update editor content when prop changes
   useEffect(() => {
-    if (editor && content) {
+    if (editor && content !== undefined && content !== null) {
       const currentContent = editor.getHTML();
       // Only update if content is actually different (normalize for comparison)
       const normalizeHTML = (html) => html.replace(/\s+/g, ' ').trim();
-      if (normalizeHTML(content) !== normalizeHTML(currentContent)) {
+      const normalizedContent = normalizeHTML(content);
+      const normalizedCurrent = normalizeHTML(currentContent);
+      
+      // Update if different, or if current is empty/default and we have content
+      if (normalizedContent !== normalizedCurrent || (normalizedContent && !normalizedCurrent)) {
         editor.commands.setContent(content);
       }
     }
