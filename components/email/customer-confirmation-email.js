@@ -149,14 +149,21 @@ function generateCustomerEmailHTML(bookingData) {
 // Send customer confirmation email with PDF attachment
 export async function sendCustomerConfirmationEmail(resend, bookingData) {
   try {
+    console.log("🔵 Starting customer confirmation email process...");
+    console.log("🔵 Customer email:", bookingData.email);
+    
     // Generate PDF quotation
+    console.log("🔵 Generating PDF quotation...");
     const pdfBuffer = await generatePDFQuotation(bookingData);
     const pdfBase64 = pdfBuffer.toString("base64");
+    console.log("🔵 PDF generated successfully, size:", pdfBase64.length, "bytes");
 
     // Generate email HTML content
+    console.log("🔵 Generating email HTML...");
     const htmlContent = generateCustomerEmailHTML(bookingData);
 
     // Send email with PDF attachment
+    console.log("🔵 Sending email to:", bookingData.email);
     const emailData = await resend.emails.send({
       from: "Sustainable Shine Bookings <onboarding@resend.dev>",
       to: [bookingData.email],
@@ -173,15 +180,22 @@ export async function sendCustomerConfirmationEmail(resend, bookingData) {
       ],
     });
 
+    console.log("✅ Customer email sent successfully!", emailData);
     return {
       success: true,
       data: emailData,
     };
   } catch (error) {
-    console.error("Error sending customer confirmation email:", error);
+    console.error("❌ Error sending customer confirmation email:", error);
+    console.error("❌ Error details:", {
+      message: error.message,
+      stack: error.stack,
+      email: bookingData.email,
+    });
     return {
       success: false,
       error: error.message,
+      details: error.stack,
     };
   }
 }

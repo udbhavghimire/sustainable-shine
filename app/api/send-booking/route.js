@@ -9,17 +9,22 @@ export async function POST(request) {
   try {
     const bookingData = await request.json();
 
+    console.log("📧 Customer Email Address:", bookingData.email);
+    console.log("👤 Customer Name:", bookingData.firstName, bookingData.lastName);
+
     // Send business notification email
     const businessEmailResult = await sendBusinessNotificationEmail(
       resend,
       bookingData
     );
+    console.log("✅ Business Email Result:", businessEmailResult);
 
     // Send customer confirmation email with PDF
     const customerEmailResult = await sendCustomerConfirmationEmail(
       resend,
       bookingData
     );
+    console.log("✅ Customer Email Result:", customerEmailResult);
 
     // Send booking data to Django backend API
     let djangoSaved = false;
