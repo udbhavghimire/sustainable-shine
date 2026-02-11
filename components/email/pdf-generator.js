@@ -1,299 +1,230 @@
-import PDFDocument from "pdfkit";
-
-// PDF Component: Draw Header with company info and INVOICE title
-function drawHeader(doc) {
-  const headerY = 50;
-  
-  // Left side - Company name and details
-  doc
-    .fontSize(18)
-    .fillColor("#000")
-    .font("Helvetica-Bold")
-    .text("Sustainable shine cleaning service", 50, headerY);
-  
-  doc
-    .fontSize(10)
-    .fillColor("#000")
-    .font("Helvetica")
-    .text("12-14 Northumberland road", 50, headerY + 25);
-  
-  doc.text("sydney. NSW, 2144", 50, headerY + 38);
-  doc.font("Helvetica-Bold").text("Phone: 0452422059", 50, headerY + 51);
-
-  // Right side - INVOICE heading
-  doc
-    .fontSize(42)
-    .fillColor("#2c5a7d")
-    .font("Helvetica-Bold")
-    .text("INVOICE", 400, headerY, { align: "right", width: 145 });
-
-  return headerY + 90; // Return Y position for next section
-}
-
-// PDF Component: Draw Bill To section with customer details
-function drawBillToSection(doc, bookingData, startY) {
-  // Bill To Box (dark blue header)
-  doc.rect(50, startY, 280, 25).fill("#2c5a7d");
-  doc
-    .fontSize(11)
-    .fillColor("#fff")
-    .font("Helvetica-Bold")
-    .text("BILL TO", 60, startY + 8);
-
-  // Customer details
-  const address = `${bookingData.unitNumber ? `${bookingData.unitNumber}/ ` : ""}${
-    bookingData.street
-  }`;
-  
-  doc
-    .fontSize(10)
-    .fillColor("#000")
-    .font("Helvetica")
-    .text(address, 60, startY + 35);
-  doc.text(`${bookingData.suburb}, ${bookingData.postcode}`, 60, startY + 48);
-  doc.text(bookingData.phone, 60, startY + 61);
-  doc.fillColor("#0066cc").text(bookingData.email, 60, startY + 74, {
-    underline: true,
-    link: `mailto:${bookingData.email}`,
-  });
-
-  return startY + 110; // Return Y position for next section
-}
-
-// PDF Component: Draw Invoice Number and Date boxes
-function drawInvoiceDetails(doc, startY) {
-  // Invoice Number and Date Box (dark blue header)
-  doc.rect(350, startY, 195, 25).fill("#2c5a7d");
-  
-  // Invoice # header
-  doc
-    .fontSize(11)
-    .fillColor("#fff")
-    .font("Helvetica-Bold")
-    .text("INVOICE #", 360, startY + 8, { width: 85 });
-  
-  // Date header
-  doc.text("DATE", 460, startY + 8, { width: 75 });
-
-  // Invoice number and date values
-  const invoiceNumber = Math.floor(100 + Math.random() * 900); // Random 3-digit number
-  const currentDate = new Date().toLocaleDateString("en-AU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-  
-  doc
-    .fontSize(10)
-    .fillColor("#000")
-    .font("Helvetica")
-    .text(invoiceNumber.toString(), 360, startY + 35, { width: 85 });
-  doc.text(currentDate, 460, startY + 35, { width: 75 });
-}
-
-// PDF Component: Build service description from booking data
-function buildServiceDescription(bookingData) {
-  let description = "";
-  
-  if (bookingData.bedrooms > 0) {
-    description += `${bookingData.bedrooms} bed `;
-  }
-  if (bookingData.bathrooms > 0) {
-    description += `,${bookingData.bathrooms} bath`;
-  }
-  if (bookingData.laundry > 0) {
-    description += `, ${bookingData.laundry} Laundry`;
-  }
-  
-  // Add-ons to description
-  const addOnDescriptions = [];
-  if (bookingData.selectedAddOns && Object.keys(bookingData.selectedAddOns).length > 0) {
-    Object.entries(bookingData.selectedAddOns).forEach(([key, value]) => {
-      if (value && bookingData.addOnDetails[key]) {
-        const addon = bookingData.addOnDetails[key];
-        addOnDescriptions.push(
-          `${addon.name.toLowerCase()}${addon.quantity > 1 ? `(${addon.quantity})` : ""}`
-        );
-      }
-    });
-  }
-  
-  if (addOnDescriptions.length > 0) {
-    description += `, including ${addOnDescriptions.join(", ")}`;
-  }
-
-  return description;
-}
-
-// PDF Component: Calculate unit price and offer price
-function calculatePrices(bookingData) {
-  const subtotalBeforeDiscount = 
-    bookingData.priceDetails.discount > 0
-      ? ((bookingData.priceDetails.subtotal + bookingData.priceDetails.discount) / 1.1) * 1.1
-      : bookingData.priceDetails.subtotal;
-  
-  return {
-    unitPrice: subtotalBeforeDiscount,
-    offerPrice: bookingData.priceDetails.total,
-  };
-}
-
-// PDF Component: Draw description table with services and prices
-function drawDescriptionTable(doc, description, unitPrice, offerPrice, startY) {
-  // Table header (dark blue)
-  doc.rect(50, startY, 495, 25).fill("#2c5a7d");
-  
-  doc
-    .fontSize(11)
-    .fillColor("#fff")
-    .font("Helvetica-Bold")
-    .text("DESCRIPTION", 60, startY + 8, { width: 310 });
-  doc.text("UNIT PRICE", 380, startY + 8, { width: 75, align: "center" });
-  doc.text("OFFER PRICE", 465, startY + 8, { width: 75, align: "center" });
-
-  // Description text
-  doc
-    .fontSize(10)
-    .fillColor("#000")
-    .font("Helvetica")
-    .text(description, 60, startY + 38, { width: 310 });
-
-  // Unit Price
-  doc.text(unitPrice.toFixed(2), 380, startY + 38, {
-    width: 75,
-    align: "center",
-  });
-
-  // Offer Price
-  doc.text(offerPrice.toFixed(2), 465, startY + 38, {
-    width: 75,
-    align: "center",
-  });
-
-  // Add empty rows (lines)
-  let lineY = startY + 60;
-  for (let i = 0; i < 13; i++) {
-    doc
-      .moveTo(50, lineY)
-      .lineTo(545, lineY)
-      .strokeColor("#d0d0d0")
-      .lineWidth(0.5)
-      .stroke();
-    
-    // Add "-" in offer price column for empty rows
-    if (i > 0) {
-      doc.fontSize(10).fillColor("#000").text("-", 465, lineY - 10, {
-        width: 75,
-        align: "center",
-      });
-    }
-    
-    lineY += 20;
-  }
-
-  // Vertical lines for table
-  doc
-    .moveTo(50, startY)
-    .lineTo(50, lineY)
-    .strokeColor("#d0d0d0")
-    .lineWidth(0.5)
-    .stroke();
-  
-  doc
-    .moveTo(370, startY + 25)
-    .lineTo(370, lineY)
-    .stroke();
-  
-  doc
-    .moveTo(455, startY + 25)
-    .lineTo(455, lineY)
-    .stroke();
-  
-  doc
-    .moveTo(545, startY)
-    .lineTo(545, lineY)
-    .stroke();
-
-  // Bottom section border
-  doc
-    .moveTo(50, lineY)
-    .lineTo(545, lineY)
-    .strokeColor("#000")
-    .lineWidth(1)
-    .stroke();
-
-  return lineY; // Return Y position for next section
-}
-
-// PDF Component: Draw totals section with subtotal and offer price
-function drawTotalsSection(doc, unitPrice, offerPrice, startY) {
-  const bottomY = startY + 15;
-  
-  // Thank you message
-  doc
-    .fontSize(11)
-    .fillColor("#2c5a7d")
-    .font("Helvetica-Oblique")
-    .text("Thank you for your business!", 60, bottomY);
-
-  // Subtotal
-  doc
-    .fontSize(10)
-    .fillColor("#000")
-    .font("Helvetica")
-    .text("SUBTOTAL", 380, bottomY, { width: 75, align: "left" });
-  doc.text(unitPrice.toFixed(2), 465, bottomY, {
-    width: 75,
-    align: "center",
-  });
-
-  // Offer Price
-  doc.text("OFFER PRICE", 380, bottomY + 20, { width: 75, align: "left" });
-  doc.text(offerPrice.toFixed(3), 465, bottomY + 20, {
-    width: 75,
-    align: "center",
-  });
-
-  return bottomY + 60; // Return Y position for footer
-}
-
-// PDF Component: Draw footer with bank details
-function drawFooter(doc, startY) {
-  doc
-    .fontSize(10)
-    .fillColor("#000")
-    .font("Helvetica")
-    .text("NISHAN SHAHI", 60, startY);
-
-  doc.text("BSB: 063-109", 60, startY + 25);
-  doc.text("ACCOUNT : 1329 9784", 60, startY + 40);
-}
+import { jsPDF } from "jspdf";
 
 // Main PDF Generation Function
 export function generatePDFQuotation(bookingData) {
   return new Promise((resolve, reject) => {
     try {
-      const doc = new PDFDocument({ margin: 50, size: "A4" });
-      const chunks = [];
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
 
-      doc.on("data", (chunk) => chunks.push(chunk));
-      doc.on("end", () => resolve(Buffer.concat(chunks)));
-      doc.on("error", reject);
+      const serviceTypeLabels = {
+        general: "General Cleaning",
+        deep: "Deep Cleaning",
+        endOfLease: "End of Lease",
+        moveIn: "Move-in Cleaning",
+      };
 
-      // Draw all components in sequence
-      const billToY = drawHeader(doc);
-      const tableY = drawBillToSection(doc, bookingData, billToY);
-      drawInvoiceDetails(doc, billToY);
-      
-      const description = buildServiceDescription(bookingData);
-      const { unitPrice, offerPrice } = calculatePrices(bookingData);
-      
-      const totalsY = drawDescriptionTable(doc, description, unitPrice, offerPrice, tableY);
-      const footerY = drawTotalsSection(doc, unitPrice, offerPrice, totalsY);
-      drawFooter(doc, footerY);
+      const frequencyLabels = {
+        once: "Just Once",
+        weekly: "Weekly",
+        fortnightly: "Fortnightly",
+        monthly: "Monthly",
+      };
 
-      doc.end();
+      // Colors
+      const darkBlue = [44, 90, 125]; // #2c5a7d
+      const black = [0, 0, 0];
+      const white = [255, 255, 255];
+
+      let yPos = 20;
+
+      // Header Section - Company name and INVOICE
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text("Sustainable shine cleaning service", 15, yPos);
+
+      // INVOICE heading on the right
+      doc.setFontSize(42);
+      doc.setTextColor(...darkBlue);
+      doc.text("INVOICE", pageWidth - 15, yPos, { align: "right" });
+
+      yPos += 8;
+
+      // Company details
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...black);
+      doc.text("12-14 Northumberland road", 15, yPos);
+      yPos += 5;
+      doc.text("sydney. NSW, 2144", 15, yPos);
+      yPos += 5;
+      doc.setFont("helvetica", "bold");
+      doc.text("Phone: 0452422059", 15, yPos);
+
+      yPos += 15;
+
+      // Bill To Section
+      // Dark blue header box
+      doc.setFillColor(...darkBlue);
+      doc.rect(15, yPos, 90, 10, "F");
+      doc.setTextColor(...white);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text("BILL TO", 20, yPos + 7);
+
+      // Invoice Number and Date Box
+      const invoiceBoxX = pageWidth - 70;
+      doc.setFillColor(...darkBlue);
+      doc.rect(invoiceBoxX, yPos, 55, 10, "F");
+      doc.setTextColor(...white);
+      doc.text("INVOICE #", invoiceBoxX + 5, yPos + 7);
+      doc.text("DATE", invoiceBoxX + 30, yPos + 7);
+
+      yPos += 12;
+
+      // Customer details
+      doc.setTextColor(...black);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+
+      const address = `${bookingData.unitNumber ? `${bookingData.unitNumber}/ ` : ""}${
+        bookingData.street
+      }`;
+      doc.text(address, 20, yPos);
+
+      // Invoice number and date
+      const invoiceNumber = Math.floor(100 + Math.random() * 900);
+      const currentDate = new Date().toLocaleDateString("en-AU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+      doc.text(invoiceNumber.toString(), invoiceBoxX + 5, yPos);
+      doc.text(currentDate, invoiceBoxX + 30, yPos);
+
+      yPos += 5;
+      doc.text(`${bookingData.suburb}, ${bookingData.postcode}`, 20, yPos);
+      yPos += 5;
+      doc.text(bookingData.phone, 20, yPos);
+      yPos += 5;
+      doc.setTextColor(0, 102, 204);
+      doc.text(bookingData.email, 20, yPos);
+      doc.setTextColor(...black);
+
+      yPos += 15;
+
+      // Description Table
+      // Table header
+      doc.setFillColor(...darkBlue);
+      doc.rect(15, yPos, pageWidth - 30, 10, "F");
+
+      doc.setTextColor(...white);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text("DESCRIPTION", 20, yPos + 7);
+      doc.text("UNIT PRICE", pageWidth - 70, yPos + 7);
+      doc.text("OFFER PRICE", pageWidth - 35, yPos + 7);
+
+      yPos += 12;
+
+      // Build description
+      let description = "";
+      if (bookingData.bedrooms > 0) {
+        description += `${bookingData.bedrooms} bed `;
+      }
+      if (bookingData.bathrooms > 0) {
+        description += `,${bookingData.bathrooms} bath`;
+      }
+      if (bookingData.laundry > 0) {
+        description += `, ${bookingData.laundry} Laundry`;
+      }
+
+      // Add-ons
+      const addOnDescriptions = [];
+      if (bookingData.selectedAddOns && Object.keys(bookingData.selectedAddOns).length > 0) {
+        Object.entries(bookingData.selectedAddOns).forEach(([key, value]) => {
+          if (value && bookingData.addOnDetails[key]) {
+            const addon = bookingData.addOnDetails[key];
+            addOnDescriptions.push(
+              `${addon.name.toLowerCase()}${addon.quantity > 1 ? `(${addon.quantity})` : ""}`
+            );
+          }
+        });
+      }
+
+      if (addOnDescriptions.length > 0) {
+        description += `, including ${addOnDescriptions.join(", ")}`;
+      }
+
+      // Calculate prices
+      const subtotalBeforeDiscount =
+        bookingData.priceDetails.discount > 0
+          ? ((bookingData.priceDetails.subtotal + bookingData.priceDetails.discount) / 1.1) * 1.1
+          : bookingData.priceDetails.subtotal;
+
+      const unitPrice = subtotalBeforeDiscount;
+      const offerPrice = bookingData.priceDetails.total;
+
+      // Description text (wrap if needed)
+      doc.setTextColor(...black);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      const splitDescription = doc.splitTextToSize(description, 110);
+      doc.text(splitDescription, 20, yPos);
+
+      // Prices
+      doc.text(unitPrice.toFixed(2), pageWidth - 70, yPos, { align: "left" });
+      doc.text(offerPrice.toFixed(2), pageWidth - 35, yPos, { align: "left" });
+
+      yPos += Math.max(splitDescription.length * 5, 10);
+
+      // Empty rows with lines
+      doc.setDrawColor(208, 208, 208);
+      doc.setLineWidth(0.1);
+
+      for (let i = 0; i < 13; i++) {
+        doc.line(15, yPos, pageWidth - 15, yPos);
+        if (i > 0) {
+          doc.text("-", pageWidth - 35, yPos - 2);
+        }
+        yPos += 6;
+      }
+
+      // Vertical lines
+      doc.line(15, yPos - 78, 15, yPos); // Left border
+      doc.line(pageWidth - 75, yPos - 78, pageWidth - 75, yPos); // Before unit price
+      doc.line(pageWidth - 40, yPos - 78, pageWidth - 40, yPos); // Before offer price
+      doc.line(pageWidth - 15, yPos - 78, pageWidth - 15, yPos); // Right border
+
+      // Bottom border
+      doc.setDrawColor(...black);
+      doc.setLineWidth(0.5);
+      doc.line(15, yPos, pageWidth - 15, yPos);
+
+      yPos += 7;
+
+      // Thank you message
+      doc.setTextColor(...darkBlue);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "italic");
+      doc.text("Thank you for your business!", 20, yPos);
+
+      // Totals
+      doc.setTextColor(...black);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text("SUBTOTAL", pageWidth - 70, yPos);
+      doc.text(unitPrice.toFixed(2), pageWidth - 35, yPos);
+
+      yPos += 7;
+      doc.text("OFFER PRICE", pageWidth - 70, yPos);
+      doc.text(offerPrice.toFixed(3), pageWidth - 35, yPos);
+
+      yPos += 15;
+
+      // Footer
+      doc.text("NISHAN SHAHI", 20, yPos);
+      yPos += 7;
+      doc.text("BSB: 063-109", 20, yPos);
+      yPos += 7;
+      doc.text("ACCOUNT : 1329 9784", 20, yPos);
+
+      // Convert to buffer
+      const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
+      resolve(pdfBuffer);
     } catch (error) {
+      console.error("Error generating PDF:", error);
       reject(error);
     }
   });
