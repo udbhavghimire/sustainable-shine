@@ -165,7 +165,7 @@ export async function sendCustomerConfirmationEmail(resend, bookingData) {
     // Send email with PDF attachment
     console.log("🔵 Sending email to:", bookingData.email);
     const emailData = await resend.emails.send({
-      from: "Sustainable Shine Bookings <onboarding@resend.dev>",
+      from: "Sustainable Shine Bookings <info@sustainableshine.com.au>",
       to: [bookingData.email],
       replyTo: "info@sustainableshine.com.au",
       subject: `✓ Booking Confirmed - ${
