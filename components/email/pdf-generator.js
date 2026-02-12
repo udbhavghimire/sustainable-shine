@@ -24,22 +24,25 @@ export function generatePDFQuotation(bookingData) {
 
       // Colors
       const darkBlue = [44, 90, 125]; // #2c5a7d
+      const lightGray = [208, 208, 208];
       const black = [0, 0, 0];
       const white = [255, 255, 255];
 
       let yPos = 20;
 
-      // Header Section - Company name and INVOICE
+      // ========== HEADER SECTION ==========
+      // Company name - left side
       doc.setFontSize(18);
       doc.setFont("helvetica", "bold");
+      doc.setTextColor(...black);
       doc.text("Sustainable shine cleaning service", 15, yPos);
 
-      // INVOICE heading on the right
+      // INVOICE heading - right side
       doc.setFontSize(42);
       doc.setTextColor(...darkBlue);
       doc.text("INVOICE", pageWidth - 15, yPos, { align: "right" });
 
-      yPos += 8;
+      yPos += 10;
 
       // Company details
       doc.setFontSize(10);
@@ -54,22 +57,24 @@ export function generatePDFQuotation(bookingData) {
 
       yPos += 15;
 
-      // Bill To Section
-      // Dark blue header box
+      // ========== BILL TO & INVOICE DETAILS SECTION ==========
+      const billToStartY = yPos;
+
+      // Bill To - Dark blue header box
       doc.setFillColor(...darkBlue);
-      doc.rect(15, yPos, 90, 10, "F");
+      doc.rect(15, yPos, 85, 8, "F");
       doc.setTextColor(...white);
       doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.text("BILL TO", 20, yPos + 7);
+      doc.text("BILL TO", 18, yPos + 6);
 
-      // Invoice Number and Date Box
-      const invoiceBoxX = pageWidth - 70;
+      // Invoice Number and Date - Dark blue header box (right side)
+      const invoiceBoxX = pageWidth - 65;
       doc.setFillColor(...darkBlue);
-      doc.rect(invoiceBoxX, yPos, 55, 10, "F");
+      doc.rect(invoiceBoxX, yPos, 50, 8, "F");
       doc.setTextColor(...white);
-      doc.text("INVOICE #", invoiceBoxX + 5, yPos + 7);
-      doc.text("DATE", invoiceBoxX + 30, yPos + 7);
+      doc.text("INVOICE #", invoiceBoxX + 2, yPos + 6);
+      doc.text("DATE", invoiceBoxX + 27, yPos + 6);
 
       yPos += 12;
 
@@ -81,39 +86,46 @@ export function generatePDFQuotation(bookingData) {
       const address = `${bookingData.unitNumber ? `${bookingData.unitNumber}/ ` : ""}${
         bookingData.street
       }`;
-      doc.text(address, 20, yPos);
+      
+      // Wrap address if too long
+      const addressLines = doc.splitTextToSize(address, 80);
+      doc.text(addressLines, 18, yPos);
+      
+      const addressHeight = addressLines.length * 5;
 
-      // Invoice number and date
+      // Invoice number and date (right side)
       const invoiceNumber = Math.floor(100 + Math.random() * 900);
       const currentDate = new Date().toLocaleDateString("en-AU", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
       });
-      doc.text(invoiceNumber.toString(), invoiceBoxX + 5, yPos);
-      doc.text(currentDate, invoiceBoxX + 30, yPos);
+      doc.text(invoiceNumber.toString(), invoiceBoxX + 2, yPos);
+      doc.text(currentDate, invoiceBoxX + 27, yPos);
 
+      yPos += addressHeight;
+      doc.text(`${bookingData.suburb}, ${bookingData.postcode}`, 18, yPos);
       yPos += 5;
-      doc.text(`${bookingData.suburb}, ${bookingData.postcode}`, 20, yPos);
-      yPos += 5;
-      doc.text(bookingData.phone, 20, yPos);
+      doc.text(bookingData.phone, 18, yPos);
       yPos += 5;
       doc.setTextColor(0, 102, 204);
-      doc.text(bookingData.email, 20, yPos);
+      doc.text(bookingData.email, 18, yPos);
       doc.setTextColor(...black);
 
       yPos += 15;
 
-      // Description Table
-      // Table header
+      // ========== DESCRIPTION TABLE ==========
+      const tableStartY = yPos;
+      
+      // Table header - dark blue background
       doc.setFillColor(...darkBlue);
       doc.rect(15, yPos, pageWidth - 30, 10, "F");
 
       doc.setTextColor(...white);
       doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.text("DESCRIPTION", 20, yPos + 7);
-      doc.text("UNIT PRICE", pageWidth - 70, yPos + 7);
+      doc.text("DESCRIPTION", 18, yPos + 7);
+      doc.text("UNIT PRICE", pageWidth - 65, yPos + 7);
       doc.text("OFFER PRICE", pageWidth - 35, yPos + 7);
 
       yPos += 12;
@@ -121,10 +133,10 @@ export function generatePDFQuotation(bookingData) {
       // Build description
       let description = "";
       if (bookingData.bedrooms > 0) {
-        description += `${bookingData.bedrooms} bed `;
+        description += `${bookingData.bedrooms} bed`;
       }
       if (bookingData.bathrooms > 0) {
-        description += `,${bookingData.bathrooms} bath`;
+        description += `${description ? " ," : ""}${bookingData.bathrooms} bath`;
       }
       if (bookingData.laundry > 0) {
         description += `, ${bookingData.laundry} Laundry`;
@@ -160,65 +172,71 @@ export function generatePDFQuotation(bookingData) {
       doc.setTextColor(...black);
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
-      const splitDescription = doc.splitTextToSize(description, 110);
-      doc.text(splitDescription, 20, yPos);
+      const splitDescription = doc.splitTextToSize(description, 115);
+      doc.text(splitDescription, 18, yPos);
 
       // Prices
-      doc.text(unitPrice.toFixed(2), pageWidth - 70, yPos, { align: "left" });
-      doc.text(offerPrice.toFixed(2), pageWidth - 35, yPos, { align: "left" });
+      doc.text(unitPrice.toFixed(2), pageWidth - 65, yPos);
+      doc.text(offerPrice.toFixed(2), pageWidth - 35, yPos);
 
-      yPos += Math.max(splitDescription.length * 5, 10);
+      yPos += Math.max(splitDescription.length * 5, 8);
 
-      // Empty rows with lines
-      doc.setDrawColor(208, 208, 208);
+      // Empty rows with horizontal lines
+      doc.setDrawColor(...lightGray);
       doc.setLineWidth(0.1);
 
+      const emptyRowsStartY = yPos;
       for (let i = 0; i < 13; i++) {
         doc.line(15, yPos, pageWidth - 15, yPos);
         if (i > 0) {
           doc.text("-", pageWidth - 35, yPos - 2);
         }
-        yPos += 6;
+        yPos += 5;
       }
 
-      // Vertical lines
-      doc.line(15, yPos - 78, 15, yPos); // Left border
-      doc.line(pageWidth - 75, yPos - 78, pageWidth - 75, yPos); // Before unit price
-      doc.line(pageWidth - 40, yPos - 78, pageWidth - 40, yPos); // Before offer price
-      doc.line(pageWidth - 15, yPos - 78, pageWidth - 15, yPos); // Right border
+      // Vertical lines for table
+      const tableEndY = yPos;
+      doc.line(15, tableStartY, 15, tableEndY); // Left border
+      doc.line(pageWidth - 75, tableStartY + 10, pageWidth - 75, tableEndY); // Before unit price
+      doc.line(pageWidth - 45, tableStartY + 10, pageWidth - 45, tableEndY); // Before offer price
+      doc.line(pageWidth - 15, tableStartY, pageWidth - 15, tableEndY); // Right border
 
-      // Bottom border
+      // Bottom border - thicker black line
       doc.setDrawColor(...black);
       doc.setLineWidth(0.5);
       doc.line(15, yPos, pageWidth - 15, yPos);
 
-      yPos += 7;
+      yPos += 8;
 
+      // ========== TOTALS SECTION ==========
       // Thank you message
       doc.setTextColor(...darkBlue);
       doc.setFontSize(11);
       doc.setFont("helvetica", "italic");
-      doc.text("Thank you for your business!", 20, yPos);
+      doc.text("Thank you for your business!", 18, yPos);
 
-      // Totals
+      // Subtotal
       doc.setTextColor(...black);
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
-      doc.text("SUBTOTAL", pageWidth - 70, yPos);
+      doc.text("SUBTOTAL", pageWidth - 65, yPos);
       doc.text(unitPrice.toFixed(2), pageWidth - 35, yPos);
 
       yPos += 7;
-      doc.text("OFFER PRICE", pageWidth - 70, yPos);
+
+      // Offer Price
+      doc.text("OFFER PRICE", pageWidth - 65, yPos);
       doc.text(offerPrice.toFixed(3), pageWidth - 35, yPos);
 
       yPos += 15;
 
-      // Footer
-      doc.text("NISHAN SHAHI", 20, yPos);
+      // ========== FOOTER ==========
+      doc.setFont("helvetica", "normal");
+      doc.text("NISHAN SHAHI", 18, yPos);
       yPos += 7;
-      doc.text("BSB: 063-109", 20, yPos);
+      doc.text("BSB: 063-109", 18, yPos);
       yPos += 7;
-      doc.text("ACCOUNT : 1329 9784", 20, yPos);
+      doc.text("ACCOUNT : 1329 9784", 18, yPos);
 
       // Convert to buffer
       const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
