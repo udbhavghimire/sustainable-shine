@@ -62,21 +62,21 @@ export function generatePDFQuotation(bookingData) {
 
       // Bill To - Dark blue header box
       doc.setFillColor(...darkBlue);
-      doc.rect(15, yPos, 85, 8, "F");
+      doc.rect(15, yPos, 85, 10, "F");
       doc.setTextColor(...white);
       doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.text("BILL TO", 18, yPos + 6);
+      doc.text("BILL TO", 18, yPos + 7);
 
       // Invoice Number and Date - Dark blue header box (right side)
       const invoiceBoxX = pageWidth - 65;
       doc.setFillColor(...darkBlue);
-      doc.rect(invoiceBoxX, yPos, 50, 8, "F");
+      doc.rect(invoiceBoxX, yPos, 50, 10, "F");
       doc.setTextColor(...white);
-      doc.text("INVOICE #", invoiceBoxX + 2, yPos + 6);
-      doc.text("DATE", invoiceBoxX + 27, yPos + 6);
+      doc.text("INVOICE #", invoiceBoxX + 2, yPos + 7);
+      doc.text("DATE", invoiceBoxX + 27, yPos + 7);
 
-      yPos += 12;
+      yPos += 15; // Increased padding after header
 
       // Customer details
       doc.setTextColor(...black);
@@ -128,7 +128,7 @@ export function generatePDFQuotation(bookingData) {
       doc.text("UNIT PRICE", pageWidth - 65, yPos + 7);
       doc.text("OFFER PRICE", pageWidth - 35, yPos + 7);
 
-      yPos += 12;
+      yPos += 18; // Increased padding after header
 
       // Build description
       let description = "";
