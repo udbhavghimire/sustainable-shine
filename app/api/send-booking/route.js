@@ -10,19 +10,23 @@ export async function POST(request) {
     const bookingData = await request.json();
 
     console.log("📧 Customer Email Address:", bookingData.email);
-    console.log("👤 Customer Name:", bookingData.firstName, bookingData.lastName);
+    console.log(
+      "👤 Customer Name:",
+      bookingData.firstName,
+      bookingData.lastName,
+    );
 
     // Send business notification email
     const businessEmailResult = await sendBusinessNotificationEmail(
       resend,
-      bookingData
+      bookingData,
     );
     console.log("✅ Business Email Result:", businessEmailResult);
 
     // Send customer confirmation email with PDF
     const customerEmailResult = await sendCustomerConfirmationEmail(
       resend,
-      bookingData
+      bookingData,
     );
     console.log("✅ Customer Email Result:", customerEmailResult);
 
@@ -83,11 +87,11 @@ export async function POST(request) {
 
       console.log(
         "Sending to Django API:",
-        JSON.stringify(djangoPayload, null, 2)
+        JSON.stringify(djangoPayload, null, 2),
       );
 
       const djangoResponse = await fetch(
-        "https://sustainable-shine-backend.onrender.com/api/bookings/",
+        "http://170.64.177.253:8000/api/bookings/",
         {
           method: "POST",
           headers: {
@@ -95,7 +99,7 @@ export async function POST(request) {
             Accept: "application/json",
           },
           body: JSON.stringify(djangoPayload),
-        }
+        },
       );
 
       const responseText = await djangoResponse.text();
@@ -108,7 +112,7 @@ export async function POST(request) {
         };
         console.error(
           "❌ Django API Error:",
-          JSON.stringify(djangoError, null, 2)
+          JSON.stringify(djangoError, null, 2),
         );
       } else {
         djangoSaved = true;
@@ -124,7 +128,7 @@ export async function POST(request) {
       };
       console.error(
         "❌ Error saving to Django backend:",
-        JSON.stringify(djangoError, null, 2)
+        JSON.stringify(djangoError, null, 2),
       );
     }
 
@@ -139,7 +143,7 @@ export async function POST(request) {
     console.error("Error sending email:", error);
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

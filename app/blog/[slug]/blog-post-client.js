@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const API_BASE_URL = "https://sustainable-shine-backend.onrender.com/api";
+const API_BASE_URL = "http://170.64.177.253:8000/api";
 
 export default function BlogPostClient({ params }) {
   const [blog, setBlog] = useState(null);
@@ -44,12 +44,12 @@ export default function BlogPostClient({ params }) {
       }
 
       const data = await response.json();
-      
+
       // Only show if published
       if (data.status !== "published") {
         throw new Error("Blog post not available");
       }
-      
+
       setBlog(data);
     } catch (error) {
       console.error("Error fetching blog:", error);
@@ -71,16 +71,16 @@ export default function BlogPostClient({ params }) {
   // Process content to ensure proper HTML formatting
   const processContent = (content) => {
     if (!content) return "";
-    
+
     // If content doesn't have HTML tags, convert line breaks to paragraphs
-    if (!content.includes('<p>') && !content.includes('<br>')) {
+    if (!content.includes("<p>") && !content.includes("<br>")) {
       return content
-        .split('\n\n')
-        .filter(para => para.trim())
-        .map(para => `<p>${para.trim().replace(/\n/g, '<br>')}</p>`)
-        .join('');
+        .split("\n\n")
+        .filter((para) => para.trim())
+        .map((para) => `<p>${para.trim().replace(/\n/g, "<br>")}</p>`)
+        .join("");
     }
-    
+
     return content;
   };
 
@@ -104,24 +104,27 @@ export default function BlogPostClient({ params }) {
           <div className="bg-white rounded-lg shadow-sm border border-red-200 p-12 text-center">
             <div className="text-6xl mb-4">😔</div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {error === "Blog post not found" || error === "Blog post not available"
+              {error === "Blog post not found" ||
+              error === "Blog post not available"
                 ? "Blog Post Not Found"
                 : "Unable to Load Blog Post"}
             </h2>
             <p className="text-gray-600 mb-6">
-              {error === "Blog post not found" || error === "Blog post not available"
+              {error === "Blog post not found" ||
+              error === "Blog post not available"
                 ? "The blog post you're looking for doesn't exist or is no longer available."
                 : "We're having trouble loading this blog post. Please try again later."}
             </p>
             <div className="flex items-center justify-center space-x-4">
-              {error !== "Blog post not found" && error !== "Blog post not available" && (
-                <button
-                  onClick={fetchBlog}
-                  className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-all"
-                >
-                  Retry
-                </button>
-              )}
+              {error !== "Blog post not found" &&
+                error !== "Blog post not available" && (
+                  <button
+                    onClick={fetchBlog}
+                    className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-all"
+                  >
+                    Retry
+                  </button>
+                )}
               <Link
                 href="/blog"
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all"
@@ -169,8 +172,8 @@ export default function BlogPostClient({ params }) {
                 alt={blog.title}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentElement.style.display = 'none';
+                  e.target.style.display = "none";
+                  e.target.parentElement.style.display = "none";
                 }}
               />
             </div>

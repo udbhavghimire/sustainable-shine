@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const API_BASE_URL = "https://sustainable-shine-backend.onrender.com/api";
+const API_BASE_URL = "http://170.64.177.253:8000/api";
 
 export default function Blog() {
   const [blogs, setBlogs] = useState([]);
@@ -31,7 +31,7 @@ export default function Blog() {
       const data = await response.json();
       // Only show published blogs
       const publishedBlogs = (data.results || data || []).filter(
-        (blog) => blog.status === "published"
+        (blog) => blog.status === "published",
       );
       setBlogs(publishedBlogs);
     } catch (error) {
@@ -128,8 +128,12 @@ export default function Blog() {
                         alt={blog.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
-                          console.error("Image failed to load:", blog.featured_image);
-                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect fill='%23e5e7eb' width='800' height='450'/%3E%3Ctext fill='%239ca3af' font-family='sans-serif' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Not Found%3C/text%3E%3C/svg%3E";
+                          console.error(
+                            "Image failed to load:",
+                            blog.featured_image,
+                          );
+                          e.target.src =
+                            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect fill='%23e5e7eb' width='800' height='450'/%3E%3Ctext fill='%239ca3af' font-family='sans-serif' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Not Found%3C/text%3E%3C/svg%3E";
                         }}
                       />
                     ) : (
@@ -209,4 +213,3 @@ export default function Blog() {
     </div>
   );
 }
-

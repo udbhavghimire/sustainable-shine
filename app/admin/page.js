@@ -7,7 +7,7 @@ import BlogList from "@/components/admin/blog-list";
 import LeadsSection from "@/components/admin/leads-section";
 import Navbar from "@/components/navbar";
 
-const API_BASE_URL = "https://sustainable-shine-backend.onrender.com/api";
+const API_BASE_URL = "http://170.64.177.253:8000/api";
 
 function AdminDashboardContent() {
   const router = useRouter();
@@ -22,7 +22,7 @@ function AdminDashboardContent() {
   const [bookingDetails, setBookingDetails] = useState(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [apiError, setApiError] = useState(false);
-  
+
   // Blog state
   const [blogs, setBlogs] = useState([]);
   const [isLoadingBlogs, setIsLoadingBlogs] = useState(false);
@@ -44,20 +44,20 @@ function AdminDashboardContent() {
 
   // Handle URL parameters for editing blogs
   useEffect(() => {
-    const blogSlug = searchParams.get('edit');
-    const tab = searchParams.get('tab');
-    
+    const blogSlug = searchParams.get("edit");
+    const tab = searchParams.get("tab");
+
     if (tab) {
       setActiveTab(tab);
     }
-    
+
     if (blogSlug && blogs.length > 0) {
-      const blogToEdit = blogs.find(b => b.slug === blogSlug);
+      const blogToEdit = blogs.find((b) => b.slug === blogSlug);
       if (blogToEdit) {
-        console.log('Loading blog for editing:', blogToEdit);
+        console.log("Loading blog for editing:", blogToEdit);
         setEditingBlog(blogToEdit);
         setShowBlogEditor(true);
-        setActiveTab('blogs');
+        setActiveTab("blogs");
       }
     }
   }, [searchParams, blogs]);
@@ -70,19 +70,16 @@ function AdminDashboardContent() {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch(
-        "https://sustainable-shine-backend.onrender.com/api/bookings/",
-        {
-          headers: {
-            "Accept": "application/json",
-          },
-        }
-      );
-      
+      const response = await fetch("http://170.64.177.253:8000/api/bookings/", {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setBookings(data.results || []);
       setApiError(false);
@@ -96,18 +93,18 @@ function AdminDashboardContent() {
   const fetchStatistics = async () => {
     try {
       const response = await fetch(
-        "https://sustainable-shine-backend.onrender.com/api/bookings/statistics/",
+        "http://170.64.177.253:8000/api/bookings/statistics/",
         {
           headers: {
-            "Accept": "application/json",
+            Accept: "application/json",
           },
-        }
+        },
       );
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setStatistics(data);
     } catch (error) {
@@ -120,18 +117,18 @@ function AdminDashboardContent() {
     setIsLoadingDetails(true);
     try {
       const response = await fetch(
-        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/detailed/`,
+        `http://170.64.177.253:8000/api/bookings/${bookingId}/detailed/`,
         {
           headers: {
-            "Accept": "application/json",
+            Accept: "application/json",
           },
-        }
+        },
       );
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setBookingDetails(data.data);
     } catch (error) {
@@ -148,14 +145,14 @@ function AdminDashboardContent() {
     try {
       const response = await fetch(`${API_BASE_URL}/blog/`, {
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setBlogs(data.results || data || []);
     } catch (error) {
@@ -163,7 +160,9 @@ function AdminDashboardContent() {
       setBlogs([]);
       // Show user-friendly error
       if (error.message === "Failed to fetch") {
-        console.warn("Backend server may be starting up or unavailable. Please wait a moment and refresh.");
+        console.warn(
+          "Backend server may be starting up or unavailable. Please wait a moment and refresh.",
+        );
       }
     } finally {
       setIsLoadingBlogs(false);
@@ -175,7 +174,7 @@ function AdminDashboardContent() {
       const url = editingBlog
         ? `${API_BASE_URL}/blog/${editingBlog.slug}/`
         : `${API_BASE_URL}/blog/`;
-      
+
       const method = editingBlog ? "PATCH" : "POST";
 
       // Set up headers and body based on whether we're sending FormData or JSON
@@ -204,7 +203,7 @@ function AdminDashboardContent() {
         let errorMessage = "Failed to save blog post";
         if (errorData.message) {
           errorMessage = errorData.message;
-        } else if (typeof errorData === 'object') {
+        } else if (typeof errorData === "object") {
           // Extract field-specific errors from Django REST Framework
           const fieldErrors = Object.entries(errorData)
             .map(([field, errors]) => {
@@ -221,16 +220,20 @@ function AdminDashboardContent() {
       }
 
       const data = await response.json();
-      
+
       // Refresh blogs list
       await fetchBlogs();
-      
+
       // Close editor and clear URL
       setShowBlogEditor(false);
       setEditingBlog(null);
-      router.push('/admin?tab=blogs', { shallow: true });
-      
-      alert(editingBlog ? "Blog post updated successfully!" : "Blog post created successfully!");
+      router.push("/admin?tab=blogs", { shallow: true });
+
+      alert(
+        editingBlog
+          ? "Blog post updated successfully!"
+          : "Blog post created successfully!",
+      );
     } catch (error) {
       console.error("Error saving blog:", error);
       throw error;
@@ -259,17 +262,22 @@ function AdminDashboardContent() {
   const changeBlogStatus = async (slug, newStatus) => {
     try {
       const endpoint = newStatus === "published" ? "publish" : "unpublish";
-      const response = await fetch(`${API_BASE_URL}/blog/${slug}/${endpoint}/`, {
-        method: "PATCH",
-        credentials: "include", // Include cookies for authentication
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/blog/${slug}/${endpoint}/`,
+        {
+          method: "PATCH",
+          credentials: "include", // Include cookies for authentication
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to ${endpoint} blog post`);
       }
 
       await fetchBlogs();
-      alert(`Blog post ${newStatus === "published" ? "published" : "unpublished"} successfully!`);
+      alert(
+        `Blog post ${newStatus === "published" ? "published" : "unpublished"} successfully!`,
+      );
     } catch (error) {
       console.error("Error changing blog status:", error);
       alert("Failed to update blog status. Please try again.");
@@ -277,7 +285,7 @@ function AdminDashboardContent() {
   };
 
   const handleEditBlog = (blog) => {
-    console.log('Editing blog:', blog);
+    console.log("Editing blog:", blog);
     setEditingBlog(blog);
     setShowBlogEditor(true);
     // Update URL to reflect editing state
@@ -288,13 +296,13 @@ function AdminDashboardContent() {
     setShowBlogEditor(false);
     setEditingBlog(null);
     // Clear URL parameters
-    router.push('/admin?tab=blogs', { shallow: true });
+    router.push("/admin?tab=blogs", { shallow: true });
   };
 
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
       const response = await fetch(
-        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/update_status/`,
+        `http://170.64.177.253:8000/api/bookings/${bookingId}/update_status/`,
         {
           method: "PATCH",
           headers: {
@@ -305,7 +313,7 @@ function AdminDashboardContent() {
           body: JSON.stringify({
             status: newStatus,
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -313,7 +321,7 @@ function AdminDashboardContent() {
         throw new Error(
           errorData.error ||
             errorData.message ||
-            `Failed to update booking status (${response.status})`
+            `Failed to update booking status (${response.status})`,
         );
       }
 
@@ -322,8 +330,10 @@ function AdminDashboardContent() {
       // Update the status in the frontend state
       setBookings((prevBookings) =>
         prevBookings.map((booking) =>
-          booking.id === bookingId ? { ...booking, status: newStatus } : booking
-        )
+          booking.id === bookingId
+            ? { ...booking, status: newStatus }
+            : booking,
+        ),
       );
 
       // Also update the selected booking if it's the one being modified
@@ -332,15 +342,15 @@ function AdminDashboardContent() {
       }
 
       console.log(`✅ Status updated to: ${newStatus} (saved to database)`);
-      
+
       // Optionally show a subtle success message
       // You could add a toast notification here instead of console.log
     } catch (error) {
       console.error("Error updating booking status:", error);
       alert(
-        `Failed to update booking status: ${error.message}\n\nPlease try again or refresh the page.`
+        `Failed to update booking status: ${error.message}\n\nPlease try again or refresh the page.`,
       );
-      
+
       // Optionally refresh the bookings list to restore correct state
       await fetchBookings();
     }
@@ -349,21 +359,21 @@ function AdminDashboardContent() {
   const deleteBooking = async (bookingId) => {
     if (
       !confirm(
-        "Are you sure you want to delete this lead? This action cannot be undone."
+        "Are you sure you want to delete this lead? This action cannot be undone.",
       )
     )
       return;
 
     try {
       const response = await fetch(
-        `https://sustainable-shine-backend.onrender.com/api/bookings/${bookingId}/`,
+        `http://170.64.177.253:8000/api/bookings/${bookingId}/`,
         {
           method: "DELETE",
           headers: {
             Accept: "application/json",
           },
           credentials: "include", // Include cookies for authentication
-        }
+        },
       );
 
       if (!response.ok) {
@@ -371,13 +381,13 @@ function AdminDashboardContent() {
           response.status === 403
             ? "You don't have permission to delete this lead. Please ensure you're logged in."
             : response.status === 404
-            ? "Lead not found or already deleted"
-            : "Failed to delete lead"
+              ? "Lead not found or already deleted"
+              : "Failed to delete lead",
         );
       }
 
       setBookings((prevBookings) =>
-        prevBookings.filter((booking) => booking.id !== bookingId)
+        prevBookings.filter((booking) => booking.id !== bookingId),
       );
       if (selectedBooking?.id === bookingId) {
         setSelectedBooking(null);
@@ -386,9 +396,7 @@ function AdminDashboardContent() {
       alert("Lead deleted successfully.");
     } catch (error) {
       console.error("Error deleting lead:", error);
-      alert(
-        error.message || "Failed to delete lead. Please try again."
-      );
+      alert(error.message || "Failed to delete lead. Please try again.");
     }
   };
 
@@ -423,11 +431,11 @@ function AdminDashboardContent() {
     // Apply sorting
     if (sortBy === "date-desc") {
       filtered.sort(
-        (a, b) => new Date(b.selected_date) - new Date(a.selected_date)
+        (a, b) => new Date(b.selected_date) - new Date(a.selected_date),
       );
     } else if (sortBy === "date-asc") {
       filtered.sort(
-        (a, b) => new Date(a.selected_date) - new Date(b.selected_date)
+        (a, b) => new Date(a.selected_date) - new Date(b.selected_date),
       );
     } else if (sortBy === "created-desc") {
       filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -456,7 +464,7 @@ function AdminDashboardContent() {
     <div className="min-h-screen bg-gray-50">
       {/* Main Navbar */}
       <Navbar />
-      
+
       {/* Admin Header - positioned below navbar */}
       <header className="bg-white shadow-sm border-b border-gray-200 pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -532,15 +540,24 @@ function AdminDashboardContent() {
           <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <svg
+                  className="h-5 w-5 text-yellow-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div className="ml-3">
                 <p className="text-sm text-yellow-700">
-                  <strong>Backend Connection Issue:</strong> Unable to connect to the server. 
-                  The backend might be starting up (Render free tier takes ~30 seconds to wake up).
-                  <button 
+                  <strong>Backend Connection Issue:</strong> Unable to connect
+                  to the server. The backend might be starting up (Render free
+                  tier takes ~30 seconds to wake up).
+                  <button
                     onClick={() => {
                       fetchBookings();
                       fetchStatistics();
@@ -555,7 +572,7 @@ function AdminDashboardContent() {
             </div>
           </div>
         )}
-        
+
         {activeTab === "leads" && (
           <LeadsSection
             bookings={getFilteredBookings()}
@@ -581,14 +598,20 @@ function AdminDashboardContent() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Blog Management</h2>
-                    <p className="text-gray-600 mt-1">Create and manage your blog posts</p>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Blog Management
+                    </h2>
+                    <p className="text-gray-600 mt-1">
+                      Create and manage your blog posts
+                    </p>
                   </div>
                   <button
                     onClick={() => {
                       setShowBlogEditor(true);
                       setEditingBlog(null);
-                      router.push('/admin?tab=blogs&new=true', { shallow: true });
+                      router.push("/admin?tab=blogs&new=true", {
+                        shallow: true,
+                      });
                     }}
                     className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-all flex items-center space-x-2"
                   >
@@ -608,7 +631,7 @@ function AdminDashboardContent() {
                     <span>Create New Post</span>
                   </button>
                 </div>
-                
+
                 {isLoadingBlogs ? (
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
@@ -639,14 +662,16 @@ function AdminDashboardContent() {
 
 export default function AdminDashboard() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <AdminDashboardContent />
     </Suspense>
   );

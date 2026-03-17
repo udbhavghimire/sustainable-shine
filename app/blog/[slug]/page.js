@@ -1,30 +1,36 @@
 import BlogPostClient from "./blog-post-client";
 
-const API_BASE_URL = "https://sustainable-shine-backend.onrender.com/api";
+const API_BASE_URL = "http://170.64.177.253:8000/api";
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  
+
   try {
-    const response = await fetch(`${API_BASE_URL}/blog/${resolvedParams.slug}/`, {
-      headers: {
-        Accept: "application/json",
+    const response = await fetch(
+      `${API_BASE_URL}/blog/${resolvedParams.slug}/`,
+      {
+        headers: {
+          Accept: "application/json",
+        },
+        next: { revalidate: 3600 }, // Revalidate every hour
       },
-      next: { revalidate: 3600 }, // Revalidate every hour
-    });
+    );
 
     if (response.ok) {
       const blog = await response.json();
-      
+
       // Strip HTML tags from content for meta description
       const stripHtml = (html) => {
         if (!html) return "";
         return html.replace(/<[^>]*>/g, "").substring(0, 160);
       };
-      
-      const description = blog.meta_description || stripHtml(blog.content) || "Read our latest blog post";
-      
+
+      const description =
+        blog.meta_description ||
+        stripHtml(blog.content) ||
+        "Read our latest blog post";
+
       return {
         title: blog.title || "Blog Post | Sustainable Shine",
         description: description,
@@ -35,12 +41,16 @@ export async function generateMetadata({ params }) {
           type: "article",
           publishedTime: blog.published_date || blog.created_at,
           authors: blog.author ? [blog.author] : [],
-          images: blog.featured_image ? [{
-            url: blog.featured_image,
-            width: 1200,
-            height: 630,
-            alt: blog.title,
-          }] : [],
+          images: blog.featured_image
+            ? [
+                {
+                  url: blog.featured_image,
+                  width: 1200,
+                  height: 630,
+                  alt: blog.title,
+                },
+              ]
+            : [],
         },
         twitter: {
           card: "summary_large_image",
