@@ -91,7 +91,7 @@ export async function POST(request) {
       );
 
       const djangoResponse = await fetch(
-        "http://170.64.177.253:8000/api/bookings/",
+        "https://api.sustainableshine.com.au/api/bookings/",
         {
           method: "POST",
           headers: {

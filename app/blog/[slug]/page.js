@@ -1,6 +1,6 @@
 import BlogPostClient from "./blog-post-client";
 
-const API_BASE_URL = "http://170.64.177.253:8000/api";
+const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }) {

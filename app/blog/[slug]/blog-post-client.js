@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const API_BASE_URL = "http://170.64.177.253:8000/api";
+const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
 export default function BlogPostClient({ params }) {
   const [blog, setBlog] = useState(null);

@@ -7,7 +7,7 @@ import BlogList from "@/components/admin/blog-list";
 import LeadsSection from "@/components/admin/leads-section";
 import Navbar from "@/components/navbar";
 
-const API_BASE_URL = "http://170.64.177.253:8000/api";
+const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
 function AdminDashboardContent() {
   const router = useRouter();
@@ -70,11 +70,14 @@ function AdminDashboardContent() {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch("http://170.64.177.253:8000/api/bookings/", {
-        headers: {
-          Accept: "application/json",
+      const response = await fetch(
+        "https://api.sustainableshine.com.au/api/bookings/",
+        {
+          headers: {
+            Accept: "application/json",
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -93,7 +96,7 @@ function AdminDashboardContent() {
   const fetchStatistics = async () => {
     try {
       const response = await fetch(
-        "http://170.64.177.253:8000/api/bookings/statistics/",
+        "https://api.sustainableshine.com.au/api/bookings/statistics/",
         {
           headers: {
             Accept: "application/json",
@@ -117,7 +120,7 @@ function AdminDashboardContent() {
     setIsLoadingDetails(true);
     try {
       const response = await fetch(
-        `http://170.64.177.253:8000/api/bookings/${bookingId}/detailed/`,
+        `https://api.sustainableshine.com.au/api/bookings/${bookingId}/detailed/`,
         {
           headers: {
             Accept: "application/json",
@@ -302,7 +305,7 @@ function AdminDashboardContent() {
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
       const response = await fetch(
-        `http://170.64.177.253:8000/api/bookings/${bookingId}/update_status/`,
+        `https://api.sustainableshine.com.au/api/bookings/${bookingId}/update_status/`,
         {
           method: "PATCH",
           headers: {
@@ -366,7 +369,7 @@ function AdminDashboardContent() {
 
     try {
       const response = await fetch(
-        `http://170.64.177.253:8000/api/bookings/${bookingId}/`,
+        `https://api.sustainableshine.com.au/api/bookings/${bookingId}/`,
         {
           method: "DELETE",
           headers: {
