@@ -9,6 +9,26 @@ import Navbar from "@/components/navbar";
 
 const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
+// Helper function to get CSRF token from cookies
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+function getCSRFToken() {
+  return getCookie('csrftoken');
+}
+
 function AdminDashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -180,10 +200,16 @@ function AdminDashboardContent() {
 
       const method = editingBlog ? "PATCH" : "POST";
 
+      // Get CSRF token
+      const csrftoken = getCSRFToken();
+
       // Set up headers and body based on whether we're sending FormData or JSON
       const fetchOptions = {
         method,
         credentials: "include", // Include cookies for authentication
+        headers: {
+          'X-CSRFToken': csrftoken, // Add CSRF token header
+        },
       };
 
       if (isFormData && blogData instanceof FormData) {
@@ -192,9 +218,7 @@ function AdminDashboardContent() {
         fetchOptions.body = blogData;
       } else {
         // For JSON data
-        fetchOptions.headers = {
-          "Content-Type": "application/json",
-        };
+        fetchOptions.headers['Content-Type'] = 'application/json';
         fetchOptions.body = JSON.stringify(blogData);
       }
 
@@ -245,9 +269,13 @@ function AdminDashboardContent() {
 
   const deleteBlog = async (slug) => {
     try {
+      const csrftoken = getCSRFToken();
       const response = await fetch(`${API_BASE_URL}/blog/${slug}/`, {
         method: "DELETE",
         credentials: "include", // Include cookies for authentication
+        headers: {
+          'X-CSRFToken': csrftoken,
+        },
       });
 
       if (!response.ok) {
@@ -264,12 +292,16 @@ function AdminDashboardContent() {
 
   const changeBlogStatus = async (slug, newStatus) => {
     try {
+      const csrftoken = getCSRFToken();
       const endpoint = newStatus === "published" ? "publish" : "unpublish";
       const response = await fetch(
         `${API_BASE_URL}/blog/${slug}/${endpoint}/`,
         {
           method: "PATCH",
           credentials: "include", // Include cookies for authentication
+          headers: {
+            'X-CSRFToken': csrftoken,
+          },
         },
       );
 
@@ -304,13 +336,15 @@ function AdminDashboardContent() {
 
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
+      const csrftoken = getCSRFToken();
       const response = await fetch(
         `https://api.sustainableshine.com.au/api/bookings/${bookingId}/update_status/`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Accept: "application/json",
+            "Accept": "application/json",
+            'X-CSRFToken': csrftoken,
           },
           credentials: "include", // Include cookies for authentication
           body: JSON.stringify({
@@ -368,12 +402,14 @@ function AdminDashboardContent() {
       return;
 
     try {
+      const csrftoken = getCSRFToken();
       const response = await fetch(
         `https://api.sustainableshine.com.au/api/bookings/${bookingId}/`,
         {
           method: "DELETE",
           headers: {
-            Accept: "application/json",
+            "Accept": "application/json",
+            'X-CSRFToken': csrftoken,
           },
           credentials: "include", // Include cookies for authentication
         },
