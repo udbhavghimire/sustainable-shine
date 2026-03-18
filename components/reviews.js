@@ -94,7 +94,7 @@ export default function Reviews({ city }) {
 
   return (
     <section id="reviews" className="section-padding bg-gray-50">
-      <div className="container-custom max-w-7xl mx-auto px-4">
+      <div className="container-custom max-w-7xl mx-auto px-2">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
@@ -107,14 +107,14 @@ export default function Reviews({ city }) {
         </div>
 
         {/* Reviews Grid - Masonry Style */}
-        <div className="columns-2 lg:columns-3 xl:columns-4 gap-3 md:gap-4 mb-8">
+        <div className="columns-2 lg:columns-3 xl:columns-4 gap-2 md:gap-4 mb-8">
           {reviews.map((review, index) => (
             <a
               key={index}
               href={googleReviewsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white rounded-lg md:rounded-xl p-3 md:p-5 border border-gray-200 hover:shadow-lg hover:border-gray-300 transition-all duration-200 cursor-pointer group mb-3 md:mb-4 break-inside-avoid inline-block w-full"
+              className="bg-white rounded-lg md:rounded-xl p-2 md:p-5 border border-gray-200 hover:shadow-lg hover:border-gray-300 transition-all duration-200 cursor-pointer group mb-3 md:mb-4 break-inside-avoid inline-block w-full"
             >
               {/* Header */}
               <div className="flex items-start gap-2 md:gap-3 mb-3">
