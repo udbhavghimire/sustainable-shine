@@ -12,18 +12,17 @@ import BookingForm from "@/components/booking-form";
 import CTA from "@/components/cta";
 import FloatingBookingButton from "@/components/floating-booking-button";
 
-
 export default function Home() {
   return (
     <main className="min-h-screen">
       <Navbar />
       <Hero />
       <About />
+      <Reviews />
       <Services />
       <HowItWorks />
       <ServiceChecklist />
       <OurWork />
-      <Reviews />
       <Blogs />
       <FAQ />
       <BookingForm />

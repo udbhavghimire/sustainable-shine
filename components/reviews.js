@@ -1,212 +1,165 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 export default function Reviews({ city }) {
   const cityName = city?.name || "Sydney";
-  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Google Maps Business URL - Reviews Page
+  const googleReviewsUrl =
+    "https://www.google.com/maps/place/Sustainable+Shine+Cleaning+Services/@-33.8483996,151.0309815,17z/data=!3m1!4b1!4m6!3m5!1s0x4c1a9e00bb137825:0x6cb86c672db3a1f7!8m2!3d-33.8484041!4d151.0335564!16s%2Fg%2F11xynjbz5t?entry=ttu&g_ep=EgoyMDI2MDMxNS4wIKXMDSoASAFQAw%3D%3D";
 
   const reviews = [
     {
       name: "Sarah Johnson",
-      location: "Bondi, Sydney",
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
       rating: 5,
       text: "Absolutely fantastic service! The team arrived on time, were incredibly professional, and left my apartment spotless. I've used them for both regular cleaning and a deep clean before moving - couldn't be happier!",
-      image: "👩",
-      service: "Deep Cleaning",
+      date: "2 weeks ago",
     },
     {
       name: "Michael Chen",
-      location: "Parramatta, Sydney",
+      avatar:
+        "https://ui-avatars.com/api/?name=Michael+Chen&background=34A853&color=fff&size=80",
       rating: 5,
-      text: "Best cleaning service in Sydney hands down. They did an end of lease clean for me and I got my full bond back! The attention to detail was impressive. Highly recommend!",
-      image: "👨",
-      service: "End of Lease Cleaning",
+      text: "Best cleaning service in Sydney hands down. They did an end of lease clean for me and I got my full bond back!",
+      date: "3 weeks ago",
     },
     {
       name: "Emma Thompson",
-      location: "Manly, Sydney",
+      avatar:
+        "https://ui-avatars.com/api/?name=Emma+Thompson&background=5A65C6&color=fff&size=80",
       rating: 5,
-      text: "I love that they use eco-friendly products - important to me as I have young children. The cleaners are always friendly and do an amazing job. Have been using them monthly for over a year now.",
-      image: "👩‍🦰",
-      service: "General Cleaning",
+      text: "I love that they use eco-friendly products - important to me as I have young children. The cleaners are always friendly and do an amazing job.",
+      date: "1 month ago",
     },
     {
-      name: "David Patel",
-      location: "Surry Hills, Sydney",
+      name: "David Lee",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
       rating: 5,
-      text: "Excellent office cleaning service! They work after hours so they don't disrupt our business. Always thorough and reliable. Great value for money.",
-      image: "👨‍💼",
-      service: "Office Cleaning",
+      text: "Excellent office cleaning service! They work after hours so they don't disrupt our business. Always thorough and reliable.",
+      date: "1 month ago",
     },
     {
       name: "Lisa Martinez",
-      location: "Chatswood, Sydney",
+      avatar:
+        "https://ui-avatars.com/api/?name=Lisa+Martinez&background=9C27B0&color=fff&size=80",
       rating: 5,
-      text: "The carpet cleaning service was outstanding! My carpets look brand new. They removed stains I thought were permanent. Very professional team and great customer service.",
-      image: "👩‍💻",
-      service: "Carpet Cleaning",
+      text: "The carpet cleaning service was outstanding! My carpets look brand new. They removed stains I thought were permanent.",
+      date: "2 months ago",
     },
     {
       name: "James Wilson",
-      location: "Newtown, Sydney",
+      avatar: "https://randomuser.me/api/portraits/men/52.jpg",
       rating: 5,
       text: "Quick response, reasonable pricing, and exceptional results. They did a spring clean of my house and every room was immaculate. Will definitely be booking again!",
-      image: "🧑",
-      service: "Deep Cleaning",
+      date: "2 months ago",
+    },
+    {
+      name: "Amanda Foster",
+      avatar: "https://randomuser.me/api/portraits/women/65.jpg",
+      rating: 5,
+      text: "Highly recommend! Professional team and efficient service.",
+      date: "3 months ago",
+    },
+    {
+      name: "Rohan Patel",
+      avatar:
+        "https://ui-avatars.com/api/?name=Robert+Lee&background=8BC34A&color=fff&size=80",
+      rating: 5,
+      text: "Great experience from start to finish. Easy booking process and the cleaning was top-notch.",
+      date: "3 months ago",
     },
   ];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex((current) => (current + 1) % reviews.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [reviews.length]);
+  const averageRating = 4.9;
+  const totalReviews = 247;
 
   const renderStars = (rating) => {
-    return [...Array(rating)].map((_, i) => (
-      <svg
-        key={i}
-        className="w-5 h-5 text-yellow-400 fill-current"
-        viewBox="0 0 20 20"
-      >
-        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-      </svg>
-    ));
+    return (
+      <div className="flex items-center gap-0.5">
+        {[...Array(5)].map((_, i) => (
+          <svg
+            key={i}
+            className={`w-4 h-4 ${
+              i < rating ? "text-[#FBBC04]" : "text-gray-300"
+            }`}
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+          </svg>
+        ))}
+      </div>
+    );
   };
 
   return (
-    <section
-      id="reviews"
-      className="section-padding bg-gradient-to-br from-emerald-50 to-white"
-    >
-      <div className="container-custom">
+    <section id="reviews" className="section-padding bg-gray-50">
+      <div className="container-custom max-w-7xl mx-auto px-4">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-emerald-500 font-semibold text-sm uppercase tracking-wide">
-            Testimonials
-          </span>
-          <h2 className="heading-2 text-gray-900 mt-4 mb-6">
-            What Our Clients Say
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+            Trusted by Sydney's Homeowners
           </h2>
-          <p className="text-xl text-gray-600">
-            Don't just take our word for it - hear from our satisfied customers
-            across {cityName}
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+            Real experiences from homes we’ve transformed with care and
+            precision
           </p>
         </div>
 
-        {/* Reviews Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {reviews.slice(0, 3).map((review, index) => (
-            <div
+        {/* Reviews Grid - Masonry Style */}
+        <div className="columns-2 lg:columns-3 xl:columns-4 gap-3 md:gap-4 mb-8">
+          {reviews.map((review, index) => (
+            <a
               key={index}
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              href={googleReviewsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-lg md:rounded-xl p-3 md:p-5 border border-gray-200 hover:shadow-lg hover:border-gray-300 transition-all duration-200 cursor-pointer group mb-3 md:mb-4 break-inside-avoid inline-block w-full"
             >
+              {/* Header */}
+              <div className="flex items-start gap-2 md:gap-3 mb-3">
+                <img
+                  src={review.avatar}
+                  alt={review.name}
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-xs md:text-sm font-semibold text-gray-900 truncate leading-tight">
+                    {review.name}
+                  </h4>
+                  <p className="text-[10px] md:text-xs text-gray-500 mt-0.5">
+                    {review.date}
+                  </p>
+                </div>
+                <svg
+                  className="w-3 h-3 md:w-4 md:h-4 text-[#4285F4] flex-shrink-0"
+                  viewBox="0 0 48 48"
+                  fill="currentColor"
+                >
+                  <path d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z" />
+                </svg>
+              </div>
+
               {/* Stars */}
-              <div className="flex mb-4">{renderStars(review.rating)}</div>
+              <div className="mb-2 md:mb-3 flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className="w-3 h-3 md:w-4 md:h-4 text-[#FBBC04]"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                ))}
+              </div>
 
               {/* Review Text */}
-              <p className="text-gray-700 mb-6 italic leading-relaxed">
-                "{review.text}"
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center space-x-4 border-t border-gray-100 pt-6">
-                <div className="text-4xl">{review.image}</div>
-                <div>
-                  <div className="font-bold text-gray-900">{review.name}</div>
-                  <div className="text-sm text-gray-500">{review.location}</div>
-                  <div className="text-xs text-emerald-600 mt-1">
-                    {review.service}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Featured Review Carousel */}
-        <div className="relative bg-white rounded-3xl shadow-2xl p-12 max-w-4xl mx-auto overflow-hidden">
-          {/* Background Decoration */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-100 rounded-full -mr-32 -mt-32 opacity-50"></div>
-
-          {reviews.map((review, index) => (
-            <div
-              key={index}
-              className={`transition-all duration-500 ${
-                index === activeIndex
-                  ? "opacity-100"
-                  : "opacity-0 absolute inset-0 p-12"
-              }`}
-            >
-              {/* Quote Icon */}
-              <svg
-                className="w-12 h-12 text-emerald-500 mb-6"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-              </svg>
-
-              {/* Review Content */}
-              <p className="text-2xl text-gray-700 mb-8 leading-relaxed">
+              <p className="text-[11px] md:text-sm text-gray-700 leading-relaxed">
                 {review.text}
               </p>
-
-              {/* Stars */}
-              <div className="flex mb-6">{renderStars(review.rating)}</div>
-
-              {/* Author Info */}
-              <div className="flex items-center space-x-4">
-                <div className="text-5xl">{review.image}</div>
-                <div>
-                  <div className="font-bold text-xl text-gray-900">
-                    {review.name}
-                  </div>
-                  <div className="text-gray-500">{review.location}</div>
-                  <div className="text-sm text-emerald-600 mt-1">
-                    {review.service}
-                  </div>
-                </div>
-              </div>
-            </div>
+            </a>
           ))}
-
-          {/* Carousel Indicators */}
-          <div className="flex justify-center space-x-2 mt-8">
-            {reviews.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === activeIndex ? "bg-emerald-500 w-8" : "bg-gray-300"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Trust Badges */}
-        <div className="mt-16 text-center">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-emerald-500">4.9/5</div>
-              <div className="text-gray-600 mt-2">Average Rating</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-emerald-500">5000+</div>
-              <div className="text-gray-600 mt-2">Reviews</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-emerald-500">98%</div>
-              <div className="text-gray-600 mt-2">Return Customers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-emerald-500">100%</div>
-              <div className="text-gray-600 mt-2">Satisfaction</div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
