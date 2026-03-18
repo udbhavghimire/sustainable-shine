@@ -190,7 +190,7 @@ export default function OurWorkPage() {
 
           {/* Before/After Comparison Grid */}
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {allProjects.map((project, index) => (
                 <BeforeAfterComparison
                   key={index}
