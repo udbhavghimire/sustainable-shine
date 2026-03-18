@@ -1,15 +1,17 @@
 "use client";
 
+import Link from "next/link";
+
 // Individual Before/After Comparison Component
 function BeforeAfterComparison({ before, after, title, location, index }) {
   return (
     <div className="relative group">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
         {/* Images Container */}
-        <div className="grid grid-cols-2 gap-2 bg-gray-100 p-6">
+        <div className="grid grid-cols-2 gap-2 bg-gray-100 p-3">
           {/* Before Image */}
           <div className="relative overflow-hidden rounded-xl bg-gray-200">
-            <div className="relative w-full h-[350px]">
+            <div className="relative w-full h-[300px]">
               <img
                 src={before}
                 alt={`${title} - Before cleaning`}
@@ -39,7 +41,7 @@ function BeforeAfterComparison({ before, after, title, location, index }) {
 
           {/* After Image */}
           <div className="relative overflow-hidden rounded-xl bg-gray-200">
-            <div className="relative w-full h-[350px]">
+            <div className="relative w-full h-[300px]">
               <img
                 src={after}
                 alt={`${title} - After cleaning`}
@@ -96,21 +98,47 @@ function BeforeAfterComparison({ before, after, title, location, index }) {
   );
 }
 
-export default function OurWork({ city }) {
-  const cityName = city?.name || "Sydney";
-  const projects = [
+export default function OurWorkPage() {
+  const allProjects = [
+    {
+      title: "Bathroom Deep Clean",
+      location: "Sydney CBD",
+      before: "/before-5.jpg",
+      after: "/after-5.jpg",
+    },
+
+    {
+      title: "Oven Tray Transformation",
+      location: "North Shore",
+      before: "/before-6.jpg",
+      after: "/after-6.jpg",
+    },
+
+    {
+      title: "Rangehood Cleaning",
+      location: "Inner West",
+      before: "/before-7.jpg",
+      after: "/after-7.jpg",
+    },
+    {
+      title: "Bathroom Sink Transformation",
+      location: "North Shore",
+      before: "/before-1.png",
+      after: "/after-1.png",
+    },
+    {
+      title: "Kitchen Cupboard Cleaning",
+      location: "Eastern Suburbs",
+      before: "/before-8.jpg",
+      after: "/after-8.jpg",
+    },
     {
       title: "Window Cleaning",
       location: "Sydney CBD",
       before: "/before.png",
       after: "/after.png",
     },
-    {
-      title: "Bathroom Cleaning",
-      location: "North Shore",
-      before: "/before-1.png",
-      after: "/after-1.png",
-    },
+
     {
       title: "Balcony Cleaning",
       location: "Inner West",
@@ -126,48 +154,75 @@ export default function OurWork({ city }) {
   ];
 
   return (
-    <section className="bg-gradient-to-br from-gray-50 to-white">
-      <div className="container-custom">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-emerald-500 font-semibold text-sm uppercase tracking-wide">
-            Our Work
-          </span>
-          <h2 className="heading-2 text-gray-900 mt-4 mb-6">
-            See The Transformation
-          </h2>
-          <p className="text-xl text-gray-600">
-            Real results from real clients. Witness how we transform dirty,
-            neglected spaces into spotless, sanitized environments.
-          </p>
-        </div>
+    <main className="min-h-screen">
+      <section className="bg-gradient-to-br from-gray-50 to-white py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <Link
+              href="/"
+              className="inline-flex items-center text-emerald-500 font-semibold text-sm uppercase tracking-wide mb-4 hover:text-emerald-600 transition-colors"
+            >
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Back to Home
+            </Link>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mt-4 mb-6">
+              Our Transformations
+            </h1>
+            <p className="text-xl text-gray-600">
+              Discover the amazing results we've achieved for our clients. Every
+              project showcases our commitment to excellence and attention to
+              detail.
+            </p>
+          </div>
 
-        {/* Before/After Comparison Grid */}
-        <div className="max-w-6xl mx-auto mb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {projects.map((project, index) => (
-              <BeforeAfterComparison
-                key={index}
-                before={project.before}
-                after={project.after}
-                title={project.title}
-                location={project.location}
-                index={index}
-              />
-            ))}
+          {/* Before/After Comparison Grid */}
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+              {allProjects.map((project, index) => (
+                <BeforeAfterComparison
+                  key={index}
+                  before={project.before}
+                  after={project.after}
+                  title={project.title}
+                  location={project.location}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Call to Action */}
+          <div className="text-center mt-16">
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Ready for Your Own Transformation?
+              </h3>
+              <p className="text-gray-600 mb-8">
+                Let us bring the same level of excellence to your space.
+              </p>
+              <Link
+                href="/booking"
+                className="inline-block bg-emerald-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                Get Your Free Quote
+              </Link>
+            </div>
           </div>
         </div>
-
-        {/* View More Button */}
-        <div className="text-center mt-12">
-          <a
-            href="/our-work"
-            className="inline-block bg-emerald-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-          >
-            View More Transformations
-          </a>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }
