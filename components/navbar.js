@@ -14,7 +14,7 @@ export default function Navbar() {
     { name: "About", href: "/#about" },
     { name: "Reviews", href: "/#reviews" },
     { name: "Blog", href: "/blog" },
-    { name: "Contact", href: "/#booking" },
+    { name: "Our Work", href: "/our-work" },
   ];
 
   // Get all suburbs for dropdown
