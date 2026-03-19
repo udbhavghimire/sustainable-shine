@@ -7,14 +7,20 @@ import { sydneySuburbs } from "@/data/suburbs";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [suburbsOpen, setSuburbsOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Services", href: "/#services" },
     { name: "About", href: "/#about" },
     { name: "Reviews", href: "/#reviews" },
     { name: "Blog", href: "/blog" },
     { name: "Our Work", href: "/our-work" },
+  ];
+
+  const serviceLinks = [
+    { name: "General Clean", href: "/general-clean" },
+    { name: "Deep Clean", href: "/deep-clean" },
+    { name: "End of Lease Cleaning", href: "/end-of-lease-cleaning" },
   ];
 
   // Get all suburbs for dropdown
@@ -49,6 +55,50 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
+
+            {/* Services Dropdown */}
+            <div className="relative group">
+              <button
+                className="text-gray-700 hover:text-emerald-500 font-medium transition-colors duration-200 flex items-center space-x-1"
+                onMouseEnter={() => setServicesOpen(true)}
+              >
+                <span>Services</span>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    servicesOpen ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {/* Services Dropdown Menu */}
+              {servicesOpen && (
+                <div
+                  className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50"
+                  onMouseEnter={() => setServicesOpen(true)}
+                  onMouseLeave={() => setServicesOpen(false)}
+                >
+                  {serviceLinks.map((service) => (
+                    <Link
+                      key={service.name}
+                      href={service.href}
+                      className="block px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors duration-200"
+                    >
+                      {service.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Sydney Suburbs Dropdown */}
             <div className="relative group">
@@ -145,6 +195,50 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
+
+            {/* Services - Mobile */}
+            <div className="py-3">
+              <button
+                onClick={() => setServicesOpen(!servicesOpen)}
+                className="flex items-center justify-between w-full text-gray-700 hover:text-emerald-500 font-medium transition-colors"
+              >
+                <span>Services</span>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    servicesOpen ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {/* Mobile Services List */}
+              {servicesOpen && (
+                <div className="mt-2 pl-4 space-y-2 bg-gray-50 rounded-lg py-2">
+                  {serviceLinks.map((service) => (
+                    <Link
+                      key={service.name}
+                      href={service.href}
+                      className="block py-2 text-sm text-gray-600 hover:text-emerald-600 transition-colors"
+                      onClick={() => {
+                        setIsOpen(false);
+                        setServicesOpen(false);
+                      }}
+                    >
+                      {service.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Sydney Suburbs - Mobile */}
             <div className="py-3">

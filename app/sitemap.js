@@ -6,13 +6,28 @@ export default function sitemap() {
   // Get all suburb slugs
   const suburbSlugs = getAllSuburbSlugs();
 
-  // Generate suburb URLs
+  // Generate suburb URLs (existing city pages)
   const suburbUrls = suburbSlugs.map((slug) => ({
     url: `${baseUrl}/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly",
     priority: 0.8,
   }));
+
+  // Generate service suburb URLs
+  const serviceSuburbUrls = [];
+  const services = ['end-of-lease-cleaning', 'deep-clean', 'general-clean'];
+  
+  services.forEach(service => {
+    suburbSlugs.forEach(slug => {
+      serviceSuburbUrls.push({
+        url: `${baseUrl}/${service}/${slug}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly",
+        priority: 0.7,
+      });
+    });
+  });
 
   // Main pages
   const mainPages = [
@@ -21,6 +36,24 @@ export default function sitemap() {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/end-of-lease-cleaning`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/deep-clean`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/general-clean`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/#services`,
@@ -48,5 +81,5 @@ export default function sitemap() {
     },
   ];
 
-  return [...mainPages, ...suburbUrls];
+  return [...mainPages, ...suburbUrls, ...serviceSuburbUrls];
 }

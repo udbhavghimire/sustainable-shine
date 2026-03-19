@@ -6,6 +6,7 @@ import HowItWorks from "@/components/how-it-works";
 import About from "@/components/about";
 import OurWork from "@/components/our-work";
 import Reviews from "@/components/reviews";
+import AreasWeServe from "@/components/areas-we-serve";
 import Blogs from "@/components/blogs";
 import FAQ from "@/components/faq";
 import BookingForm from "@/components/booking-form";
@@ -22,7 +23,9 @@ export default function Home() {
       <Services />
       <HowItWorks />
       <ServiceChecklist />
+      <AreasWeServe />
       <OurWork />
+
       <Blogs />
       <FAQ />
       <BookingForm />

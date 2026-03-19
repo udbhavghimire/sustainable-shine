@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Services({ city }) {
   const cityName = city?.name || "Sydney";
   const services = [
@@ -18,6 +20,7 @@ export default function Services({ city }) {
       popular: false,
       image: "/general clean.png",
       serviceType: "general",
+      link: "/general-clean",
     },
     {
       icon: "✨",
@@ -34,6 +37,7 @@ export default function Services({ city }) {
       popular: true,
       image: "/deep cleaning.jpg",
       serviceType: "deep",
+      link: "/deep-clean",
     },
     {
       icon: "🔑",
@@ -50,6 +54,7 @@ export default function Services({ city }) {
       popular: false,
       image: "/end of lease.jpg",
       serviceType: "endOfLease",
+      link: "/end-of-lease-cleaning",
     },
   ];
 
@@ -76,35 +81,26 @@ export default function Services({ city }) {
           {services.map((service, index) => (
             <div
               key={index}
-              className={`relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${
-                service.popular ? "ring-2 ring-emerald-500" : ""
-              }`}
+              className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
             >
-              {service.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                  <span className="bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    Most Popular
-                  </span>
+              {/* Image - Clickable */}
+              <Link href={service.link} className="block">
+                <div className="relative h-48 mb-6 -mx-8 -mt-8 rounded-t-2xl overflow-hidden cursor-pointer">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 </div>
-              )}
+              </Link>
 
-              {/* Image */}
-              <div className="relative h-48 mb-6 -mx-8 -mt-8 rounded-t-2xl overflow-hidden">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                <div className="absolute bottom-4 left-4 text-5xl bg-white/90 backdrop-blur-sm rounded-full w-16 h-16 flex items-center justify-center shadow-lg">
-                  {service.icon}
-                </div>
-              </div>
-
-              {/* Title */}
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                {service.title}
-              </h3>
+              {/* Title - Clickable */}
+              <Link href={service.link}>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 hover:text-emerald-600 transition-colors cursor-pointer">
+                  {service.title}
+                </h3>
+              </Link>
 
               {/* Description */}
               <p className="text-gray-600 mb-6">{service.description}</p>
@@ -136,16 +132,20 @@ export default function Services({ city }) {
                     {service.price}
                   </span>
                 </div>
-                <a
-                  href={`/booking?service=${service.serviceType}`}
-                  className={`block w-full text-center py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
-                    service.popular
-                      ? "bg-emerald-500 hover:bg-emerald-600 text-white"
-                      : "bg-emerald-50 hover:bg-emerald-100 text-emerald-600"
-                  }`}
-                >
-                  Book Now
-                </a>
+                <div className="flex gap-3">
+                  <Link
+                    href={service.link}
+                    className="flex-1 text-center py-3 px-6 rounded-lg font-semibold border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 transition-all duration-300"
+                  >
+                    Learn More
+                  </Link>
+                  <a
+                    href={`/booking?service=${service.serviceType}`}
+                    className="flex-1 text-center py-3 px-6 rounded-lg font-semibold transition-all duration-300 bg-emerald-500 hover:bg-emerald-600 text-white"
+                  >
+                    Book Now
+                  </a>
+                </div>
               </div>
             </div>
           ))}
