@@ -112,16 +112,16 @@ export default function Hero({ city }) {
             {/* Stats */}
             <div className="flex gap-8 pt-8 border-t border-gray-200">
               <div>
-                <div className="text-3xl font-bold text-emerald-500">5000+</div>
+                <div className="text-3xl font-bold text-emerald-500">500+</div>
                 <div className="text-gray-600 text-sm">Happy Clients</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-emerald-500">4.9★</div>
-                <div className="text-gray-600 text-sm">Average Rating</div>
+                <div className="text-3xl font-bold text-emerald-500">3+</div>
+                <div className="text-gray-600 text-sm">Years Experience</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-emerald-500">10+</div>
-                <div className="text-gray-600 text-sm">Years Experience</div>
+                <div className="text-gray-600 text-sm">Expert Cleaners</div>
               </div>
             </div>
           </div>

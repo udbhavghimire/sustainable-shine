@@ -120,15 +120,15 @@ export default function About({ city }) {
             {/* Stats */}
             <div className="grid grid-cols-2 gap-6 mt-10">
               <div className="border-l-4 border-emerald-500 pl-4">
-                <div className="text-4xl font-bold text-gray-900">10+</div>
+                <div className="text-4xl font-bold text-gray-900">3+</div>
                 <div className="text-gray-600 mt-1">Years in Business</div>
               </div>
               <div className="border-l-4 border-emerald-500 pl-4">
-                <div className="text-4xl font-bold text-gray-900">5000+</div>
+                <div className="text-4xl font-bold text-gray-900">500+</div>
                 <div className="text-gray-600 mt-1">Happy Customers</div>
               </div>
               <div className="border-l-4 border-emerald-500 pl-4">
-                <div className="text-4xl font-bold text-gray-900">50+</div>
+                <div className="text-4xl font-bold text-gray-900">10+</div>
                 <div className="text-gray-600 mt-1">Expert Cleaners</div>
               </div>
               <div className="border-l-4 border-emerald-500 pl-4">
@@ -158,23 +158,6 @@ export default function About({ city }) {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Certifications */}
-        <div className="mt-20 text-center">
-          <p className="text-gray-600 mb-8">Certified & Trusted By</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 opacity-60">
-            <div className="text-2xl font-bold text-gray-400">
-              Licensed & Insured
-            </div>
-            <div className="text-2xl font-bold text-gray-400">
-              AICPA Certified
-            </div>
-            <div className="text-2xl font-bold text-gray-400">
-              Eco-Friendly Approved
-            </div>
-            <div className="text-2xl font-bold text-gray-400">ISO 9001</div>
           </div>
         </div>
       </div>
