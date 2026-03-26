@@ -16,16 +16,16 @@ export default function Hero({ city }) {
           {/* Left Content */}
           <div className="space-y-8">
             <div className="inline-block">
-              <span className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">
+              <span className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full md:text-sm text-[10px] font-semibold">
                 ✨ {cityName}'s #1 Eco-Friendly Cleaning Service
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
               Professional Cleaning Services in {cityName}
             </h1>
 
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="md:text-xl text-base text-gray-600 leading-relaxed">
               Professional cleaning services in {cityFullName} that care for
               your home and the environment. From general and deep cleaning to
               end-of-lease, we've got you covered.
@@ -100,11 +100,17 @@ export default function Hero({ city }) {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#booking" className="btn-primary text-center">
-                Get Free Quote
+            <div className="flex  sm:flex-row gap-4 relative z-10">
+              <a
+                href="/booking"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 text-center"
+              >
+                Get a Free Quote
               </a>
-              <a href="#services" className="btn-secondary text-center">
+              <a
+                href="#services"
+                className="bg-white hover:bg-gray-50 text-emerald-500 font-semibold px-8 py-3 rounded-lg border-2 border-emerald-500 transition-all duration-300 text-center"
+              >
                 View Services
               </a>
             </div>
@@ -164,8 +170,8 @@ export default function Hero({ city }) {
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute top-40 right-10 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-      <div className="absolute bottom-40 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute top-40 right-10 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob pointer-events-none"></div>
+      <div className="absolute bottom-40 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000 pointer-events-none"></div>
     </section>
   );
 }

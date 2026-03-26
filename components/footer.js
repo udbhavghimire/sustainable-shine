@@ -64,6 +64,63 @@ export default function Footer({ city }) {
               reliable, and environmentally conscious cleaning solutions for
               homes and businesses.
             </p>
+            {/* Contact Information */}
+            <div className="mb-6 space-y-2">
+              <a
+                href="tel:+61452422059"
+                className="flex items-center text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+              >
+                <svg
+                  className="w-5 h-5 mr-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                +61 452 422 059
+              </a>
+              <a
+                href="mailto:info@sustainableshine.com.au"
+                className="flex items-center text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+              >
+                <svg
+                  className="w-5 h-5 mr-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                info@sustainableshine.com.au
+              </a>
+              <div className="flex items-center text-gray-400">
+                <svg
+                  className="w-5 h-5 mr-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                ABN: 27 383 550 018
+              </div>
+            </div>
             {/* Social Media */}
             <div className="flex space-x-4">
               <a
@@ -203,34 +260,10 @@ export default function Footer({ city }) {
       {/* Bottom Footer */}
       <div className="border-t border-gray-800">
         <div className="container-custom py-6">
-          <div className="md:flex md:items-center md:justify-between">
-            <div className="text-center md:text-left">
-              <p className="text-gray-400">
-                © {currentYear} Sustainable Shine Cleaning. All rights reserved.
-              </p>
-            </div>
-            <div className="mt-4 md:mt-0 flex justify-center space-x-6">
-              <a
-                href="#"
-                className="text-gray-400 hover:text-emerald-400 transition-colors"
-              >
-                ABN: 27 383 550 018
-              </a>
-              <span className="text-gray-600">|</span>
-              <a
-                href="tel:+61234567890"
-                className="text-gray-400 hover:text-emerald-400 transition-colors"
-              >
-                +61 452 422 059
-              </a>
-              <span className="text-gray-600">|</span>
-              <a
-                href="mailto:info@sustainableshine.com.au"
-                className="text-gray-400 hover:text-emerald-400 transition-colors"
-              >
-                info@sustainableshine.com.au
-              </a>
-            </div>
+          <div className="text-center">
+            <p className="text-gray-400">
+              © {currentYear} Sustainable Shine Cleaning. All rights reserved.
+            </p>
           </div>
         </div>
       </div>

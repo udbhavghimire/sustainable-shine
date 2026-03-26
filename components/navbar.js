@@ -32,17 +32,48 @@ export default function Navbar() {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <nav className="fixed w-full bg-white/95 backdrop-blur-sm shadow-md z-50">
+    <nav className="fixed w-full bg-white/95 backdrop-blur-sm shadow-md z-50 px-5">
       <div className="container-custom">
         <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <img
-              src="/sustainable logo.png"
-              alt="Sustainable Shine Logo"
-              width={200}
-            />
-          </Link>
+          {/* Logo and Mobile Actions */}
+          <div className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center">
+              <img
+                src="/sustainable logo.png"
+                alt="Sustainable Shine Logo"
+                className="w-36 md:w-[200px]"
+              />
+            </Link>
+
+            {/* Phone Icon and Book Now - Mobile Only */}
+            <div className="flex items-center space-x-2 md:hidden ms-7">
+              <a
+                href="tel:+61 452 422 059"
+                className="hover:opacity-80 transition-opacity"
+                aria-label="Call us"
+              >
+                <svg
+                  className="w-8 h-8 text-emerald-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="/booking"
+                className="mx-3 px-3 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+              >
+                Book Now
+              </a>
+            </div>
+          </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
