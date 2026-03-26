@@ -118,6 +118,20 @@ export default function BookingDetailsModal({ booking, bookingDetails, isLoading
                         ).toLocaleDateString()
                       : "Not set"}
                   </p>
+                  {(details.service_details?.preferred_time || booking.selected_time) && (
+                    <p>
+                      <span className="font-medium">Preferred Time:</span>{" "}
+                      {(() => {
+                        const time24 = details.service_details?.preferred_time || booking.selected_time;
+                        if (!time24) return "Not set";
+                        const [hours, minutes] = time24.split(":");
+                        const hour = parseInt(hours);
+                        const ampm = hour >= 12 ? "PM" : "AM";
+                        const hour12 = hour % 12 || 12;
+                        return `${hour12}:${minutes} ${ampm}`;
+                      })()}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

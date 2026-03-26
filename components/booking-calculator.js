@@ -235,6 +235,7 @@ export default function BookingCalculator() {
 
   // Form details state
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -256,6 +257,7 @@ export default function BookingCalculator() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   // Mobile quote visibility state
   const [isQuoteVisible, setIsQuoteVisible] = useState(true);
@@ -1026,30 +1028,37 @@ export default function BookingCalculator() {
   const validateForm = () => {
     if (!selectedDate) {
       setSubmitError("Please select a preferred date");
+      setShowModal(true);
       return false;
     }
     if (!firstName || !lastName) {
       setSubmitError("Please enter your full name");
+      setShowModal(true);
       return false;
     }
     if (!email) {
       setSubmitError("Please enter your email address");
+      setShowModal(true);
       return false;
     }
     if (!phone) {
       setSubmitError("Please enter your phone number");
+      setShowModal(true);
       return false;
     }
     if (!street) {
       setSubmitError("Please enter your street address");
+      setShowModal(true);
       return false;
     }
     if (!suburb) {
       setSubmitError("Please enter your suburb");
+      setShowModal(true);
       return false;
     }
     if (!postcode) {
       setSubmitError("Please enter your postcode");
+      setShowModal(true);
       return false;
     }
     return true;
@@ -1063,12 +1072,11 @@ export default function BookingCalculator() {
 
     // Validate form
     if (!validateForm()) {
-      // Scroll to top to show error
-      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
     setIsSubmitting(true);
+    setShowModal(true);
 
     try {
       // Prepare add-on details for email
@@ -1101,6 +1109,7 @@ export default function BookingCalculator() {
         selectedAddOns,
         addOnDetails,
         selectedDate,
+        selectedTime,
         firstName,
         lastName,
         email,
@@ -1144,34 +1153,19 @@ export default function BookingCalculator() {
             "\nError Details:",
             result.django_error
           );
-          // You might want to show this to the user
-          alert(
-            "⚠️ Your booking request was received and emailed, but there was an issue saving it to our system. We will contact you shortly."
-          );
         } else {
           console.log("✅ Booking saved successfully to database");
         }
-
-        // Scroll to top to show success message
-        window.scrollTo({ top: 0, behavior: "smooth" });
-
-        // Optionally reset form after successful submission
-        // You can uncomment these if you want to clear the form
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 3000);
       } else {
         setSubmitError(
           result.error || "Failed to submit booking. Please try again."
         );
-        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch (error) {
       console.error("Submission error:", error);
       setSubmitError(
         "An error occurred while submitting your booking. Please try again."
       );
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setIsSubmitting(false);
     }
@@ -1446,7 +1440,68 @@ export default function BookingCalculator() {
   );
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 py-20">
+    <>
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            transform: scale(0);
+          }
+          to {
+            transform: scale(1);
+          }
+        }
+
+        @keyframes checkmark {
+          0% {
+            stroke-dashoffset: 100;
+          }
+          100% {
+            stroke-dashoffset: 0;
+          }
+        }
+
+        @keyframes shakeX {
+          0%, 100% {
+            transform: translateX(0);
+          }
+          10%, 30%, 50%, 70%, 90% {
+            transform: translateX(-10px);
+          }
+          20%, 40%, 60%, 80% {
+            transform: translateX(10px);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-scaleIn {
+          animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .animate-checkmark {
+          stroke-dasharray: 100;
+          stroke-dashoffset: 100;
+          animation: checkmark 0.6s ease-out 0.2s forwards;
+        }
+
+        .animate-shakeX {
+          animation: shakeX 0.6s ease-in-out;
+        }
+      `}</style>
+      <section className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 py-20">
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12 pt-24 lg:pt-10">
@@ -1547,63 +1602,120 @@ export default function BookingCalculator() {
           
         </div>
 
-        {/* Success Message */}
-        {submitSuccess && (
-          <div className="mb-8 bg-emerald-50 border-2 border-emerald-500 rounded-2xl p-6 shadow-lg">
-            <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0">
-                <svg
-                  className="w-8 h-8 text-emerald-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-bold text-emerald-900 mb-2">
-                  Booking Request Sent Successfully! 🎉
-                </h3>
-                <p className="text-emerald-800">
-                  Thank you for your booking request! We've received your
-                  details and will contact you shortly to confirm your
-                  appointment.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Booking Submission Modal */}
+        {showModal && (
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+              {/* Background overlay with animation */}
+              <div 
+                className="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75 backdrop-blur-sm"
+                onClick={() => {
+                  if (submitSuccess || submitError) {
+                    setShowModal(false);
+                    setSubmitSuccess(false);
+                    setSubmitError("");
+                  }
+                }}
+              ></div>
 
-        {/* Error Message */}
-        {submitError && (
-          <div className="mb-8 bg-red-50 border-2 border-red-500 rounded-2xl p-6 shadow-lg">
-            <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0">
-                <svg
-                  className="w-8 h-8 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-bold text-red-900 mb-2">
-                  Error Submitting Booking
-                </h3>
-                <p className="text-red-800">{submitError}</p>
+              {/* Center modal */}
+              <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+              <div className="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="w-full text-center">
+                      {isSubmitting && !submitSuccess && !submitError && (
+                        <div className="animate-fadeIn">
+                          {/* Loading Animation */}
+                          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-r from-emerald-100 to-emerald-200 mb-6">
+                            <svg className="animate-spin h-12 w-12 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          </div>
+                          <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                            Processing Your Booking...
+                          </h3>
+                          <p className="text-base text-gray-600 mb-4">
+                            Please wait while we submit your booking request.
+                          </p>
+                          <div className="flex justify-center space-x-1 mb-4">
+                            <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          </div>
+                        </div>
+                      )}
+
+                      {submitSuccess && (
+                        <div className="animate-fadeIn">
+                          {/* Success Animation */}
+                          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-r from-emerald-100 to-emerald-200 mb-6 animate-scaleIn">
+                            <svg className="h-16 w-16 text-emerald-600 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                            Booking Confirmed! 🎉
+                          </h3>
+                          <p className="text-base text-gray-600 mb-6 px-4">
+                            Thank you for choosing Sustainable Shine Cleaning! We've received your booking request and sent a confirmation email to <span className="font-semibold text-emerald-600">{email}</span>.
+                          </p>
+                          <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 mb-6 text-left rounded-r-lg">
+                            <p className="text-sm text-emerald-800">
+                              <strong className="font-semibold">What's Next?</strong><br />
+                              Our team will contact you within 24 hours to confirm your booking time and answer any questions.
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setShowModal(false);
+                              setSubmitSuccess(false);
+                              // Optionally reload or reset form
+                              // window.location.reload();
+                            }}
+                            className="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-base font-semibold text-white hover:from-emerald-700 hover:to-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 transform hover:scale-105"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      )}
+
+                      {submitError && (
+                        <div className="animate-fadeIn">
+                          {/* Error Animation */}
+                          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-r from-red-100 to-red-200 mb-6 animate-shakeX">
+                            <svg className="h-16 w-16 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </div>
+                          <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                            Booking Failed
+                          </h3>
+                          <p className="text-base text-gray-600 mb-6 px-4">
+                            {submitError}
+                          </p>
+                          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 text-left rounded-r-lg">
+                            <p className="text-sm text-red-800">
+                              <strong className="font-semibold">Need Help?</strong><br />
+                              Please try again or contact us directly at <a href="tel:+61452422059" className="font-semibold underline">+61 452 422 059</a>
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setShowModal(false);
+                              setSubmitError("");
+                            }}
+                            className="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-base font-semibold text-white hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200"
+                          >
+                            Try Again
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -2239,15 +2351,66 @@ export default function BookingCalculator() {
               </div>
             </div>
 
-            {/* Select Date Section */}
+            {/* Select Date & Time Section */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Select Date
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Select Date & Time
               </h2>
-              <CalendarPicker
-                selectedDate={selectedDate}
-                onDateSelect={setSelectedDate}
-              />
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Calendar - Left Side */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-3">
+                    Preferred Date
+                  </label>
+                  <CalendarPicker
+                    selectedDate={selectedDate}
+                    onDateSelect={setSelectedDate}
+                  />
+                </div>
+
+                {/* Time Selection - Right Side */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-3">
+                    Preferred Time
+                  </label>
+                  <select
+                    value={selectedTime}
+                    onChange={(e) => setSelectedTime(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700 cursor-pointer text-base"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23374151'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'right 0.75rem center',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem'
+                    }}
+                  >
+                    <option value="">Select a time</option>
+                    <option value="08:00">8:00 AM</option>
+                    <option value="08:30">8:30 AM</option>
+                    <option value="09:00">9:00 AM</option>
+                    <option value="09:30">9:30 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="10:30">10:30 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="11:30">11:30 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="12:30">12:30 PM</option>
+                    <option value="13:00">1:00 PM</option>
+                    <option value="13:30">1:30 PM</option>
+                    <option value="14:00">2:00 PM</option>
+                    <option value="14:30">2:30 PM</option>
+                    <option value="15:00">3:00 PM</option>
+                    <option value="15:30">3:30 PM</option>
+                    <option value="16:00">4:00 PM</option>
+                    <option value="16:30">4:30 PM</option>
+                  </select>
+                  <p className="text-sm text-gray-600 mt-3">
+                    Select your preferred time slot for the cleaning service
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Customer Details Section */}
@@ -2683,5 +2846,6 @@ export default function BookingCalculator() {
         </div>
       </div>
     </section>
+    </>
   );
 }

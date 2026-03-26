@@ -47,6 +47,7 @@ export async function POST(request) {
         service_type: bookingData.serviceType,
         frequency: bookingData.frequency || "once",
         selected_date: bookingData.selectedDate || null,
+        selected_time: bookingData.selectedTime || null,
 
         // Property Details
         unit_number: bookingData.unitNumber || "",

@@ -14,6 +14,16 @@ const frequencyLabels = {
   monthly: "Monthly",
 };
 
+// Helper function to format time from 24-hour to 12-hour format
+function formatTime(time24) {
+  if (!time24) return "";
+  const [hours, minutes] = time24.split(":");
+  const hour = parseInt(hours);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minutes} ${ampm}`;
+}
+
 // Generate customer confirmation email HTML content
 function generateCustomerEmailHTML(bookingData) {
   return `
@@ -88,6 +98,17 @@ function generateCustomerEmailHTML(bookingData) {
               <span class="label">Preferred Date</span>
               <span class="value">${bookingData.selectedDate || "To be confirmed"}</span>
             </div>
+
+            ${
+              bookingData.selectedTime
+                ? `
+            <div class="info-row">
+              <span class="label">Preferred Time</span>
+              <span class="value">${formatTime(bookingData.selectedTime)}</span>
+            </div>
+            `
+                : ""
+            }
 
             <div class="info-row">
               <span class="label">Property Address</span>
