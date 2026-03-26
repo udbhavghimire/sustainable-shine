@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import Swal from "sweetalert2";
 
 // Calendar Picker Component
 function CalendarPicker({ selectedDate, onDateSelect }) {
@@ -64,7 +65,7 @@ function CalendarPicker({ selectedDate, onDateSelect }) {
     // Format date as YYYY-MM-DD for input compatibility
     const formattedDate = `${year}-${String(month + 1).padStart(
       2,
-      "0"
+      "0",
     )}-${String(day).padStart(2, "0")}`;
     onDateSelect(formattedDate);
   };
@@ -191,8 +192,8 @@ function CalendarPicker({ selectedDate, onDateSelect }) {
                   isDateDisabled(day)
                     ? "text-gray-300 cursor-not-allowed bg-gray-100"
                     : isDateSelected(day)
-                    ? "cursor-pointer"
-                    : "hover:bg-emerald-100 cursor-pointer"
+                      ? "cursor-pointer"
+                      : "hover:bg-emerald-100 cursor-pointer"
                 }
                 ${
                   isDateSelected(day)
@@ -257,7 +258,6 @@ export default function BookingCalculator() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [showModal, setShowModal] = useState(false);
 
   // Mobile quote visibility state
   const [isQuoteVisible, setIsQuoteVisible] = useState(true);
@@ -1028,37 +1028,92 @@ export default function BookingCalculator() {
   const validateForm = () => {
     if (!selectedDate) {
       setSubmitError("Please select a preferred date");
-      setShowModal(true);
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please select a preferred date",
+        confirmButtonColor: "#059669",
+        confirmButtonText: "OK",
+      });
       return false;
     }
     if (!firstName || !lastName) {
       setSubmitError("Please enter your full name");
-      setShowModal(true);
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please enter your full name",
+        confirmButtonColor: "#059669",
+        confirmButtonText: "OK",
+      });
       return false;
     }
     if (!email) {
       setSubmitError("Please enter your email address");
-      setShowModal(true);
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please enter your email address",
+        confirmButtonColor: "#059669",
+        confirmButtonText: "OK",
+      });
+      return false;
+    }
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setSubmitError("Please enter a valid email address");
+      Swal.fire({
+        icon: "warning",
+        title: "Invalid Email",
+        text: "Please enter a valid email address",
+        confirmButtonColor: "#059669",
+        confirmButtonText: "OK",
+      });
       return false;
     }
     if (!phone) {
       setSubmitError("Please enter your phone number");
-      setShowModal(true);
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please enter your phone number",
+        confirmButtonColor: "#059669",
+        confirmButtonText: "OK",
+      });
       return false;
     }
     if (!street) {
       setSubmitError("Please enter your street address");
-      setShowModal(true);
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please enter your street address",
+        confirmButtonColor: "#059669",
+        confirmButtonText: "OK",
+      });
       return false;
     }
     if (!suburb) {
       setSubmitError("Please enter your suburb");
-      setShowModal(true);
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please enter your suburb",
+        confirmButtonColor: "#059669",
+        confirmButtonText: "OK",
+      });
       return false;
     }
     if (!postcode) {
       setSubmitError("Please enter your postcode");
-      setShowModal(true);
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please enter your postcode",
+        confirmButtonColor: "#059669",
+        confirmButtonText: "OK",
+      });
       return false;
     }
     return true;
@@ -1066,19 +1121,24 @@ export default function BookingCalculator() {
 
   // Handle form submission
   const handleSubmit = async () => {
+    console.log("🚀 Starting form submission...");
+
     // Reset previous states
     setSubmitError("");
     setSubmitSuccess(false);
 
     // Validate form
     if (!validateForm()) {
+      console.log("❌ Form validation failed");
       return;
     }
 
+    console.log("✅ Form validation passed");
     setIsSubmitting(true);
-    setShowModal(true);
 
     try {
+      console.log("📝 Preparing booking data...");
+
       // Prepare add-on details for email
       const addOnDetails = {};
       Object.keys(selectedAddOns).forEach((key) => {
@@ -1110,24 +1170,26 @@ export default function BookingCalculator() {
         addOnDetails,
         selectedDate,
         selectedTime,
-        firstName,
-        lastName,
-        email,
-        phone,
+        firstName: firstName?.trim(),
+        lastName: lastName?.trim(),
+        email: email?.trim(),
+        phone: phone?.trim(),
         smsReminders,
         hasPet,
         hearAboutUs,
         specialNotes,
-        unitNumber,
-        street,
-        suburb,
-        postcode,
+        unitNumber: unitNumber?.trim(),
+        street: street?.trim(),
+        suburb: suburb?.trim(),
+        postcode: postcode?.trim(),
         cleanlinessLevel,
         parking,
         flexibleDateTime,
         access,
         priceDetails,
       };
+
+      console.log("📤 Sending to API...");
 
       // Send to API
       const response = await fetch("/api/send-booking", {
@@ -1138,35 +1200,67 @@ export default function BookingCalculator() {
         body: JSON.stringify(bookingData),
       });
 
+      console.log("📥 API response received, status:", response.status);
+
       const result = await response.json();
 
       // Log full response for debugging
       console.log("📦 Full API Response:", result);
 
       if (result.success) {
+        console.log("✅ API call successful!");
         setSubmitSuccess(true);
+
+        // Show success alert
+        Swal.fire({
+          icon: "success",
+          title: "Booking Confirmed!",
+          html: `Confirmation sent to<br><strong class="text-emerald-600">${email}<br><br>We'll contact you shortly.<br><br> Thank you for choosing Sustainable Shine`,
+          confirmButtonColor: "#059669",
+          confirmButtonText: "Close",
+        });
 
         // Log Django save status for debugging
         if (!result.django_saved) {
           console.error(
             "⚠️ Booking email sent but NOT saved to database!",
             "\nError Details:",
-            result.django_error
+            result.django_error,
           );
         } else {
           console.log("✅ Booking saved successfully to database");
         }
       } else {
+        console.error("❌ API call failed:", result.error);
         setSubmitError(
-          result.error || "Failed to submit booking. Please try again."
+          result.error || "Failed to submit booking. Please try again.",
         );
+
+        // Show error alert
+        Swal.fire({
+          icon: "error",
+          title: "Submission Failed",
+          html: `${result.error || "Failed to submit booking. Please try again."}<br><br><strong>Need Help?</strong><br>Call us at <a href="tel:+61452422059" class="font-semibold underline">0452 422 059</a>`,
+          confirmButtonColor: "#dc2626",
+          confirmButtonText: "Close",
+        });
       }
     } catch (error) {
-      console.error("Submission error:", error);
+      console.error("❌ Submission error:", error);
       setSubmitError(
-        "An error occurred while submitting your booking. Please try again."
+        "An error occurred while submitting your booking. Please try again.",
       );
+
+      // Show error alert
+      Swal.fire({
+        icon: "error",
+        title: "Submission Failed",
+        html: `An error occurred while submitting your booking. Please try again.<br><br><strong>Need Help?</strong><br>Call us at <a href="tel:+61452422059" class="font-semibold underline">0452 422 059</a>`,
+        confirmButtonColor: "#dc2626",
+        confirmButtonText: "Close",
+      });
     } finally {
+      console.log("🏁 Submission process completed");
       setIsSubmitting(false);
     }
   };
@@ -1181,7 +1275,9 @@ export default function BookingCalculator() {
 
   // Reusable Price Summary Component
   const PriceSummary = ({ className = "" }) => (
-    <div className={`bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl shadow-xl p-6 text-white lg:max-h-none max-h-[500px] overflow-y-auto ${className}`}>
+    <div
+      className={`bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl shadow-xl p-6 text-white lg:max-h-none max-h-[500px] overflow-y-auto ${className}`}
+    >
       <div className="text-center mb-4">
         <h3 className="text-2xl font-bold">Your Quote</h3>
       </div>
@@ -1355,14 +1451,11 @@ export default function BookingCalculator() {
         )}
         {priceDetails.discount > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-emerald-100">
-              Subtotal (before discount)
-            </span>
+            <span className="text-emerald-100">Subtotal (before discount)</span>
             <span className="font-semibold">
               $
               {(
-                ((priceDetails.subtotal + priceDetails.discount) /
-                  1.1) *
+                ((priceDetails.subtotal + priceDetails.discount) / 1.1) *
                 1.1
               ).toFixed(2)}
             </span>
@@ -1371,8 +1464,8 @@ export default function BookingCalculator() {
         {priceDetails.discount > 0 && (
           <div className="flex justify-between items-center text-emerald-300">
             <span className="font-semibold">
-              Discount ({frequencyDiscounts[frequency] * 100}% off from
-              2nd clean)
+              Discount ({frequencyDiscounts[frequency] * 100}% off from 2nd
+              clean)
             </span>
             <span className="font-semibold">
               -${priceDetails.discount.toFixed(2)}
@@ -1387,9 +1480,7 @@ export default function BookingCalculator() {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-emerald-100">GST (10%)</span>
-          <span className="font-semibold">
-            ${priceDetails.gst.toFixed(2)}
-          </span>
+          <span className="font-semibold">${priceDetails.gst.toFixed(2)}</span>
         </div>
       </div>
 
@@ -1397,9 +1488,7 @@ export default function BookingCalculator() {
       <div className="border-t-2 border-white/30 pt-4 mb-6">
         <div className="flex justify-between items-center">
           <span className="text-xl font-bold text-white">
-            {priceDetails.discount > 0
-              ? "First Cleaning Total"
-              : "Total"}
+            {priceDetails.discount > 0 ? "First Cleaning Total" : "Total"}
           </span>
           <span className="text-3xl font-bold text-white">
             ${(priceDetails.total + priceDetails.discount).toFixed(2)}
@@ -1441,121 +1530,90 @@ export default function BookingCalculator() {
 
   return (
     <>
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes scaleIn {
-          from {
-            transform: scale(0);
-          }
-          to {
-            transform: scale(1);
-          }
-        }
-
-        @keyframes checkmark {
-          0% {
-            stroke-dashoffset: 100;
-          }
-          100% {
-            stroke-dashoffset: 0;
-          }
-        }
-
-        @keyframes shakeX {
-          0%, 100% {
-            transform: translateX(0);
-          }
-          10%, 30%, 50%, 70%, 90% {
-            transform: translateX(-10px);
-          }
-          20%, 40%, 60%, 80% {
-            transform: translateX(10px);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out;
-        }
-
-        .animate-scaleIn {
-          animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .animate-checkmark {
-          stroke-dasharray: 100;
-          stroke-dashoffset: 100;
-          animation: checkmark 0.6s ease-out 0.2s forwards;
-        }
-
-        .animate-shakeX {
-          animation: shakeX 0.6s ease-in-out;
-        }
-      `}</style>
       <section className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 py-20">
-      <div className="container-custom">
-        {/* Header */}
-        <div className="text-center mb-12 pt-24 lg:pt-10">
-          <span className="text-emerald-500 font-semibold text-sm uppercase tracking-wide">
-            Instant Quote
-          </span>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-4 mb-4">
-            Booking Calculator
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Get an instant quote for your cleaning service. Customize your
-            package and see the cost in real-time.
-          </p>
-        </div>
+        <div className="container-custom">
+          {/* Header */}
+          <div className="text-center mb-12 pt-24 lg:pt-10">
+            <span className="text-emerald-500 font-semibold text-sm uppercase tracking-wide">
+              Instant Quote
+            </span>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-4 mb-4">
+              Booking Calculator
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Get an instant quote for your cleaning service. Customize your
+              package and see the cost in real-time.
+            </p>
+          </div>
 
-        {/* Floating Quote Section - Mobile Only */}
-        <div className="lg:hidden">
-          {/* Floating Header Button */}
-          <div className="fixed top-22 left-0 right-0 z-40 px-4">
-            <div className="max-w-3xl mx-auto">
-              {isQuoteMinimized ? (
-                // Minimized floating button
-                <button
-                  onClick={() => setIsQuoteMinimized(false)}
-                  className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-2xl shadow-2xl p-4 transition-all duration-300 active:scale-[0.98]"
-                  aria-label="Show quote"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"
-                        />
-                      </svg>
-                      <div className="text-left">
-                        <div className="font-bold text-lg">Your Quote</div>
-                        <div className="text-xs text-emerald-100">Tap to view details</div>
+          {/* Floating Quote Section - Mobile Only */}
+          <div className="lg:hidden">
+            {/* Floating Header Button */}
+            <div className="fixed top-22 left-0 right-0 z-40 px-4">
+              <div className="max-w-3xl mx-auto">
+                {isQuoteMinimized ? (
+                  // Minimized floating button
+                  <button
+                    onClick={() => setIsQuoteMinimized(false)}
+                    className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-2xl shadow-2xl p-4 transition-all duration-300 active:scale-[0.98]"
+                    aria-label="Show quote"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"
+                          />
+                        </svg>
+                        <div className="text-left">
+                          <div className="font-bold text-lg">Your Quote</div>
+                          <div className="text-xs text-emerald-100">
+                            Tap to view details
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="text-right">
+                          <div className="text-2xl font-bold">
+                            $
+                            {(
+                              priceDetails.total + priceDetails.discount
+                            ).toFixed(0)}
+                          </div>
+                          <div className="text-xs text-emerald-100">Total</div>
+                        </div>
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="text-right">
-                        <div className="text-2xl font-bold">
-                          ${(priceDetails.total + priceDetails.discount).toFixed(0)}
-                        </div>
-                        <div className="text-xs text-emerald-100">Total</div>
-                      </div>
+                  </button>
+                ) : (
+                  // Expanded quote section
+                  <div className="relative bg-gradient-to-br from-emerald-50 via-white to-blue-50 rounded-2xl p-1 shadow-2xl">
+                    <button
+                      onClick={() => setIsQuoteMinimized(true)}
+                      className="absolute top-4 right-4 z-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full p-2 transition-colors shadow-lg"
+                      aria-label="Minimize quote"
+                    >
                       <svg
                         className="w-5 h-5"
                         fill="none"
@@ -1566,1286 +1624,1155 @@ export default function BookingCalculator() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
+                          d="M5 15l7-7 7 7"
                         />
                       </svg>
-                    </div>
+                    </button>
+                    <PriceSummary />
                   </div>
-                </button>
-              ) : (
-                // Expanded quote section
-                <div className="relative bg-gradient-to-br from-emerald-50 via-white to-blue-50 rounded-2xl p-1 shadow-2xl">
-                  <button
-                    onClick={() => setIsQuoteMinimized(true)}
-                    className="absolute top-4 right-4 z-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full p-2 transition-colors shadow-lg"
-                    aria-label="Minimize quote"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 15l7-7 7 7"
-                      />
-                    </svg>
-                  </button>
-                  <PriceSummary />
-                </div>
-              )}
-            </div>
-          </div>
-          
-        </div>
-
-        {/* Booking Submission Modal */}
-        {showModal && (
-          <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-              {/* Background overlay with animation */}
-              <div 
-                className="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75 backdrop-blur-sm"
-                onClick={() => {
-                  if (submitSuccess || submitError) {
-                    setShowModal(false);
-                    setSubmitSuccess(false);
-                    setSubmitError("");
-                  }
-                }}
-              ></div>
-
-              {/* Center modal */}
-              <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-
-              <div className="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div className="w-full text-center">
-                      {isSubmitting && !submitSuccess && !submitError && (
-                        <div className="animate-fadeIn">
-                          {/* Loading Animation */}
-                          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-r from-emerald-100 to-emerald-200 mb-6">
-                            <svg className="animate-spin h-12 w-12 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                          </div>
-                          <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                            Processing Your Booking...
-                          </h3>
-                          <p className="text-base text-gray-600 mb-4">
-                            Please wait while we submit your booking request.
-                          </p>
-                          <div className="flex justify-center space-x-1 mb-4">
-                            <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                          </div>
-                        </div>
-                      )}
-
-                      {submitSuccess && (
-                        <div className="animate-fadeIn">
-                          {/* Success Animation */}
-                          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-r from-emerald-100 to-emerald-200 mb-6 animate-scaleIn">
-                            <svg className="h-16 w-16 text-emerald-600 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                            Booking Confirmed! 🎉
-                          </h3>
-                          <p className="text-base text-gray-600 mb-6 px-4">
-                            Thank you for choosing Sustainable Shine Cleaning! We've received your booking request and sent a confirmation email to <span className="font-semibold text-emerald-600">{email}</span>.
-                          </p>
-                          <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 mb-6 text-left rounded-r-lg">
-                            <p className="text-sm text-emerald-800">
-                              <strong className="font-semibold">What's Next?</strong><br />
-                              Our team will contact you within 24 hours to confirm your booking time and answer any questions.
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              setShowModal(false);
-                              setSubmitSuccess(false);
-                              // Optionally reload or reset form
-                              // window.location.reload();
-                            }}
-                            className="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-base font-semibold text-white hover:from-emerald-700 hover:to-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 transform hover:scale-105"
-                          >
-                            Close
-                          </button>
-                        </div>
-                      )}
-
-                      {submitError && (
-                        <div className="animate-fadeIn">
-                          {/* Error Animation */}
-                          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-r from-red-100 to-red-200 mb-6 animate-shakeX">
-                            <svg className="h-16 w-16 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </div>
-                          <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                            Booking Failed
-                          </h3>
-                          <p className="text-base text-gray-600 mb-6 px-4">
-                            {submitError}
-                          </p>
-                          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 text-left rounded-r-lg">
-                            <p className="text-sm text-red-800">
-                              <strong className="font-semibold">Need Help?</strong><br />
-                              Please try again or contact us directly at <a href="tel:+61452422059" className="font-semibold underline">+61 452 422 059</a>
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              setShowModal(false);
-                              setSubmitError("");
-                            }}
-                            className="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-base font-semibold text-white hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200"
-                          >
-                            Try Again
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
-        )}
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Side - Configuration */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Service Type Selection */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Select Your Service
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {serviceTypes.map((type) => (
-                  <button
-                    key={type.value}
-                    onClick={() => setServiceType(type.value)}
-                    className={`p-6 rounded-xl border-2 transition-all duration-200 hover:shadow-md ${
-                      serviceType === type.value
-                        ? "border-emerald-500 bg-emerald-50 shadow-md"
-                        : "border-gray-200 hover:border-emerald-300"
-                    }`}
-                  >
-                    {/* Icon */}
-                    <div className="mb-4 flex justify-center">
-                      {type.value === "general" && (
-                        <svg
-                          className="w-16 h-16 text-teal-500"
-                          viewBox="0 0 64 64"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          {/* Broom handle */}
-                          <line x1="32" y1="10" x2="20" y2="40" />
-                          {/* Broom bristles */}
-                          <path
-                            d="M15 40 L25 40 L20 50 L10 50 Z"
-                            fill="currentColor"
-                            opacity="0.3"
-                          />
-                          <line x1="12" y1="42" x2="10" y2="50" />
-                          <line x1="16" y1="42" x2="14" y2="50" />
-                          <line x1="20" y1="42" x2="18" y2="50" />
-                          <line x1="24" y1="42" x2="22" y2="50" />
-                          {/* Sparkles */}
-                          <circle cx="38" cy="15" r="1.5" fill="currentColor" />
-                          <circle cx="42" cy="22" r="1" fill="currentColor" />
-                          <circle cx="28" cy="18" r="1" fill="currentColor" />
-                        </svg>
-                      )}
-                      {type.value === "deep" && (
-                        <svg
-                          className="w-16 h-16 text-teal-500"
-                          viewBox="0 0 64 64"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          {/* Washing bucket */}
-                          <path
-                            d="M18 25 L46 25 L42 50 L22 50 Z"
-                            fill="currentColor"
-                            opacity="0.2"
-                          />
-                          <line x1="18" y1="25" x2="46" y2="25" />
-                          <line x1="20" y1="30" x2="44" y2="30" />
-                          {/* Handle */}
-                          <path
-                            d="M22 25 Q22 18, 28 18 L36 18 Q42 18, 42 25"
-                            fill="none"
-                          />
-                          {/* Bubbles */}
-                          <circle
-                            cx="25"
-                            cy="35"
-                            r="2"
-                            fill="currentColor"
-                            opacity="0.4"
-                          />
-                          <circle
-                            cx="32"
-                            cy="38"
-                            r="2.5"
-                            fill="currentColor"
-                            opacity="0.4"
-                          />
-                          <circle
-                            cx="39"
-                            cy="36"
-                            r="2"
-                            fill="currentColor"
-                            opacity="0.4"
-                          />
-                          <circle
-                            cx="28"
-                            cy="42"
-                            r="1.5"
-                            fill="currentColor"
-                            opacity="0.4"
-                          />
-                          <circle
-                            cx="36"
-                            cy="44"
-                            r="1.5"
-                            fill="currentColor"
-                            opacity="0.4"
-                          />
-                        </svg>
-                      )}
-                      {type.value === "endOfLease" && (
-                        <svg
-                          className="w-16 h-16 text-teal-500"
-                          viewBox="0 0 64 64"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          {/* Truck body */}
-                          <rect
-                            x="12"
-                            y="28"
-                            width="28"
-                            height="16"
-                            rx="2"
-                            fill="currentColor"
-                            opacity="0.2"
-                          />
-                          <rect
-                            x="40"
-                            y="32"
-                            width="10"
-                            height="12"
-                            rx="1"
-                            fill="currentColor"
-                            opacity="0.2"
-                          />
-                          {/* Wheels */}
-                          <circle cx="22" cy="44" r="4" fill="none" />
-                          <circle
-                            cx="22"
-                            cy="44"
-                            r="2"
-                            fill="currentColor"
-                            opacity="0.3"
-                          />
-                          <circle cx="42" cy="44" r="4" fill="none" />
-                          <circle
-                            cx="42"
-                            cy="44"
-                            r="2"
-                            fill="currentColor"
-                            opacity="0.3"
-                          />
-                          {/* Water drop icon on truck */}
-                          <path
-                            d="M27 34 Q27 31, 29 31 Q31 31, 31 34 Q31 36, 29 36 Q27 36, 27 34 Z"
-                            fill="currentColor"
-                            opacity="0.5"
-                          />
-                          {/* Speed lines */}
-                          <line x1="46" y1="35" x2="52" y2="35" />
-                          <line x1="48" y1="38" x2="53" y2="38" />
-                          <line x1="47" y1="41" x2="51" y2="41" />
-                        </svg>
-                      )}
-                      {type.value === "moveIn" && (
-                        <svg
-                          className="w-16 h-16 text-teal-500"
-                          viewBox="0 0 64 64"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          {/* House */}
-                          <path
-                            d="M32 15 L48 28 L48 50 L16 50 L16 28 Z"
-                            fill="currentColor"
-                            opacity="0.2"
-                          />
-                          <polyline points="12,30 32,15 52,30" fill="none" />
-                          <rect
-                            x="16"
-                            y="28"
-                            width="32"
-                            height="22"
-                            fill="none"
-                          />
-                          {/* Door */}
-                          <rect
-                            x="28"
-                            y="38"
-                            width="8"
-                            height="12"
-                            fill="currentColor"
-                            opacity="0.3"
-                          />
-                          {/* Windows */}
-                          <rect
-                            x="22"
-                            y="32"
-                            width="6"
-                            height="6"
-                            fill="currentColor"
-                            opacity="0.3"
-                          />
-                          <rect
-                            x="36"
-                            y="32"
-                            width="6"
-                            height="6"
-                            fill="currentColor"
-                            opacity="0.3"
-                          />
-                          {/* Chimney with sparkle */}
-                          <rect
-                            x="38"
-                            y="18"
-                            width="4"
-                            height="8"
-                            fill="currentColor"
-                            opacity="0.3"
-                          />
-                          <circle cx="44" cy="22" r="1.5" fill="currentColor" />
-                        </svg>
-                      )}
-                    </div>
-                    <div
-                      className={`text-base font-semibold text-center ${
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left Side - Configuration */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Service Type Selection */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  Select Your Service
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {serviceTypes.map((type) => (
+                    <button
+                      key={type.value}
+                      onClick={() => setServiceType(type.value)}
+                      className={`p-6 rounded-xl border-2 transition-all duration-200 hover:shadow-md ${
                         serviceType === type.value
-                          ? "text-emerald-700"
-                          : "text-gray-700"
+                          ? "border-emerald-500 bg-emerald-50 shadow-md"
+                          : "border-gray-200 hover:border-emerald-300"
                       }`}
                     >
-                      {type.label}
-                    </div>
-                  </button>
-                ))}
+                      {/* Icon */}
+                      <div className="mb-4 flex justify-center">
+                        {type.value === "general" && (
+                          <svg
+                            className="w-16 h-16 text-teal-500"
+                            viewBox="0 0 64 64"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {/* Broom handle */}
+                            <line x1="32" y1="10" x2="20" y2="40" />
+                            {/* Broom bristles */}
+                            <path
+                              d="M15 40 L25 40 L20 50 L10 50 Z"
+                              fill="currentColor"
+                              opacity="0.3"
+                            />
+                            <line x1="12" y1="42" x2="10" y2="50" />
+                            <line x1="16" y1="42" x2="14" y2="50" />
+                            <line x1="20" y1="42" x2="18" y2="50" />
+                            <line x1="24" y1="42" x2="22" y2="50" />
+                            {/* Sparkles */}
+                            <circle
+                              cx="38"
+                              cy="15"
+                              r="1.5"
+                              fill="currentColor"
+                            />
+                            <circle cx="42" cy="22" r="1" fill="currentColor" />
+                            <circle cx="28" cy="18" r="1" fill="currentColor" />
+                          </svg>
+                        )}
+                        {type.value === "deep" && (
+                          <svg
+                            className="w-16 h-16 text-teal-500"
+                            viewBox="0 0 64 64"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {/* Washing bucket */}
+                            <path
+                              d="M18 25 L46 25 L42 50 L22 50 Z"
+                              fill="currentColor"
+                              opacity="0.2"
+                            />
+                            <line x1="18" y1="25" x2="46" y2="25" />
+                            <line x1="20" y1="30" x2="44" y2="30" />
+                            {/* Handle */}
+                            <path
+                              d="M22 25 Q22 18, 28 18 L36 18 Q42 18, 42 25"
+                              fill="none"
+                            />
+                            {/* Bubbles */}
+                            <circle
+                              cx="25"
+                              cy="35"
+                              r="2"
+                              fill="currentColor"
+                              opacity="0.4"
+                            />
+                            <circle
+                              cx="32"
+                              cy="38"
+                              r="2.5"
+                              fill="currentColor"
+                              opacity="0.4"
+                            />
+                            <circle
+                              cx="39"
+                              cy="36"
+                              r="2"
+                              fill="currentColor"
+                              opacity="0.4"
+                            />
+                            <circle
+                              cx="28"
+                              cy="42"
+                              r="1.5"
+                              fill="currentColor"
+                              opacity="0.4"
+                            />
+                            <circle
+                              cx="36"
+                              cy="44"
+                              r="1.5"
+                              fill="currentColor"
+                              opacity="0.4"
+                            />
+                          </svg>
+                        )}
+                        {type.value === "endOfLease" && (
+                          <svg
+                            className="w-16 h-16 text-teal-500"
+                            viewBox="0 0 64 64"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {/* Truck body */}
+                            <rect
+                              x="12"
+                              y="28"
+                              width="28"
+                              height="16"
+                              rx="2"
+                              fill="currentColor"
+                              opacity="0.2"
+                            />
+                            <rect
+                              x="40"
+                              y="32"
+                              width="10"
+                              height="12"
+                              rx="1"
+                              fill="currentColor"
+                              opacity="0.2"
+                            />
+                            {/* Wheels */}
+                            <circle cx="22" cy="44" r="4" fill="none" />
+                            <circle
+                              cx="22"
+                              cy="44"
+                              r="2"
+                              fill="currentColor"
+                              opacity="0.3"
+                            />
+                            <circle cx="42" cy="44" r="4" fill="none" />
+                            <circle
+                              cx="42"
+                              cy="44"
+                              r="2"
+                              fill="currentColor"
+                              opacity="0.3"
+                            />
+                            {/* Water drop icon on truck */}
+                            <path
+                              d="M27 34 Q27 31, 29 31 Q31 31, 31 34 Q31 36, 29 36 Q27 36, 27 34 Z"
+                              fill="currentColor"
+                              opacity="0.5"
+                            />
+                            {/* Speed lines */}
+                            <line x1="46" y1="35" x2="52" y2="35" />
+                            <line x1="48" y1="38" x2="53" y2="38" />
+                            <line x1="47" y1="41" x2="51" y2="41" />
+                          </svg>
+                        )}
+                        {type.value === "moveIn" && (
+                          <svg
+                            className="w-16 h-16 text-teal-500"
+                            viewBox="0 0 64 64"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {/* House */}
+                            <path
+                              d="M32 15 L48 28 L48 50 L16 50 L16 28 Z"
+                              fill="currentColor"
+                              opacity="0.2"
+                            />
+                            <polyline points="12,30 32,15 52,30" fill="none" />
+                            <rect
+                              x="16"
+                              y="28"
+                              width="32"
+                              height="22"
+                              fill="none"
+                            />
+                            {/* Door */}
+                            <rect
+                              x="28"
+                              y="38"
+                              width="8"
+                              height="12"
+                              fill="currentColor"
+                              opacity="0.3"
+                            />
+                            {/* Windows */}
+                            <rect
+                              x="22"
+                              y="32"
+                              width="6"
+                              height="6"
+                              fill="currentColor"
+                              opacity="0.3"
+                            />
+                            <rect
+                              x="36"
+                              y="32"
+                              width="6"
+                              height="6"
+                              fill="currentColor"
+                              opacity="0.3"
+                            />
+                            {/* Chimney with sparkle */}
+                            <rect
+                              x="38"
+                              y="18"
+                              width="4"
+                              height="8"
+                              fill="currentColor"
+                              opacity="0.3"
+                            />
+                            <circle
+                              cx="44"
+                              cy="22"
+                              r="1.5"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <div
+                        className={`text-base font-semibold text-center ${
+                          serviceType === type.value
+                            ? "text-emerald-700"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        {type.label}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Cleaning Frequency Section - Only for General Cleaning */}
-            {serviceType === "general" && (
+              {/* Cleaning Frequency Section - Only for General Cleaning */}
+              {serviceType === "general" && (
+                <div className="bg-white rounded-2xl shadow-lg p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">
+                      Recurring service
+                    </h2>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xl">🔥</span>
+                      <span className="font-bold text-gray-900">
+                        Most popular
+                      </span>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {/* Just Once */}
+                    <button
+                      onClick={() => setFrequency("once")}
+                      className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                            frequency === "once"
+                              ? "border-emerald-500 bg-white"
+                              : "border-gray-300 bg-white"
+                          }`}
+                        >
+                          {frequency === "once" && (
+                            <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                          )}
+                        </div>
+                        <span className="text-lg font-medium text-gray-900">
+                          Just Once
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* Weekly */}
+                    <button
+                      onClick={() => setFrequency("weekly")}
+                      className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                            frequency === "weekly"
+                              ? "border-emerald-500 bg-white"
+                              : "border-gray-300 bg-white"
+                          }`}
+                        >
+                          {frequency === "weekly" && (
+                            <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                          )}
+                        </div>
+                        <span className="text-lg font-medium text-gray-900">
+                          Weekly
+                        </span>
+                      </div>
+                      <span className="bg-yellow-400 text-gray-900 px-4 py-1.5 rounded-full font-semibold text-sm">
+                        20% off
+                      </span>
+                    </button>
+
+                    {/* Fortnightly */}
+                    <button
+                      onClick={() => setFrequency("fortnightly")}
+                      className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                            frequency === "fortnightly"
+                              ? "border-emerald-500 bg-white"
+                              : "border-gray-300 bg-white"
+                          }`}
+                        >
+                          {frequency === "fortnightly" && (
+                            <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                          )}
+                        </div>
+                        <span className="text-lg font-medium text-gray-900">
+                          Fortnightly
+                        </span>
+                      </div>
+                      <span className="bg-yellow-400 text-gray-900 px-4 py-1.5 rounded-full font-semibold text-sm">
+                        15% off
+                      </span>
+                    </button>
+
+                    {/* Monthly */}
+                    <button
+                      onClick={() => setFrequency("monthly")}
+                      className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                            frequency === "monthly"
+                              ? "border-emerald-500 bg-white"
+                              : "border-gray-300 bg-white"
+                          }`}
+                        >
+                          {frequency === "monthly" && (
+                            <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                          )}
+                        </div>
+                        <span className="text-lg font-medium text-gray-900">
+                          Monthly
+                        </span>
+                      </div>
+                      <span className="bg-yellow-400 text-gray-900 px-4 py-1.5 rounded-full font-semibold text-sm">
+                        10% off
+                      </span>
+                    </button>
+                  </div>
+                  {frequency !== "once" && (
+                    <div className="mt-4 text-sm text-gray-600 bg-emerald-50 rounded-lg p-3">
+                      <div className="flex items-start space-x-2">
+                        <svg
+                          className="w-4 h-4 mt-0.5 flex-shrink-0 text-emerald-600"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <p>
+                          * First cleaning at full price. Discount applies from
+                          2nd cleaning onwards.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Room Configuration */}
               <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">
-                    Recurring service
-                  </h2>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xl">🔥</span>
-                    <span className="font-bold text-gray-900">
-                      Most popular
-                    </span>
+                <h2 className="text-xl font-bold text-gray-900 mb-6">
+                  Property Details
+                </h2>
+
+                <div className="space-y-6">
+                  {/* Bedrooms */}
+                  <div>
+                    <div className="flex items-center space-x-2 mb-3">
+                      <span className="text-2xl">🛏️</span>
+                      <span className="text-base font-bold text-gray-900">
+                        Bedrooms
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-5 gap-2">
+                      {[1, 2, 3, 4].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() => setBedrooms(num)}
+                          className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
+                            bedrooms === num
+                              ? "bg-emerald-500 text-white shadow-md"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setBedrooms(5)}
+                        className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
+                          bedrooms >= 5
+                            ? "bg-emerald-500 text-white shadow-md"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                      >
+                        5+
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Bathrooms */}
+                  <div>
+                    <div className="flex items-center space-x-2 mb-3">
+                      <span className="text-2xl">🚿</span>
+                      <span className="text-base font-bold text-gray-900">
+                        Bathrooms
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-5 gap-2">
+                      {[1, 2, 3, 4].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() => setBathrooms(num)}
+                          className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
+                            bathrooms === num
+                              ? "bg-emerald-500 text-white shadow-md"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setBathrooms(5)}
+                        className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
+                          bathrooms >= 5
+                            ? "bg-emerald-500 text-white shadow-md"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                      >
+                        5+
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Storeys */}
+                  <div>
+                    <div className="flex items-center space-x-2 mb-3">
+                      <span className="text-2xl">🏢</span>
+                      <span className="text-base font-bold text-gray-900">
+                        Storeys
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 max-w-sm">
+                      {[1, 2, 3].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() => setStorey(num)}
+                          className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
+                            storey === num
+                              ? "bg-emerald-500 text-white shadow-md"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      How many levels is your home?
+                    </p>
+                  </div>
+
+                  {/* Laundry */}
+                  <div>
+                    <div className="flex items-center space-x-2 mb-3">
+                      <span className="text-2xl">🧺</span>
+                      <span className="text-base font-bold text-gray-900">
+                        Laundries
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 max-w-sm">
+                      {[0, 1, 2].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() => setLaundry(num)}
+                          className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
+                            laundry === num
+                              ? "bg-emerald-500 text-white shadow-md"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Do you have a laundry room/cupboard?
+                    </p>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  {/* Just Once */}
-                  <button
-                    onClick={() => setFrequency("once")}
-                    className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                          frequency === "once"
-                            ? "border-emerald-500 bg-white"
-                            : "border-gray-300 bg-white"
-                        }`}
-                      >
-                        {frequency === "once" && (
-                          <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                        )}
-                      </div>
-                      <span className="text-lg font-medium text-gray-900">
-                        Just Once
-                      </span>
-                    </div>
-                  </button>
+              </div>
 
-                  {/* Weekly */}
-                  <button
-                    onClick={() => setFrequency("weekly")}
-                    className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                          frequency === "weekly"
-                            ? "border-emerald-500 bg-white"
-                            : "border-gray-300 bg-white"
-                        }`}
-                      >
-                        {frequency === "weekly" && (
-                          <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                        )}
-                      </div>
-                      <span className="text-lg font-medium text-gray-900">
-                        Weekly
-                      </span>
-                    </div>
-                    <span className="bg-yellow-400 text-gray-900 px-4 py-1.5 rounded-full font-semibold text-sm">
-                      20% off
-                    </span>
-                  </button>
+              {/* Add-ons Section */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <div className="bg-white rounded-2xl shadow-lg p-6">
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      Customize Your Service
+                    </h2>
+                    <p className="text-gray-600">
+                      Select your add-ons as required. Only pay for what you
+                      need.
+                    </p>
+                  </div>
 
-                  {/* Fortnightly */}
-                  <button
-                    onClick={() => setFrequency("fortnightly")}
-                    className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                          frequency === "fortnightly"
-                            ? "border-emerald-500 bg-white"
-                            : "border-gray-300 bg-white"
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {addOnsData.map((addOn) => (
+                      <button
+                        key={addOn.id}
+                        onClick={() => toggleAddOn(addOn.id)}
+                        className={`relative p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-md ${
+                          selectedAddOns[addOn.id]
+                            ? "border-emerald-500 bg-emerald-50"
+                            : "border-gray-200 hover:border-emerald-300 bg-white"
                         }`}
                       >
-                        {frequency === "fortnightly" && (
-                          <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        {/* Checkmark indicator */}
+                        {selectedAddOns[addOn.id] && (
+                          <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={3}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </div>
                         )}
-                      </div>
-                      <span className="text-lg font-medium text-gray-900">
-                        Fortnightly
-                      </span>
-                    </div>
-                    <span className="bg-yellow-400 text-gray-900 px-4 py-1.5 rounded-full font-semibold text-sm">
-                      15% off
-                    </span>
-                  </button>
 
-                  {/* Monthly */}
-                  <button
-                    onClick={() => setFrequency("monthly")}
-                    className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                          frequency === "monthly"
-                            ? "border-emerald-500 bg-white"
-                            : "border-gray-300 bg-white"
-                        }`}
-                      >
-                        {frequency === "monthly" && (
-                          <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        <div className="mb-3 flex justify-center">
+                          {renderAddOnIcon(addOn.id)}
+                        </div>
+                        <div
+                          className={`text-sm font-bold mb-1 ${
+                            selectedAddOns[addOn.id]
+                              ? "text-emerald-700"
+                              : "text-gray-800"
+                          }`}
+                        >
+                          {addOn.name}
+                        </div>
+                        {addOn.description && (
+                          <div className="text-xs text-gray-500 mb-2">
+                            {addOn.description}
+                          </div>
                         )}
-                      </div>
-                      <span className="text-lg font-medium text-gray-900">
-                        Monthly
-                      </span>
-                    </div>
-                    <span className="bg-yellow-400 text-gray-900 px-4 py-1.5 rounded-full font-semibold text-sm">
-                      10% off
-                    </span>
-                  </button>
+                        <div
+                          className={`text-lg font-bold mb-2 ${
+                            selectedAddOns[addOn.id]
+                              ? "text-emerald-600"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          ${addOn.price}
+                        </div>
+
+                        {/* Quantity selector for items with hasQuantity */}
+                        {addOn.hasQuantity && selectedAddOns[addOn.id] && (
+                          <div
+                            className="flex items-center justify-center space-x-2 mt-2"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateQuantity(
+                                  addOn.id,
+                                  (addOnQuantities[addOn.id] || 1) - 1,
+                                );
+                              }}
+                              className="w-7 h-7 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold flex items-center justify-center transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="w-10 text-center font-semibold text-gray-900">
+                              {addOnQuantities[addOn.id] || 1}
+                            </span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateQuantity(
+                                  addOn.id,
+                                  (addOnQuantities[addOn.id] || 1) + 1,
+                                );
+                              }}
+                              className="w-7 h-7 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold flex items-center justify-center transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                {frequency !== "once" && (
-                  <div className="mt-4 text-sm text-gray-600 bg-emerald-50 rounded-lg p-3">
-                    <div className="flex items-start space-x-2">
+              </div>
+
+              {/* Select Date & Time Section */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  Select Date & Time
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Calendar - Left Side */}
+                  <div>
+                    <label className="block text-gray-900 font-semibold mb-3">
+                      Preferred Date
+                    </label>
+                    <CalendarPicker
+                      selectedDate={selectedDate}
+                      onDateSelect={setSelectedDate}
+                    />
+                  </div>
+
+                  {/* Time Selection - Right Side */}
+                  <div>
+                    <label className="block text-gray-900 font-semibold mb-3">
+                      Preferred Time
+                    </label>
+                    <select
+                      value={selectedTime}
+                      onChange={(e) => setSelectedTime(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700 cursor-pointer text-base"
+                      style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23374151'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "right 0.75rem center",
+                        backgroundSize: "1.5em 1.5em",
+                        paddingRight: "2.5rem",
+                      }}
+                    >
+                      <option value="">Select a time</option>
+                      <option value="08:00">8:00 AM</option>
+                      <option value="08:30">8:30 AM</option>
+                      <option value="09:00">9:00 AM</option>
+                      <option value="09:30">9:30 AM</option>
+                      <option value="10:00">10:00 AM</option>
+                      <option value="10:30">10:30 AM</option>
+                      <option value="11:00">11:00 AM</option>
+                      <option value="11:30">11:30 AM</option>
+                      <option value="12:00">12:00 PM</option>
+                      <option value="12:30">12:30 PM</option>
+                      <option value="13:00">1:00 PM</option>
+                      <option value="13:30">1:30 PM</option>
+                      <option value="14:00">2:00 PM</option>
+                      <option value="14:30">2:30 PM</option>
+                      <option value="15:00">3:00 PM</option>
+                      <option value="15:30">3:30 PM</option>
+                      <option value="16:00">4:00 PM</option>
+                      <option value="16:30">4:30 PM</option>
+                    </select>
+                    <p className="text-sm text-gray-600 mt-3">
+                      Select your preferred time slot for the cleaning service
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Customer Details Section */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Customer Details
+                </h2>
+                <p className="text-gray-700 mb-6">
+                  This information will be used to contact you about your
+                  service.
+                </p>
+
+                <div className="space-y-6">
+                  {/* Name Row */}
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-900 font-semibold mb-2">
+                        First Name
+                      </label>
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Ex: James"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-900 font-semibold mb-2">
+                        Last Name
+                      </label>
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Ex: Lee"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email and Phone */}
+                  <div className="flex flex-col md:flex-row gap-4">
+                    {/* Email */}
+                    <div className="flex-1">
+                      <label className="block text-gray-900 font-semibold mb-2">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Ex: example@xyz.com"
+                        required
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                      />
+                    </div>
+
+                    {/* Phone */}
+                    <div className="flex-1">
+                      <label className="block text-gray-900 font-semibold mb-2">
+                        Phone No
+                      </label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Phone No."
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* SMS Reminders Checkbox */}
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="smsReminders"
+                      checked={smsReminders}
+                      onChange={(e) => setSmsReminders(e.target.checked)}
+                      className="w-5 h-5 accent-emerald-600 border-2 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
+                    />
+                    <label
+                      htmlFor="smsReminders"
+                      className="text-gray-900 font-medium cursor-pointer"
+                    >
+                      Send me reminders about my booking via text message
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Address Details Section */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  Address Details
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-900 font-semibold mb-2">
+                      Unit Number
+                    </label>
+                    <input
+                      type="text"
+                      value={unitNumber}
+                      onChange={(e) => setUnitNumber(e.target.value)}
+                      placeholder="e.g., Unit 5, Apt 2B (optional)"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-900 font-semibold mb-2">
+                      Street <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={street}
+                      onChange={(e) => setStreet(e.target.value)}
+                      placeholder="e.g., 123 Main Street"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-900 font-semibold mb-2">
+                      Suburb <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={suburb}
+                      onChange={(e) => setSuburb(e.target.value)}
+                      placeholder="e.g., Sydney"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-900 font-semibold mb-2">
+                      Postcode <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={postcode}
+                      onChange={(e) => setPostcode(e.target.value)}
+                      placeholder="e.g., 2000"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Pet and Referral Section */}
+              <div className="bg-gray-50 rounded-2xl shadow-lg p-6 space-y-6">
+                {/* Do You have Pet */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    Do You have Pet?
+                  </label>
+                  <select
+                    value={hasPet}
+                    onChange={(e) => setHasPet(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
+                  >
+                    <option value="">Select Option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+
+                {/* How Did You Hear About Us */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    How Did You Hear About Us
+                  </label>
+                  <select
+                    value={hearAboutUs}
+                    onChange={(e) => setHearAboutUs(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
+                  >
+                    <option value="">Select Option</option>
+                    <option value="google">Google Search</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="friend">Friend/Family Referral</option>
+                    <option value="flyer">Flyer</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {/* Special Notes */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    Would You Like To Add Any Notes?
+                  </label>
+                  <textarea
+                    value={specialNotes}
+                    onChange={(e) => setSpecialNotes(e.target.value)}
+                    placeholder="Special Notes Or Instructions"
+                    rows={5}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none resize-none"
+                  />
+                </div>
+              </div>
+
+              {/* Access & Other Information Section */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  Access & Other Information
+                </h2>
+
+                {/* Cleanliness Level */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    On A Scale Of 1-4, How Clean Would You Estimate Your Home To
+                    Be?
+                  </label>
+                  <select
+                    value={cleanlinessLevel}
+                    onChange={(e) => setCleanlinessLevel(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
+                  >
+                    <option value="">Select Option</option>
+                    <option value="1">1 - Very Clean</option>
+                    <option value="2">2 - Moderately Clean</option>
+                    <option value="3">3 - Needs Cleaning</option>
+                    <option value="4">4 - Heavily Soiled</option>
+                  </select>
+                </div>
+
+                {/* Parking */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    Where can the cleaners park?
+                  </label>
+                  <select
+                    value={parking}
+                    onChange={(e) => setParking(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
+                  >
+                    <option value="">Select Option</option>
+                    <option value="driveway">Driveway</option>
+                    <option value="street">Street Parking</option>
+                    <option value="garage">Garage</option>
+                    <option value="visitor">Visitor Parking</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {/* Flexible Date/Time */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    Is Your Date And Time Flexible
+                  </label>
+                  <select
+                    value={flexibleDateTime}
+                    onChange={(e) => setFlexibleDateTime(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
+                  >
+                    <option value="">Select Option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+
+                {/* Access */}
+                <div>
+                  <label className="block text-gray-900 font-semibold mb-2">
+                    How Will The Cleaner Gain Access To Your Home
+                  </label>
+                  <select
+                    value={access}
+                    onChange={(e) => setAccess(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
+                  >
+                    <option value="">Select Option</option>
+                    <option value="home">I will be home</option>
+                    <option value="key">Leave a key</option>
+                    <option value="lockbox">Lockbox</option>
+                    <option value="doorcode">Door code</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || submitSuccess}
+                  className={`w-full py-5 px-8 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg ${
+                    isSubmitting || submitSuccess
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transform hover:scale-[1.02]"
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center">
                       <svg
-                        className="w-4 h-4 mt-0.5 flex-shrink-0 text-emerald-600"
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Sending Booking Request...
+                    </span>
+                  ) : submitSuccess ? (
+                    <span className="flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 mr-2"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
                         <path
                           fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <p>
-                        * First cleaning at full price. Discount applies from
-                        2nd cleaning onwards.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Room Configuration */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
-                Property Details
-              </h2>
-
-              <div className="space-y-6">
-                {/* Bedrooms */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <span className="text-2xl">🛏️</span>
-                    <span className="text-base font-bold text-gray-900">
-                      Bedrooms
+                      Booking Sent Successfully!
                     </span>
-                  </div>
-                  <div className="grid grid-cols-5 gap-2">
-                    {[1, 2, 3, 4].map((num) => (
-                      <button
-                        key={num}
-                        onClick={() => setBedrooms(num)}
-                        className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
-                          bedrooms === num
-                            ? "bg-emerald-500 text-white shadow-md"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => setBedrooms(5)}
-                      className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
-                        bedrooms >= 5
-                          ? "bg-emerald-500 text-white shadow-md"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                    >
-                      5+
-                    </button>
-                  </div>
-                </div>
-
-                {/* Bathrooms */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <span className="text-2xl">🚿</span>
-                    <span className="text-base font-bold text-gray-900">
-                      Bathrooms
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-5 gap-2">
-                    {[1, 2, 3, 4].map((num) => (
-                      <button
-                        key={num}
-                        onClick={() => setBathrooms(num)}
-                        className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
-                          bathrooms === num
-                            ? "bg-emerald-500 text-white shadow-md"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => setBathrooms(5)}
-                      className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
-                        bathrooms >= 5
-                          ? "bg-emerald-500 text-white shadow-md"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                    >
-                      5+
-                    </button>
-                  </div>
-                </div>
-
-                {/* Storeys */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <span className="text-2xl">🏢</span>
-                    <span className="text-base font-bold text-gray-900">
-                      Storeys
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 max-w-sm">
-                    {[1, 2, 3].map((num) => (
-                      <button
-                        key={num}
-                        onClick={() => setStorey(num)}
-                        className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
-                          storey === num
-                            ? "bg-emerald-500 text-white shadow-md"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-600 mt-2">
-                    How many levels is your home?
-                  </p>
-                </div>
-
-                {/* Laundry */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <span className="text-2xl">🧺</span>
-                    <span className="text-base font-bold text-gray-900">
-                      Laundries
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 max-w-sm">
-                    {[0, 1, 2].map((num) => (
-                      <button
-                        key={num}
-                        onClick={() => setLaundry(num)}
-                        className={`py-2.5 px-3 rounded-lg font-semibold text-base transition-all duration-200 ${
-                          laundry === num
-                            ? "bg-emerald-500 text-white shadow-md"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-600 mt-2">
-                    Do you have a laundry room/cupboard?
-                  </p>
-                </div>
+                  ) : (
+                    "Submit Booking Request"
+                  )}
+                </button>
+                <p className="text-sm text-gray-600 text-center mt-4">
+                  By submitting, you agree to receive communication from
+                  Sustainable Shine regarding your booking.
+                </p>
               </div>
             </div>
 
-            {/* Add-ons Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    Customize Your Service
-                  </h2>
-                  <p className="text-gray-600">
-                    Select your add-ons as required. Only pay for what you need.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {addOnsData.map((addOn) => (
-                    <button
-                      key={addOn.id}
-                      onClick={() => toggleAddOn(addOn.id)}
-                      className={`relative p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-md ${
-                        selectedAddOns[addOn.id]
-                          ? "border-emerald-500 bg-emerald-50"
-                          : "border-gray-200 hover:border-emerald-300 bg-white"
-                      }`}
-                    >
-                      {/* Checkmark indicator */}
-                      {selectedAddOns[addOn.id] && (
-                        <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
-                          <svg
-                            className="w-4 h-4 text-white"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={3}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        </div>
-                      )}
-
-                      <div className="mb-3 flex justify-center">
-                        {renderAddOnIcon(addOn.id)}
-                      </div>
-                      <div
-                        className={`text-sm font-bold mb-1 ${
-                          selectedAddOns[addOn.id]
-                            ? "text-emerald-700"
-                            : "text-gray-800"
-                        }`}
-                      >
-                        {addOn.name}
-                      </div>
-                      {addOn.description && (
-                        <div className="text-xs text-gray-500 mb-2">
-                          {addOn.description}
-                        </div>
-                      )}
-                      <div
-                        className={`text-lg font-bold mb-2 ${
-                          selectedAddOns[addOn.id]
-                            ? "text-emerald-600"
-                            : "text-gray-700"
-                        }`}
-                      >
-                        ${addOn.price}
-                      </div>
-
-                      {/* Quantity selector for items with hasQuantity */}
-                      {addOn.hasQuantity && selectedAddOns[addOn.id] && (
-                        <div
-                          className="flex items-center justify-center space-x-2 mt-2"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              updateQuantity(
-                                addOn.id,
-                                (addOnQuantities[addOn.id] || 1) - 1
-                              );
-                            }}
-                            className="w-7 h-7 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold flex items-center justify-center transition-colors"
-                          >
-                            -
-                          </button>
-                          <span className="w-10 text-center font-semibold text-gray-900">
-                            {addOnQuantities[addOn.id] || 1}
-                          </span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              updateQuantity(
-                                addOn.id,
-                                (addOnQuantities[addOn.id] || 1) + 1
-                              );
-                            }}
-                            className="w-7 h-7 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold flex items-center justify-center transition-colors"
-                          >
-                            +
-                          </button>
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
+            {/* Right Side - Price Calculator (Desktop Only) */}
+            <div className="hidden lg:block lg:col-span-1 relative">
+              <div className="sticky top-24 max-h-screen overflow-y-auto">
+                <PriceSummary />
               </div>
-            </div>
-
-            {/* Select Date & Time Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Select Date & Time
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Calendar - Left Side */}
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-3">
-                    Preferred Date
-                  </label>
-                  <CalendarPicker
-                    selectedDate={selectedDate}
-                    onDateSelect={setSelectedDate}
-                  />
-                </div>
-
-                {/* Time Selection - Right Side */}
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-3">
-                    Preferred Time
-                  </label>
-                  <select
-                    value={selectedTime}
-                    onChange={(e) => setSelectedTime(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700 cursor-pointer text-base"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23374151'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'right 0.75rem center',
-                      backgroundSize: '1.5em 1.5em',
-                      paddingRight: '2.5rem'
-                    }}
-                  >
-                    <option value="">Select a time</option>
-                    <option value="08:00">8:00 AM</option>
-                    <option value="08:30">8:30 AM</option>
-                    <option value="09:00">9:00 AM</option>
-                    <option value="09:30">9:30 AM</option>
-                    <option value="10:00">10:00 AM</option>
-                    <option value="10:30">10:30 AM</option>
-                    <option value="11:00">11:00 AM</option>
-                    <option value="11:30">11:30 AM</option>
-                    <option value="12:00">12:00 PM</option>
-                    <option value="12:30">12:30 PM</option>
-                    <option value="13:00">1:00 PM</option>
-                    <option value="13:30">1:30 PM</option>
-                    <option value="14:00">2:00 PM</option>
-                    <option value="14:30">2:30 PM</option>
-                    <option value="15:00">3:00 PM</option>
-                    <option value="15:30">3:30 PM</option>
-                    <option value="16:00">4:00 PM</option>
-                    <option value="16:30">4:30 PM</option>
-                  </select>
-                  <p className="text-sm text-gray-600 mt-3">
-                    Select your preferred time slot for the cleaning service
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Customer Details Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Customer Details
-              </h2>
-              <p className="text-gray-700 mb-6">
-                This information will be used to contact you about your service.
-              </p>
-
-              <div className="space-y-6">
-                {/* Name Row */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-900 font-semibold mb-2">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="Ex: James"
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-900 font-semibold mb-2">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Ex: Lee"
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Email and Phone */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  {/* Email */}
-                  <div className="flex-1">
-                    <label className="block text-gray-900 font-semibold mb-2">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Ex: example@xyz.com"
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-
-                  {/* Phone */}
-                  <div className="flex-1">
-                    <label className="block text-gray-900 font-semibold mb-2">
-                      Phone No
-                    </label>
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="Phone No."
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                {/* SMS Reminders Checkbox */}
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    id="smsReminders"
-                    checked={smsReminders}
-                    onChange={(e) => setSmsReminders(e.target.checked)}
-                    className="w-5 h-5 accent-emerald-600 border-2 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
-                  />
-                  <label
-                    htmlFor="smsReminders"
-                    className="text-gray-900 font-medium cursor-pointer"
-                  >
-                    Send me reminders about my booking via text message
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Address Details Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Address Details
-              </h2>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-2">
-                    Unit Number
-                  </label>
-                  <input
-                    type="text"
-                    value={unitNumber}
-                    onChange={(e) => setUnitNumber(e.target.value)}
-                    placeholder="e.g., Unit 5, Apt 2B (optional)"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-2">
-                    Street <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={street}
-                    onChange={(e) => setStreet(e.target.value)}
-                    placeholder="e.g., 123 Main Street"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-2">
-                    Suburb <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={suburb}
-                    onChange={(e) => setSuburb(e.target.value)}
-                    placeholder="e.g., Sydney"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-900 font-semibold mb-2">
-                    Postcode <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={postcode}
-                    onChange={(e) => setPostcode(e.target.value)}
-                    placeholder="e.g., 2000"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Pet and Referral Section */}
-            <div className="bg-gray-50 rounded-2xl shadow-lg p-6 space-y-6">
-              {/* Do You have Pet */}
-              <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  Do You have Pet?
-                </label>
-                <select
-                  value={hasPet}
-                  onChange={(e) => setHasPet(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
-                >
-                  <option value="">Select Option</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-              </div>
-
-              {/* How Did You Hear About Us */}
-              <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  How Did You Hear About Us
-                </label>
-                <select
-                  value={hearAboutUs}
-                  onChange={(e) => setHearAboutUs(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
-                >
-                  <option value="">Select Option</option>
-                  <option value="google">Google Search</option>
-                  <option value="facebook">Facebook</option>
-                  <option value="instagram">Instagram</option>
-                  <option value="friend">Friend/Family Referral</option>
-                  <option value="flyer">Flyer</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              {/* Special Notes */}
-              <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  Would You Like To Add Any Notes?
-                </label>
-                <textarea
-                  value={specialNotes}
-                  onChange={(e) => setSpecialNotes(e.target.value)}
-                  placeholder="Special Notes Or Instructions"
-                  rows={5}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none resize-none"
-                />
-              </div>
-            </div>
-
-            {/* Access & Other Information Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Access & Other Information
-              </h2>
-
-              {/* Cleanliness Level */}
-              <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  On A Scale Of 1-4, How Clean Would You Estimate Your Home To
-                  Be?
-                </label>
-                <select
-                  value={cleanlinessLevel}
-                  onChange={(e) => setCleanlinessLevel(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
-                >
-                  <option value="">Select Option</option>
-                  <option value="1">1 - Very Clean</option>
-                  <option value="2">2 - Moderately Clean</option>
-                  <option value="3">3 - Needs Cleaning</option>
-                  <option value="4">4 - Heavily Soiled</option>
-                </select>
-              </div>
-
-              {/* Parking */}
-              <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  Where can the cleaners park?
-                </label>
-                <select
-                  value={parking}
-                  onChange={(e) => setParking(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
-                >
-                  <option value="">Select Option</option>
-                  <option value="driveway">Driveway</option>
-                  <option value="street">Street Parking</option>
-                  <option value="garage">Garage</option>
-                  <option value="visitor">Visitor Parking</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              {/* Flexible Date/Time */}
-              <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  Is Your Date And Time Flexible
-                </label>
-                <select
-                  value={flexibleDateTime}
-                  onChange={(e) => setFlexibleDateTime(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
-                >
-                  <option value="">Select Option</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-              </div>
-
-              {/* Access */}
-              <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  How Will The Cleaner Gain Access To Your Home
-                </label>
-                <select
-                  value={access}
-                  onChange={(e) => setAccess(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none appearance-none bg-white text-gray-700"
-                >
-                  <option value="">Select Option</option>
-                  <option value="home">I will be home</option>
-                  <option value="key">Leave a key</option>
-                  <option value="lockbox">Lockbox</option>
-                  <option value="doorcode">Door code</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting || submitSuccess}
-                className={`w-full py-5 px-8 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg ${
-                  isSubmitting || submitSuccess
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transform hover:scale-[1.02]"
-                }`}
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Sending Booking Request...
-                  </span>
-                ) : submitSuccess ? (
-                  <span className="flex items-center justify-center">
-                    <svg
-                      className="w-6 h-6 mr-2"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Booking Sent Successfully!
-                  </span>
-                ) : (
-                  "Submit Booking Request"
-                )}
-              </button>
-              <p className="text-sm text-gray-600 text-center mt-4">
-                By submitting, you agree to receive communication from
-                Sustainable Shine regarding your booking.
-              </p>
             </div>
           </div>
 
-          {/* Right Side - Price Calculator (Desktop Only) */}
-          <div className="hidden lg:block lg:col-span-1 relative">
-            <div className="sticky top-24 max-h-screen overflow-y-auto">
-              <PriceSummary />
-            </div>
-          </div>
-        </div>
-
-        {/* Additional Info Section */}
-        <div className="mt-12 bg-white rounded-2xl shadow-lg p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">
-            What's Included in Your Service
-          </h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="flex items-start space-x-3">
-              <div className="bg-emerald-100 p-2 rounded-lg">
-                <svg
-                  className="w-6 h-6 text-emerald-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div className="font-semibold text-gray-900 mb-1">
-                  Professional Team
+          {/* Additional Info Section */}
+          <div className="mt-12 bg-white rounded-2xl shadow-lg p-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              What's Included in Your Service
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="flex items-start space-x-3">
+                <div className="bg-emerald-100 p-2 rounded-lg">
+                  <svg
+                    className="w-6 h-6 text-emerald-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
                 </div>
-                <p className="text-sm text-gray-600">
-                  Trained and insured cleaning professionals
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="bg-emerald-100 p-2 rounded-lg">
-                <svg
-                  className="w-6 h-6 text-emerald-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div className="font-semibold text-gray-900 mb-1">
-                  Eco-Friendly Products
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">
+                    Professional Team
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Trained and insured cleaning professionals
+                  </p>
                 </div>
-                <p className="text-sm text-gray-600">
-                  100% green and sustainable cleaning supplies
-                </p>
               </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="bg-emerald-100 p-2 rounded-lg">
-                <svg
-                  className="w-6 h-6 text-emerald-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div className="font-semibold text-gray-900 mb-1">
-                  Satisfaction Guarantee
+              <div className="flex items-start space-x-3">
+                <div className="bg-emerald-100 p-2 rounded-lg">
+                  <svg
+                    className="w-6 h-6 text-emerald-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
                 </div>
-                <p className="text-sm text-gray-600">
-                  100% money-back guarantee if not satisfied
-                </p>
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">
+                    Eco-Friendly Products
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    100% green and sustainable cleaning supplies
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="bg-emerald-100 p-2 rounded-lg">
+                  <svg
+                    className="w-6 h-6 text-emerald-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">
+                    Satisfaction Guarantee
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    100% money-back guarantee if not satisfied
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }

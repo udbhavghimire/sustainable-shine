@@ -48,12 +48,15 @@ export function generatePDFQuotation(bookingData) {
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(...black);
-      doc.text("12-14 Northumberland road", 15, yPos);
+      doc.text("12-14 Northumberland road, Auburn", 15, yPos);
       yPos += 5;
-      doc.text("sydney. NSW, 2144", 15, yPos);
+      doc.text("Sydney. NSW, 2144", 15, yPos);
       yPos += 5;
       doc.setFont("helvetica", "bold");
       doc.text("Phone: 0452422059", 15, yPos);
+      yPos += 5;
+      doc.setFont("helvetica", "normal");
+      doc.text("ABN: 27 383 550 018", 15, yPos);
 
       yPos += 15;
 
@@ -86,11 +89,11 @@ export function generatePDFQuotation(bookingData) {
       const address = `${bookingData.unitNumber ? `${bookingData.unitNumber}/ ` : ""}${
         bookingData.street
       }`;
-      
+
       // Wrap address if too long
       const addressLines = doc.splitTextToSize(address, 80);
       doc.text(addressLines, 18, yPos);
-      
+
       const addressHeight = addressLines.length * 5;
 
       // Invoice number and date (right side)
@@ -116,7 +119,7 @@ export function generatePDFQuotation(bookingData) {
 
       // ========== DESCRIPTION TABLE ==========
       const tableStartY = yPos;
-      
+
       // Table header - dark blue background
       doc.setFillColor(...darkBlue);
       doc.rect(15, yPos, pageWidth - 30, 10, "F");
@@ -126,7 +129,7 @@ export function generatePDFQuotation(bookingData) {
       doc.setFont("helvetica", "bold");
       doc.text("DESCRIPTION", 18, yPos + 7);
       doc.text("UNIT PRICE", pageWidth - 65, yPos + 7);
-      doc.text("OFFER PRICE", pageWidth - 35, yPos + 7);
+      doc.text("GST", pageWidth - 35, yPos + 7);
 
       yPos += 18; // Increased padding after header
 
@@ -144,12 +147,15 @@ export function generatePDFQuotation(bookingData) {
 
       // Add-ons
       const addOnDescriptions = [];
-      if (bookingData.selectedAddOns && Object.keys(bookingData.selectedAddOns).length > 0) {
+      if (
+        bookingData.selectedAddOns &&
+        Object.keys(bookingData.selectedAddOns).length > 0
+      ) {
         Object.entries(bookingData.selectedAddOns).forEach(([key, value]) => {
           if (value && bookingData.addOnDetails[key]) {
             const addon = bookingData.addOnDetails[key];
             addOnDescriptions.push(
-              `${addon.name.toLowerCase()}${addon.quantity > 1 ? `(${addon.quantity})` : ""}`
+              `${addon.name.toLowerCase()}${addon.quantity > 1 ? `(${addon.quantity})` : ""}`,
             );
           }
         });
@@ -160,13 +166,13 @@ export function generatePDFQuotation(bookingData) {
       }
 
       // Calculate prices
-      const subtotalBeforeDiscount =
-        bookingData.priceDetails.discount > 0
-          ? ((bookingData.priceDetails.subtotal + bookingData.priceDetails.discount) / 1.1) * 1.1
-          : bookingData.priceDetails.subtotal;
+      const totalWithGST = bookingData.priceDetails.total;
+      const priceBeforeGST = totalWithGST / 1.1;
+      const gstAmount = totalWithGST - priceBeforeGST;
 
-      const unitPrice = subtotalBeforeDiscount;
-      const offerPrice = bookingData.priceDetails.total;
+      const unitPrice = priceBeforeGST;
+      const gst = gstAmount;
+      const subtotal = totalWithGST;
 
       // Description text (wrap if needed)
       doc.setTextColor(...black);
@@ -177,7 +183,7 @@ export function generatePDFQuotation(bookingData) {
 
       // Prices
       doc.text(unitPrice.toFixed(2), pageWidth - 65, yPos);
-      doc.text(offerPrice.toFixed(2), pageWidth - 35, yPos);
+      doc.text(gst.toFixed(2), pageWidth - 35, yPos);
 
       yPos += Math.max(splitDescription.length * 5, 8);
 
@@ -215,18 +221,12 @@ export function generatePDFQuotation(bookingData) {
       doc.setFont("helvetica", "italic");
       doc.text("Thank you for your business!", 18, yPos);
 
-      // Subtotal
+      // Subtotal (total after GST)
       doc.setTextColor(...black);
       doc.setFontSize(10);
-      doc.setFont("helvetica", "normal");
+      doc.setFont("helvetica", "bold");
       doc.text("SUBTOTAL", pageWidth - 65, yPos);
-      doc.text(unitPrice.toFixed(2), pageWidth - 35, yPos);
-
-      yPos += 7;
-
-      // Offer Price
-      doc.text("OFFER PRICE", pageWidth - 65, yPos);
-      doc.text(offerPrice.toFixed(3), pageWidth - 35, yPos);
+      doc.text(subtotal.toFixed(2), pageWidth - 35, yPos);
 
       yPos += 15;
 

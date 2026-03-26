@@ -183,11 +183,15 @@ export async function sendCustomerConfirmationEmail(resend, bookingData) {
     console.log("🔵 Generating email HTML...");
     const htmlContent = generateCustomerEmailHTML(bookingData);
 
+    // Ensure email is properly formatted and trimmed
+    const customerEmail = bookingData.email?.trim();
+    const customerName = `${bookingData.firstName} ${bookingData.lastName}`.trim();
+
     // Send email with PDF attachment
-    console.log("🔵 Sending email to:", bookingData.email);
+    console.log("🔵 Sending email to:", customerEmail);
     const emailData = await resend.emails.send({
       from: "Sustainable Shine Bookings <info@sustainableshine.com.au>",
-      to: [bookingData.email],
+      to: [`${customerName} <${customerEmail}>`],
       replyTo: "info@sustainableshine.com.au",
       subject: `✓ Booking Confirmed - ${
         serviceTypeLabels[bookingData.serviceType]

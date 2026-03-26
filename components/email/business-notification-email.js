@@ -479,10 +479,14 @@ export async function sendBusinessNotificationEmail(resend, bookingData) {
   try {
     const htmlContent = generateBusinessEmailHTML(bookingData);
 
+    // Ensure email is properly formatted and trimmed
+    const customerEmail = bookingData.email?.trim();
+    const customerName = `${bookingData.firstName} ${bookingData.lastName}`.trim();
+
     const emailData = await resend.emails.send({
       from: "Sustainable Shine Bookings <info@sustainableshine.com.au>",
       to: ["info@sustainableshine.com.au"],
-      replyTo: bookingData.email,
+      replyTo: `${customerName} <${customerEmail}>`,
       subject: `New Booking Request: ${
         serviceTypeLabels[bookingData.serviceType]
       } - ${bookingData.firstName} ${bookingData.lastName}`,

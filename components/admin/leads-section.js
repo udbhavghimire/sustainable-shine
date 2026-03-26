@@ -132,7 +132,7 @@ export default function LeadsSection({
                   Location
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
+                  Date & Time
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Service Type
@@ -182,6 +182,17 @@ export default function LeadsSection({
                           ? new Date(booking.selected_date).toLocaleDateString()
                           : "Not set"}
                       </div>
+                      {booking.selected_time && (
+                        <div className="text-xs text-gray-600 mt-1">
+                          {(() => {
+                            const [hours, minutes] = booking.selected_time.split(":");
+                            const hour = parseInt(hours);
+                            const ampm = hour >= 12 ? "PM" : "AM";
+                            const hour12 = hour % 12 || 12;
+                            return `${hour12}:${minutes} ${ampm}`;
+                          })()}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 capitalize">

@@ -9,6 +9,11 @@ export async function POST(request) {
   try {
     const bookingData = await request.json();
 
+    // Trim and validate email
+    bookingData.email = bookingData.email?.trim();
+    bookingData.firstName = bookingData.firstName?.trim();
+    bookingData.lastName = bookingData.lastName?.trim();
+
     console.log("📧 Customer Email Address:", bookingData.email);
     console.log(
       "👤 Customer Name:",
