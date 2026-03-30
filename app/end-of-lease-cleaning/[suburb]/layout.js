@@ -1,27 +1,89 @@
 import { getSuburbData } from "@/data/suburbs";
 
 export async function generateMetadata({ params }) {
-  const suburbData = getSuburbData(params.suburb);
-  
+  const resolvedParams = await params;
+  const suburbData = getSuburbData(resolvedParams.suburb);
+
   if (!suburbData) {
     return {
       title: "End of Lease Cleaning | Sustainable Shine",
+      description: "Professional end of lease cleaning services in Sydney.",
     };
   }
 
-  const canonicalUrl = `https://sustainableshine.com.au/end-of-lease-cleaning/${params.suburb}`;
+  const pageUrl = `https://sustainableshine.com.au/end-of-lease-cleaning/${resolvedParams.suburb}`;
+  const imageUrl = "https://sustainableshine.com.au/hero2.jpeg";
 
   return {
-    title: `End of Lease Cleaning ${suburbData.name} - Bond Back Guarantee`,
-    description: `Professional end of lease cleaning ${suburbData.name} for apartments, houses, and units. Expert bond cleaning ${suburbData.name} service with 100% guarantee. Get your full bond back with trusted move out cleaning in ${suburbData.name}. Local cleaners familiar with ${suburbData.name} property standards.`,
+    metadataBase: new URL("https://sustainableshine.com.au"),
+
+    title: `End of Lease Cleaning ${suburbData.name} | Bond Back Guarantee`,
+    description: `Professional end of lease cleaning ${suburbData.name} for apartments, houses & units. Expert bond cleaning with 100% guarantee. Get your full bond back with trusted move out cleaning. Book today!`,
     keywords: `end of lease cleaning ${suburbData.name}, bond cleaning ${suburbData.name}, move out cleaning ${suburbData.name}, exit cleaning ${suburbData.name}, rental cleaning ${suburbData.name}, end of lease cleaners ${suburbData.name}, bond back guarantee, vacate cleaning, lease cleaning`,
+
+    authors: [{ name: "Sustainable Shine" }],
+    creator: "Sustainable Shine",
+    publisher: "Sustainable Shine",
+
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/favicon.ico", sizes: "16x16", type: "image/x-icon" },
+        { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+      ],
+      shortcut: "/favicon.ico",
+      apple: "/favicon.ico",
+    },
+
     openGraph: {
-      title: `End of Lease Cleaning ${suburbData.name} - Bond Back Guarantee`,
+      title: `End of Lease Cleaning ${suburbData.name} | Bond Back Guarantee`,
       description: `Professional end of lease cleaning in ${suburbData.name}. 100% bond back guarantee. Trusted by tenants for move out cleaning.`,
       type: "website",
+      locale: "en_AU",
+      siteName: "Sustainable Shine",
+      url: pageUrl,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `Professional End of Lease Cleaning in ${suburbData.name} - Bond Guarantee`,
+        },
+      ],
     },
+
+    twitter: {
+      card: "summary_large_image",
+      title: `End of Lease Cleaning ${suburbData.name} | Bond Back Guarantee`,
+      description: `Professional end of lease cleaning in ${suburbData.name}. 100% bond back guarantee. Trusted by tenants for move out cleaning.`,
+      images: [imageUrl],
+      creator: "@sustainableshine",
+      site: "@sustainableshine",
+    },
+
     alternates: {
-      canonical: canonicalUrl,
+      canonical: pageUrl,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+
+    category: "Cleaning Services",
+
+    other: {
+      "geo.region": "AU-NSW",
+      "geo.placename": suburbData.name,
+      "geo.position": "",
     },
   };
 }

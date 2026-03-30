@@ -123,19 +123,17 @@ function generateSlug(name) {
     .replace(/[^a-z0-9-]/g, "");
 }
 
-// Auto-generate meta title
 function generateMetaTitle(name) {
-  return `Professional House Cleaning Services in ${name} - Book Today!`;
+  return `Professional House Cleaning in ${name} | Book Now`;
 }
 
-// Auto-generate meta description
 function generateMetaDescription(name) {
-  return `Looking for professional house cleaning services in ${name}? Sustainable Shine offers spotless, eco-friendly home cleaning at great prices. Call now!`;
+  return `Professional house cleaning services in ${name}, Sydney. Trusted local cleaners offering deep cleaning, end-of-lease & general home cleaning. Book today!`;
 }
 
 // Auto-generate keywords
 function generateKeywords(name) {
-  return `cleaning services ${name}, ${name} cleaners, eco-friendly cleaning ${name}, house cleaning ${name}, deep cleaning ${name}, end-of-lease cleaning ${name}`;
+  return `cleaning services ${name}, ${name} cleaners, house cleaning ${name}, deep cleaning ${name}, end-of-lease cleaning ${name}, general cleaning ${name}`;
 }
 
 // Build the suburbs object with auto-generated content

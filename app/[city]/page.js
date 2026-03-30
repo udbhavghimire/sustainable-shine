@@ -37,10 +37,19 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const pageUrl = `https://sustainableshine.com.au/${resolvedParams.city}`;
+  const imageUrl = "https://sustainableshine.com.au/hero2.jpeg";
+
   return {
+    metadataBase: new URL("https://sustainableshine.com.au"),
+    
     title: suburbData.metaTitle,
     description: suburbData.metaDescription,
     keywords: suburbData.keywords,
+    
+    authors: [{ name: "Sustainable Shine" }],
+    creator: "Sustainable Shine",
+    publisher: "Sustainable Shine",
     
     // Favicon and Icons
     icons: {
@@ -59,28 +68,34 @@ export async function generateMetadata({ params }) {
       type: "website",
       locale: "en_AU",
       siteName: "Sustainable Shine",
-      url: `https://sustainableshine.com.au/${resolvedParams.city}`,
+      url: pageUrl,
       images: [
         {
-          url: "https://sustainableshine.com.au/hero2.jpeg",
+          url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `Professional Cleaning Services in ${suburbData.name}`,
+          alt: `Professional Cleaning Services in ${suburbData.name} - Sustainable Shine`,
         },
       ],
     },
+    
     twitter: {
       card: "summary_large_image",
       title: suburbData.metaTitle,
       description: suburbData.metaDescription,
-      images: ["https://sustainableshine.com.au/hero2.jpeg"],
+      images: [imageUrl],
+      creator: "@sustainableshine",
+      site: "@sustainableshine",
     },
+    
     alternates: {
-      canonical: `https://sustainableshine.com.au/${resolvedParams.city}`,
+      canonical: pageUrl,
     },
+    
     robots: {
       index: true,
       follow: true,
+      nocache: false,
       googleBot: {
         index: true,
         follow: true,
@@ -89,7 +104,14 @@ export async function generateMetadata({ params }) {
         "max-snippet": -1,
       },
     },
-    metadataBase: new URL("https://sustainableshine.com.au"),
+    
+    category: "Cleaning Services",
+    
+    other: {
+      "geo.region": "AU-NSW",
+      "geo.placename": suburbData.name,
+      "geo.position": "",
+    },
   };
 }
 
