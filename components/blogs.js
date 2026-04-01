@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BlogImage from "./blog-image";
 
 const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
@@ -74,15 +75,7 @@ export default async function Blogs() {
               <article className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
                 <div className="aspect-video w-full overflow-hidden bg-gray-100">
                   {blog.featured_image ? (
-                    <img
-                      src={blog.featured_image}
-                      alt={blog.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        e.target.src =
-                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect fill='%23e5e7eb' width='800' height='450'/%3E%3Ctext fill='%239ca3af' font-family='sans-serif' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Not Found%3C/text%3E%3C/svg%3E";
-                      }}
-                    />
+                    <BlogImage src={blog.featured_image} alt={blog.title} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-emerald-100">
                       <svg

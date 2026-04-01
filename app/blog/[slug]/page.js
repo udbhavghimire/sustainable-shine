@@ -62,7 +62,7 @@ export async function generateMetadata({ params }) {
       return {
         title: blog.title || "Blog Post | Sustainable Shine",
         description: description,
-        keywords: blog.tags?.join(", ") || "",
+        keywords: Array.isArray(blog.tags) ? blog.tags.join(", ") : (blog.tags || ""),
         openGraph: {
           title: blog.title,
           description: description,
