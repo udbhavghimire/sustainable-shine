@@ -1,63 +1,65 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
-export default function Blog() {
-  const [blogs, setBlogs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
-
-  const fetchBlogs = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/blog/`, {
-        headers: {
-          Accept: "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      // Only show published blogs
-      const publishedBlogs = (data.results || data || []).filter(
-        (blog) => blog.status === "published",
-      );
-      setBlogs(publishedBlogs);
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+async function fetchBlogs() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/blog/`, {
+      headers: {
+        Accept: "application/json",
+      },
+      next: { revalidate: 3600 }, // Revalidate every hour
     });
-  };
 
-  const getExcerpt = (content, maxLength = 150) => {
-    if (!content) return "";
-    const text = content.replace(/<[^>]*>/g, ""); // Strip HTML tags
-    return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
-  };
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    // Only show published blogs
+    const publishedBlogs = (data.results || data || []).filter(
+      (blog) => blog.status === "published",
+    );
+    return publishedBlogs;
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    return [];
+  }
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function getExcerpt(content, maxLength = 150) {
+  if (!content) return "";
+  const text = content.replace(/<[^>]*>/g, ""); // Strip HTML tags
+  return text.length > maxLength
+    ? text.substring(0, maxLength) + "..."
+    : text;
+}
+
+// Generate metadata for SEO
+export const metadata = {
+  title: "Blog | Sustainable Shine - Cleaning Tips & Insights",
+  description: "Expert advice, eco-friendly cleaning tips, and insights to keep your home sparkling clean. Browse our latest articles on sustainable cleaning practices.",
+  openGraph: {
+    title: "Blog | Sustainable Shine",
+    description: "Expert cleaning tips and eco-friendly home care insights",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://sustainableshine.com.au/blog",
+  },
+};
+
+export default async function Blog() {
+  const blogs = await fetchBlogs();
 
   return (
     <div className="min-h-screen bg-gray-50 py-32">
@@ -72,29 +74,7 @@ export default function Blog() {
           </p>
         </div>
 
-        {isLoading ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading blog posts...</p>
-          </div>
-        ) : error ? (
-          <div className="bg-white rounded-lg shadow-sm border border-red-200 p-12 text-center">
-            <div className="text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Unable to Load Blogs
-            </h2>
-            <p className="text-gray-600 mb-6">
-              We're having trouble connecting to our server. Please try again
-              later.
-            </p>
-            <button
-              onClick={fetchBlogs}
-              className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-all"
-            >
-              Retry
-            </button>
-          </div>
-        ) : blogs.length === 0 ? (
+        {blogs.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <div className="text-6xl mb-4">📝</div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -127,14 +107,6 @@ export default function Blog() {
                         src={blog.featured_image}
                         alt={blog.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          console.error(
-                            "Image failed to load:",
-                            blog.featured_image,
-                          );
-                          e.target.src =
-                            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect fill='%23e5e7eb' width='800' height='450'/%3E%3Ctext fill='%239ca3af' font-family='sans-serif' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Not Found%3C/text%3E%3C/svg%3E";
-                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-emerald-100">

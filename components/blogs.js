@@ -1,83 +1,52 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
-export default function Blogs() {
-  const [blogs, setBlogs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
-
-  const fetchBlogs = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/blog/`, {
-        headers: {
-          Accept: "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const publishedBlogs = (data.results || data || []).filter(
-        (blog) => blog.status === "published"
-      );
-      
-      // Get only the 4 most recent blogs
-      setBlogs(publishedBlogs.slice(0, 4));
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
-      setBlogs([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+async function fetchBlogs() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/blog/`, {
+      headers: {
+        Accept: "application/json",
+      },
+      next: { revalidate: 3600 }, // Revalidate every hour
     });
-  };
 
-  const getExcerpt = (content, maxLength = 120) => {
-    if (!content) return "";
-    const text = content.replace(/<[^>]*>/g, "");
-    return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
-  };
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  if (isLoading) {
-    return (
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Latest from Our Blog
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Stay updated with cleaning tips, eco-friendly advice, and home care insights
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading blog posts...</p>
-          </div>
-        </div>
-      </section>
+    const data = await response.json();
+    const publishedBlogs = (data.results || data || []).filter(
+      (blog) => blog.status === "published"
     );
+    
+    // Get only the 4 most recent blogs
+    return publishedBlogs.slice(0, 4);
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    return [];
   }
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function getExcerpt(content, maxLength = 120) {
+  if (!content) return "";
+  const text = content.replace(/<[^>]*>/g, "");
+  return text.length > maxLength
+    ? text.substring(0, maxLength) + "..."
+    : text;
+}
+
+export default async function Blogs() {
+  const blogs = await fetchBlogs();
 
   if (blogs.length === 0) {
     return null;

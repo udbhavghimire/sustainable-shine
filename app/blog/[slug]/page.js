@@ -2,6 +2,34 @@ import BlogPostClient from "./blog-post-client";
 
 const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
+// Generate static params for all blog posts
+export async function generateStaticParams() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/blog/`, {
+      headers: {
+        Accept: "application/json",
+      },
+      next: { revalidate: 3600 },
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    const publishedBlogs = (data.results || data || []).filter(
+      (blog) => blog.status === "published"
+    );
+
+    return publishedBlogs.map((blog) => ({
+      slug: blog.slug,
+    }));
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];
+  }
+}
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;

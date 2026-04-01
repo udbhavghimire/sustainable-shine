@@ -13,7 +13,7 @@ import FAQ from "@/components/faq";
 import CTA from "@/components/cta";
 import FloatingBookingButton from "@/components/floating-booking-button";
 
-export default function Home() {
+export default async function Home() {
   return (
     <main className="min-h-screen">
       <Navbar />
