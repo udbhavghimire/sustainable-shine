@@ -1,14 +1,11 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 import HowItWorks from "@/components/how-it-works";
 import Reviews from "@/components/reviews";
 import OurWork from "@/components/our-work";
 import AreasWeServe from "@/components/areas-we-serve";
+import FAQSection from "@/components/faq-section";
 
 export default function EndOfLeaseCleaningPage() {
-  const [openFaq, setOpenFaq] = useState(null);
 
   const features = [
     {
@@ -228,7 +225,10 @@ export default function EndOfLeaseCleaningPage() {
                 <Link href="/booking" className="btn-primary text-center">
                   Get Free Quote
                 </Link>
-                <a href="tel:0470573081" className="btn-secondary text-center">
+                <a
+                  href="tel:+61 452 422 059"
+                  className="btn-secondary text-center"
+                >
                   Call +61 452 422 059
                 </a>
               </div>
@@ -404,76 +404,11 @@ export default function EndOfLeaseCleaningPage() {
       <HowItWorks />
 
       {/* FAQ Section */}
-      <section className="section-padding bg-gray-50">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <span className="text-emerald-500 font-semibold text-sm uppercase tracking-wide">
-                FAQs
-              </span>
-              <h2 className="heading-2 text-gray-900 mt-4 mb-6">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-xl text-gray-600">
-                Everything you need to know about end of lease cleaning
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg"
-                >
-                  <button
-                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                    className="w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-inset"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-gray-900 pr-8">
-                        {faq.question}
-                      </h3>
-                      <div
-                        className={`flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center transition-transform duration-300 ${
-                          openFaq === index ? "rotate-180" : ""
-                        }`}
-                      >
-                        <svg
-                          className="w-5 h-5 text-emerald-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </button>
-
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      openFaq === index
-                        ? "max-h-96 opacity-100"
-                        : "max-h-0 opacity-0"
-                    }`}
-                  >
-                    <div className="px-6 pb-6">
-                      <p className="text-gray-600 leading-relaxed">
-                        {faq.answer}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <FAQSection
+        faqs={faqs}
+        title="Frequently Asked Questions"
+        subtitle="Everything you need to know about end of lease cleaning"
+      />
 
       {/* CTA Section */}
       <section className="section-padding bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
@@ -497,7 +432,7 @@ export default function EndOfLeaseCleaningPage() {
                 Book Now
               </Link>
               <a
-                href="tel:0470573081"
+                href="tel:+61 452 422 059"
                 className="bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-lg text-center border-2 border-white"
               >
                 Call +61 452 422 059

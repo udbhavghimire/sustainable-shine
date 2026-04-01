@@ -4,7 +4,11 @@ import HowItWorks from "@/components/how-it-works";
 import Reviews from "@/components/reviews";
 import OurWork from "@/components/our-work";
 import FAQSection from "@/components/faq-section";
-import { LocalBusinessSchema, ServiceSchema, BreadcrumbSchema } from "@/components/schema-markup";
+import {
+  LocalBusinessSchema,
+  ServiceSchema,
+  BreadcrumbSchema,
+} from "@/components/schema-markup";
 
 export async function generateStaticParams() {
   const slugs = getAllSuburbSlugs();
@@ -22,7 +26,7 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
   }
 
   const pageUrl = `https://sustainableshine.com.au/end-of-lease-cleaning/${resolvedParams.suburb}`;
-  
+
   const serviceDetails = {
     type: "End of Lease Cleaning",
     name: `End of Lease Cleaning ${suburbData.name}`,
@@ -159,7 +163,13 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Professional <strong>end of lease cleaning {suburbData.name}</strong> for apartments, houses, and units. Expert <strong>bond cleaning {suburbData.name}</strong> service with 100% guarantee. Get your full bond back with trusted <strong>move out cleaning</strong> in {suburbData.name}. Local cleaners familiar with {suburbData.name} property standards.
+              Professional{" "}
+              <strong>end of lease cleaning {suburbData.name}</strong> for
+              apartments, houses, and units. Expert{" "}
+              <strong>bond cleaning {suburbData.name}</strong> service with 100%
+              guarantee. Get your full bond back with trusted{" "}
+              <strong>move out cleaning</strong> in {suburbData.name}. Local
+              cleaners familiar with {suburbData.name} property standards.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -170,7 +180,7 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
                 Get Free Quote for {suburbData.name}
               </Link>
               <a
-                href="tel:0470573081"
+                href="tel:+61 452 422 059"
                 className="bg-white text-emerald-600 px-8 py-4 rounded-full font-bold text-lg border-2 border-emerald-500 hover:bg-emerald-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 Call +61 452 422 059
@@ -206,7 +216,9 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
               Why Choose Our End of Lease Cleaning {suburbData.name}?
             </h2>
             <p className="text-xl text-gray-600">
-              Professional <strong>bond cleaning {suburbData.name}</strong> with guaranteed results. Trusted <strong>end of lease cleaners</strong> familiar with {suburbData.name} property requirements.
+              Professional <strong>bond cleaning {suburbData.name}</strong> with
+              guaranteed results. Trusted <strong>end of lease cleaners</strong>{" "}
+              familiar with {suburbData.name} property requirements.
             </p>
           </div>
 
@@ -236,12 +248,27 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
                 End of Lease Cleaning Checklist {suburbData.name}
               </h2>
               <p className="text-xl text-gray-600">
-                Comprehensive <strong>bond cleaning checklist</strong> for {suburbData.name} properties. Every detail covered for guaranteed bond return.
+                Comprehensive <strong>bond cleaning checklist</strong> for{" "}
+                {suburbData.name} properties. Every detail covered for
+                guaranteed bond return.
               </p>
-              <Link href="/checklist" className="inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors mt-4">
+              <Link
+                href="/checklist"
+                className="inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors mt-4"
+              >
                 View Complete Cleaning Checklist
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-5 h-5 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </Link>
             </div>
@@ -293,7 +320,11 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
                 </h2>
                 <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
                   <p>
-                    Our <strong>end of lease cleaning {suburbData.name}</strong> team specializes in preparing rental properties for final inspections. We understand {suburbData.name} real estate standards and ensure every detail meets property manager requirements.
+                    Our <strong>end of lease cleaning {suburbData.name}</strong>{" "}
+                    team specializes in preparing rental properties for final
+                    inspections. We understand {suburbData.name} real estate
+                    standards and ensure every detail meets property manager
+                    requirements.
                   </p>
                   <p>
                     Whether you're moving out of an apartment, house, or unit in{" "}
@@ -450,7 +481,11 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
               Book End of Lease Cleaning {suburbData.name} Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Get your full bond back with expert <strong>bond cleaning {suburbData.name}</strong>. Professional <strong>end of lease cleaners</strong> available for same-day service. Call now for a free quote on <strong>move out cleaning</strong> in {suburbData.name}!
+              Get your full bond back with expert{" "}
+              <strong>bond cleaning {suburbData.name}</strong>. Professional{" "}
+              <strong>end of lease cleaners</strong> available for same-day
+              service. Call now for a free quote on{" "}
+              <strong>move out cleaning</strong> in {suburbData.name}!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -460,7 +495,7 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
                 Book {suburbData.name} Cleaning
               </Link>
               <a
-                href="tel:0470573081"
+                href="tel:+61 452 422 059"
                 className="bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 Call +61 452 422 059
@@ -474,29 +509,35 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(LocalBusinessSchema({
-            suburbData,
-            serviceType: "End of Lease Cleaning",
-            pageUrl,
-          })),
+          __html: JSON.stringify(
+            LocalBusinessSchema({
+              suburbData,
+              serviceType: "End of Lease Cleaning",
+              pageUrl,
+            }),
+          ),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(ServiceSchema({
-            suburbData,
-            serviceDetails,
-            pageUrl,
-          })),
+          __html: JSON.stringify(
+            ServiceSchema({
+              suburbData,
+              serviceDetails,
+              pageUrl,
+            }),
+          ),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(BreadcrumbSchema({
-            items: breadcrumbItems,
-          })),
+          __html: JSON.stringify(
+            BreadcrumbSchema({
+              items: breadcrumbItems,
+            }),
+          ),
         }}
       />
     </main>

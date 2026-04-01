@@ -4,7 +4,11 @@ import HowItWorks from "@/components/how-it-works";
 import Reviews from "@/components/reviews";
 import OurWork from "@/components/our-work";
 import FAQSection from "@/components/faq-section";
-import { LocalBusinessSchema, ServiceSchema, BreadcrumbSchema } from "@/components/schema-markup";
+import {
+  LocalBusinessSchema,
+  ServiceSchema,
+  BreadcrumbSchema,
+} from "@/components/schema-markup";
 
 export async function generateStaticParams() {
   const slugs = getAllSuburbSlugs();
@@ -22,7 +26,7 @@ export default async function DeepCleanSuburbPage({ params }) {
   }
 
   const pageUrl = `https://sustainableshine.com.au/deep-clean/${resolvedParams.suburb}`;
-  
+
   const serviceDetails = {
     type: "Deep Cleaning",
     name: `Deep Cleaning ${suburbData.name}`,
@@ -163,7 +167,10 @@ export default async function DeepCleanSuburbPage({ params }) {
           <div className="max-w-4xl mx-auto text-center">
             {/* Breadcrumbs */}
             <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-6">
-              <Link href="/" className="hover:text-emerald-600 transition-colors">
+              <Link
+                href="/"
+                className="hover:text-emerald-600 transition-colors"
+              >
                 Home
               </Link>
               <span>/</span>
@@ -184,7 +191,12 @@ export default async function DeepCleanSuburbPage({ params }) {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Intensive <strong>deep cleaning {suburbData.name}</strong> for homes and apartments. Professional <strong>deep clean</strong> service includes oven cleaning, grout scrubbing, and sanitization. Expert <strong>spring cleaning {suburbData.name}</strong> for thorough home maintenance. Local cleaners familiar with {suburbData.name} properties.
+              Intensive <strong>deep cleaning {suburbData.name}</strong> for
+              homes and apartments. Professional <strong>deep clean</strong>{" "}
+              service includes oven cleaning, grout scrubbing, and sanitization.
+              Expert <strong>spring cleaning {suburbData.name}</strong> for
+              thorough home maintenance. Local cleaners familiar with{" "}
+              {suburbData.name} properties.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -195,7 +207,7 @@ export default async function DeepCleanSuburbPage({ params }) {
                 Get Free Quote for {suburbData.name}
               </Link>
               <a
-                href="tel:0470573081"
+                href="tel:+61 452 422 059"
                 className="bg-white text-emerald-600 px-8 py-4 rounded-full font-bold text-lg border-2 border-emerald-500 hover:bg-emerald-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 Call +61 452 422 059
@@ -231,7 +243,10 @@ export default async function DeepCleanSuburbPage({ params }) {
               Why Choose Our Deep Cleaning Services {suburbData.name}?
             </h2>
             <p className="text-xl text-gray-600">
-              Professional <strong>deep cleaners {suburbData.name}</strong> with intensive cleaning techniques. Expert <strong>spring cleaning</strong> for {suburbData.name} homes and apartments.
+              Professional <strong>deep cleaners {suburbData.name}</strong> with
+              intensive cleaning techniques. Expert{" "}
+              <strong>spring cleaning</strong> for {suburbData.name} homes and
+              apartments.
             </p>
           </div>
 
@@ -260,12 +275,27 @@ export default async function DeepCleanSuburbPage({ params }) {
               Deep Cleaning Checklist {suburbData.name}
             </h2>
             <p className="text-xl text-gray-600">
-              Comprehensive <strong>deep clean</strong> covering every room in your {suburbData.name} property. Hospital-grade sanitization and intensive cleaning.
+              Comprehensive <strong>deep clean</strong> covering every room in
+              your {suburbData.name} property. Hospital-grade sanitization and
+              intensive cleaning.
             </p>
-            <Link href="/checklist" className="inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors mt-4">
+            <Link
+              href="/checklist"
+              className="inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors mt-4"
+            >
               View Complete Deep Cleaning Checklist
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 ml-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           </div>
@@ -323,7 +353,11 @@ export default async function DeepCleanSuburbPage({ params }) {
                 </h2>
                 <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
                   <p>
-                    Our <strong>deep cleaning {suburbData.name}</strong> team specializes in intensive house cleaning with hospital-grade products. We provide thorough <strong>spring cleaning</strong> services for {suburbData.name} properties, reaching areas others miss.
+                    Our <strong>deep cleaning {suburbData.name}</strong> team
+                    specializes in intensive house cleaning with hospital-grade
+                    products. We provide thorough{" "}
+                    <strong>spring cleaning</strong> services for{" "}
+                    {suburbData.name} properties, reaching areas others miss.
                   </p>
                   <p>
                     Whether you're preparing for a special event, doing spring
@@ -476,7 +510,11 @@ export default async function DeepCleanSuburbPage({ params }) {
               Book Deep Cleaning {suburbData.name} Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Transform your home with expert <strong>deep cleaning services {suburbData.name}</strong>. Professional <strong>deep house cleaning</strong> includes oven cleaning, grout scrubbing, and complete sanitization. Call now for a free quote!
+              Transform your home with expert{" "}
+              <strong>deep cleaning services {suburbData.name}</strong>.
+              Professional <strong>deep house cleaning</strong> includes oven
+              cleaning, grout scrubbing, and complete sanitization. Call now for
+              a free quote!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -486,7 +524,7 @@ export default async function DeepCleanSuburbPage({ params }) {
                 Book {suburbData.name} Deep Clean
               </Link>
               <a
-                href="tel:0470573081"
+                href="tel:+61 452 422 059"
                 className="bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 Call +61 452 422 059
@@ -500,29 +538,35 @@ export default async function DeepCleanSuburbPage({ params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(LocalBusinessSchema({
-            suburbData,
-            serviceType: "Deep Cleaning",
-            pageUrl,
-          })),
+          __html: JSON.stringify(
+            LocalBusinessSchema({
+              suburbData,
+              serviceType: "Deep Cleaning",
+              pageUrl,
+            }),
+          ),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(ServiceSchema({
-            suburbData,
-            serviceDetails,
-            pageUrl,
-          })),
+          __html: JSON.stringify(
+            ServiceSchema({
+              suburbData,
+              serviceDetails,
+              pageUrl,
+            }),
+          ),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(BreadcrumbSchema({
-            items: breadcrumbItems,
-          })),
+          __html: JSON.stringify(
+            BreadcrumbSchema({
+              items: breadcrumbItems,
+            }),
+          ),
         }}
       />
     </main>

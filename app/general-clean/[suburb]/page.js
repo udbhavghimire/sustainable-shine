@@ -4,7 +4,11 @@ import HowItWorks from "@/components/how-it-works";
 import Reviews from "@/components/reviews";
 import OurWork from "@/components/our-work";
 import FAQSection from "@/components/faq-section";
-import { LocalBusinessSchema, ServiceSchema, BreadcrumbSchema } from "@/components/schema-markup";
+import {
+  LocalBusinessSchema,
+  ServiceSchema,
+  BreadcrumbSchema,
+} from "@/components/schema-markup";
 
 export async function generateStaticParams() {
   const slugs = getAllSuburbSlugs();
@@ -22,7 +26,7 @@ export default async function GeneralCleanSuburbPage({ params }) {
   }
 
   const pageUrl = `https://sustainableshine.com.au/general-clean/${resolvedParams.suburb}`;
-  
+
   const serviceDetails = {
     type: "General Cleaning",
     name: `General Cleaning ${suburbData.name}`,
@@ -187,7 +191,12 @@ export default async function GeneralCleanSuburbPage({ params }) {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Reliable <strong>general cleaning {suburbData.name}</strong> for homes and apartments. Professional <strong>house cleaning</strong> available weekly, fortnightly, or monthly. Trusted <strong>regular cleaning services</strong> for busy {suburbData.name} families and professionals. Local cleaners you can count on.
+              Reliable <strong>general cleaning {suburbData.name}</strong> for
+              homes and apartments. Professional <strong>house cleaning</strong>{" "}
+              available weekly, fortnightly, or monthly. Trusted{" "}
+              <strong>regular cleaning services</strong> for busy{" "}
+              {suburbData.name} families and professionals. Local cleaners you
+              can count on.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -198,7 +207,7 @@ export default async function GeneralCleanSuburbPage({ params }) {
                 Get Free Quote for {suburbData.name}
               </Link>
               <a
-                href="tel:0470573081"
+                href="tel:+61 452 422 059"
                 className="bg-white text-emerald-600 px-8 py-4 rounded-full font-bold text-lg border-2 border-emerald-500 hover:bg-emerald-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 Call +61 452 422 059
@@ -234,7 +243,10 @@ export default async function GeneralCleanSuburbPage({ params }) {
               Why Choose Our General Cleaning Services {suburbData.name}?
             </h2>
             <p className="text-xl text-gray-600">
-              Consistent quality <strong>house cleaning {suburbData.name}</strong> service. Professional <strong>regular cleaning</strong> for maintaining a spotless home.
+              Consistent quality{" "}
+              <strong>house cleaning {suburbData.name}</strong> service.
+              Professional <strong>regular cleaning</strong> for maintaining a
+              spotless home.
             </p>
           </div>
 
@@ -263,12 +275,27 @@ export default async function GeneralCleanSuburbPage({ params }) {
               General Cleaning Checklist {suburbData.name}
             </h2>
             <p className="text-xl text-gray-600">
-              Complete <strong>house cleaning</strong> covering all living spaces in your {suburbData.name} property. Regular maintenance for a consistently clean home.
+              Complete <strong>house cleaning</strong> covering all living
+              spaces in your {suburbData.name} property. Regular maintenance for
+              a consistently clean home.
             </p>
-            <Link href="/checklist" className="inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors mt-4">
+            <Link
+              href="/checklist"
+              className="inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors mt-4"
+            >
               View Complete Cleaning Checklist
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 ml-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           </div>
@@ -410,7 +437,11 @@ export default async function GeneralCleanSuburbPage({ params }) {
                 </h2>
                 <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
                   <p>
-                    Our <strong>general cleaning {suburbData.name}</strong> team provides reliable, professional <strong>house cleaning services</strong>. We offer flexible weekly, fortnightly, or monthly cleaning schedules to maintain your {suburbData.name} home consistently clean.
+                    Our <strong>general cleaning {suburbData.name}</strong> team
+                    provides reliable, professional{" "}
+                    <strong>house cleaning services</strong>. We offer flexible
+                    weekly, fortnightly, or monthly cleaning schedules to
+                    maintain your {suburbData.name} home consistently clean.
                   </p>
                   <p>
                     Whether you're a young professional, a family, or anyone in
@@ -560,7 +591,10 @@ export default async function GeneralCleanSuburbPage({ params }) {
               Book House Cleaning {suburbData.name} Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Enjoy a consistently clean home with professional <strong>general cleaning services {suburbData.name}</strong>. Flexible <strong>house cleaning</strong> schedules available weekly, fortnightly, or monthly. Call now for a free quote!
+              Enjoy a consistently clean home with professional{" "}
+              <strong>general cleaning services {suburbData.name}</strong>.
+              Flexible <strong>house cleaning</strong> schedules available
+              weekly, fortnightly, or monthly. Call now for a free quote!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -570,7 +604,7 @@ export default async function GeneralCleanSuburbPage({ params }) {
                 Book {suburbData.name} Cleaning
               </Link>
               <a
-                href="tel:0470573081"
+                href="tel:+61 452 422 059"
                 className="bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 Call +61 452 422 059
@@ -584,29 +618,35 @@ export default async function GeneralCleanSuburbPage({ params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(LocalBusinessSchema({
-            suburbData,
-            serviceType: "General Cleaning",
-            pageUrl,
-          })),
+          __html: JSON.stringify(
+            LocalBusinessSchema({
+              suburbData,
+              serviceType: "General Cleaning",
+              pageUrl,
+            }),
+          ),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(ServiceSchema({
-            suburbData,
-            serviceDetails,
-            pageUrl,
-          })),
+          __html: JSON.stringify(
+            ServiceSchema({
+              suburbData,
+              serviceDetails,
+              pageUrl,
+            }),
+          ),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(BreadcrumbSchema({
-            items: breadcrumbItems,
-          })),
+          __html: JSON.stringify(
+            BreadcrumbSchema({
+              items: breadcrumbItems,
+            }),
+          ),
         }}
       />
     </main>
