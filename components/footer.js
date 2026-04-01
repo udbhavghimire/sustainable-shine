@@ -25,7 +25,7 @@ export default function Footer({ city }) {
     { name: "Bondi", slug: "bondi" },
     { name: "Parramatta", slug: "parramatta" },
     { name: "Manly", slug: "manly" },
-    { name: "Surry Hills", slug: "surry_hills" },
+    { name: "Surry Hills", slug: "surry-hills" },
     { name: "Chatswood", slug: "chatswood" },
     { name: "Newtown", slug: "newtown" },
     { name: "Penrith", slug: "penrith" },
