@@ -1,28 +1,68 @@
-"use client";
-
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { getSuburbData } from "@/data/suburbs";
+import { getSuburbData, getAllSuburbSlugs } from "@/data/suburbs";
 import HowItWorks from "@/components/how-it-works";
 import Reviews from "@/components/reviews";
 import OurWork from "@/components/our-work";
+import FAQSection from "@/components/faq-section";
+import { LocalBusinessSchema, ServiceSchema, BreadcrumbSchema } from "@/components/schema-markup";
 
-export default function DeepCleanSuburbPage() {
-  const params = useParams();
-  const [suburbData, setSuburbData] = useState(null);
-  const [openFaq, setOpenFaq] = useState(null);
+export async function generateStaticParams() {
+  const slugs = getAllSuburbSlugs();
+  return slugs.map((suburb) => ({
+    suburb,
+  }));
+}
 
-  useEffect(() => {
-    if (params.suburb) {
-      const data = getSuburbData(params.suburb);
-      setSuburbData(data);
-    }
-  }, [params.suburb]);
+export default async function DeepCleanSuburbPage({ params }) {
+  const resolvedParams = await params;
+  const suburbData = getSuburbData(resolvedParams.suburb);
 
   if (!suburbData) {
-    return <div>Loading...</div>;
+    return <div>Suburb not found</div>;
   }
+
+  const pageUrl = `https://sustainableshine.com.au/deep-clean/${resolvedParams.suburb}`;
+  
+  const serviceDetails = {
+    type: "Deep Cleaning",
+    name: `Deep Cleaning ${suburbData.name}`,
+    description: `Professional deep cleaning service in ${suburbData.name}. Intensive house cleaning including oven cleaning, grout scrubbing, and complete sanitization for homes and apartments.`,
+    priceRange: [
+      {
+        "@type": "PriceSpecification",
+        price: "349",
+        priceCurrency: "AUD",
+        name: "2BR apartment",
+      },
+      {
+        "@type": "PriceSpecification",
+        price: "499",
+        priceCurrency: "AUD",
+        name: "3BR house",
+      },
+      {
+        "@type": "PriceSpecification",
+        price: "649",
+        priceCurrency: "AUD",
+        name: "4BR house",
+      },
+    ],
+  };
+
+  const breadcrumbItems = [
+    {
+      name: "Home",
+      url: "https://sustainableshine.com.au",
+    },
+    {
+      name: "Deep Clean",
+      url: "https://sustainableshine.com.au/deep-clean",
+    },
+    {
+      name: suburbData.name,
+      url: pageUrl,
+    },
+  ];
 
   const localFeatures = [
     {
@@ -380,60 +420,11 @@ export default function DeepCleanSuburbPage() {
       <OurWork />
 
       {/* FAQ Section */}
-      <section className="py-20 bg-gradient-to-br from-emerald-50 to-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
-                {suburbData.name} Deep Cleaning FAQs
-              </h2>
-              <p className="text-xl text-gray-600">
-                Common questions from {suburbData.name} residents
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden"
-                >
-                  <button
-                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                    className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-emerald-50 transition-colors"
-                  >
-                    <span className="text-lg font-bold text-gray-900">
-                      {faq.question}
-                    </span>
-                    <svg
-                      className={`w-6 h-6 text-emerald-500 transition-transform ${
-                        openFaq === index ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                  {openFaq === index && (
-                    <div className="px-8 pb-6">
-                      <p className="text-gray-600 leading-relaxed">
-                        {faq.answer}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <FAQSection
+        faqs={faqs}
+        title={`${suburbData.name} Deep Cleaning FAQs`}
+        subtitle={`Common questions from ${suburbData.name} residents`}
+      />
 
       {/* Internal Links Section */}
       <section className="py-20 bg-white">
@@ -454,7 +445,7 @@ export default function DeepCleanSuburbPage() {
                   </span>
                 </Link>
                 <Link
-                  href={`/end-of-lease-cleaning/${params.suburb}`}
+                  href={`/end-of-lease-cleaning/${resolvedParams.suburb}`}
                   className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition-all text-center border border-emerald-100 hover:border-emerald-300"
                 >
                   <span className="text-2xl mb-2 block">🏠</span>
@@ -463,7 +454,7 @@ export default function DeepCleanSuburbPage() {
                   </span>
                 </Link>
                 <Link
-                  href={`/general-clean/${params.suburb}`}
+                  href={`/general-clean/${resolvedParams.suburb}`}
                   className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition-all text-center border border-emerald-100 hover:border-emerald-300"
                 >
                   <span className="text-2xl mb-2 block">✨</span>
@@ -504,6 +495,36 @@ export default function DeepCleanSuburbPage() {
           </div>
         </div>
       </section>
+
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(LocalBusinessSchema({
+            suburbData,
+            serviceType: "Deep Cleaning",
+            pageUrl,
+          })),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(ServiceSchema({
+            suburbData,
+            serviceDetails,
+            pageUrl,
+          })),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(BreadcrumbSchema({
+            items: breadcrumbItems,
+          })),
+        }}
+      />
     </main>
   );
 }

@@ -99,10 +99,10 @@ export default function About({ city }) {
             </h2>
             <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
               <p>
-                For over a decade, Sustainable Shine has been providing
-                exceptional cleaning services to homes and businesses across{" "}
-                {cityName}. We believe that a clean space shouldn't come at the
-                cost of our environment.
+                Sustainable Shine has been providing exceptional cleaning
+                services to homes and businesses across {cityName}. We believe
+                that a clean space shouldn't come at the cost of our
+                environment.
               </p>
               <p>
                 Our team of dedicated professionals uses eco-friendly products

@@ -1,4 +1,11 @@
-import { getSuburbData } from "@/data/suburbs";
+import { getSuburbData, getAllSuburbSlugs } from "@/data/suburbs";
+
+export async function generateStaticParams() {
+  const slugs = getAllSuburbSlugs();
+  return slugs.map((suburb) => ({
+    suburb,
+  }));
+}
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
