@@ -9,6 +9,7 @@ import {
   LocalBusinessSchema,
   ServiceSchema,
   BreadcrumbSchema,
+  FAQPageSchema,
 } from "@/components/schema-markup";
 
 export async function generateStaticParams() {
@@ -531,6 +532,12 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
               items: breadcrumbItems,
             }),
           ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(FAQPageSchema({ faqs })),
         }}
       />
     </main>

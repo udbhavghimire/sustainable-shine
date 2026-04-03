@@ -217,12 +217,10 @@ export default function EndOfLeaseCleaningPage() {
               </h1>
 
               <p className="text-xl text-gray-600 leading-relaxed">
-                Professional <strong>end of lease cleaning Sydney</strong>{" "}
-                service with guaranteed bond return. Our expert bond cleaning
-                meets all real estate inspection standards. Get your full
-                security deposit back with our comprehensive{" "}
-                <strong>move out cleaning</strong> service trusted by 5000+
-                Sydney tenants.
+                We help Sydney tenants get their full bond back. Our team
+                follows the REIQ cleaning checklist and knows exactly what
+                local property managers look for — so your final inspection
+                passes first time. Trusted by 5000+ Sydney tenants.
               </p>
 
               {/* CTA Buttons */}
@@ -290,10 +288,9 @@ export default function EndOfLeaseCleaningPage() {
               Why Choose Our End of Lease Cleaning Sydney Service?
             </h2>
             <p className="text-xl text-gray-600">
-              Stress-free <strong>bond cleaning Sydney</strong> with 100%
-              guaranteed results. Our professional{" "}
-              <strong>exit cleaning</strong> service ensures full bond return
-              for rental properties across Sydney.
+              We know what Sydney property managers expect and deliver results
+              that hold up to the strictest final inspections — backed by our
+              100% bond back guarantee.
             </p>
           </div>
 
@@ -328,12 +325,10 @@ export default function EndOfLeaseCleaningPage() {
                 Complete End of Lease Cleaning Checklist Sydney
               </h2>
               <p className="text-xl text-gray-600">
-                Our comprehensive{" "}
-                <strong>end of lease cleaning checklist</strong> covers every
-                detail to meet Sydney property manager and real estate agent
-                standards. Professional{" "}
-                <strong>rental property cleaning</strong> for guaranteed bond
-                return.
+                We work through every room on the full REIQ checklist —
+                kitchen oven and rangehood, bathrooms, walls, windows, carpets,
+                and cupboards — to meet the standard property managers actually
+                check.
               </p>
               <Link
                 href="/checklist"
@@ -423,11 +418,9 @@ export default function EndOfLeaseCleaningPage() {
               Book Professional End of Lease Cleaning Sydney Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Get your bond back guaranteed with our expert{" "}
-              <strong>end of lease cleaning Sydney</strong> service.
-              Professional <strong>bond cleaners</strong> available for same-day
-              service. Call now for a free quote on{" "}
-              <strong>move out cleaning</strong>!
+              Our Sydney team is available for same-day and weekend bookings.
+              We follow the full REIQ checklist and back every clean with our
+              bond back guarantee. Call now for a free quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

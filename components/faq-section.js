@@ -1,20 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { FAQPageSchema } from "@/components/schema-markup";
 
 export default function FAQSection({ faqs, title, subtitle }) {
   const [openFaq, setOpenFaq] = useState(null);
 
   return (
     <section className="py-20 bg-gradient-to-br from-emerald-50 to-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(FAQPageSchema({ faqs })),
-        }}
-      />
-      
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -32,13 +24,14 @@ export default function FAQSection({ faqs, title, subtitle }) {
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  aria-expanded={openFaq === index}
                   className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-emerald-50 transition-colors"
                 >
                   <span className="text-lg font-bold text-gray-900">
                     {faq.question}
                   </span>
                   <svg
-                    className={`w-6 h-6 text-emerald-500 transition-transform ${
+                    className={`w-6 h-6 text-emerald-500 transition-transform flex-shrink-0 ${
                       openFaq === index ? "rotate-180" : ""
                     }`}
                     fill="none"
@@ -53,13 +46,16 @@ export default function FAQSection({ faqs, title, subtitle }) {
                     />
                   </svg>
                 </button>
-                {openFaq === index && (
-                  <div className="px-8 pb-6">
-                    <p className="text-gray-600 leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </div>
-                )}
+                {/* Answer is always rendered in the DOM for SSR/SEO; CSS controls visibility */}
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    openFaq === index ? "max-h-96 pb-6" : "max-h-0"
+                  }`}
+                >
+                  <p className="px-8 text-gray-600 leading-relaxed">
+                    {faq.answer}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

@@ -205,12 +205,9 @@ export default function GeneralCleanPage() {
               </h1>
 
               <p className="text-xl text-gray-600 leading-relaxed">
-                Reliable <strong>general cleaning services Sydney</strong> for
-                homes and apartments. Professional{" "}
-                <strong>house cleaning Sydney</strong> available weekly,
-                fortnightly, or monthly. Trusted{" "}
-                <strong>regular cleaning</strong> service for busy Sydney
-                families and professionals.
+                We keep Sydney homes consistently clean on a schedule that
+                works for you — weekly, fortnightly, or monthly visits with
+                the same trusted cleaner every time. No lock-in contracts.
               </p>
 
               {/* CTA Buttons */}
@@ -278,9 +275,9 @@ export default function GeneralCleanPage() {
               Why Choose Our General Cleaning Service Sydney?
             </h2>
             <p className="text-xl text-gray-600">
-              Consistent quality <strong>house cleaning Sydney</strong> service
-              every time. Professional <strong>regular cleaning</strong> for
-              maintaining a spotless, healthy home environment.
+              Consistent quality every visit — the same cleaner who knows your
+              home, your preferences, and how to keep it in great shape without
+              you having to think about it.
             </p>
           </div>
 
@@ -314,10 +311,9 @@ export default function GeneralCleanPage() {
               What's Included in General Cleaning Sydney
             </h2>
             <p className="text-xl text-gray-600">
-              Complete <strong>house cleaning checklist</strong> for all living
-              spaces. Our <strong>general cleaning service</strong> covers
-              kitchen, bathrooms, bedrooms, and living areas for a consistently
-              clean home.
+              Every visit covers the same thorough checklist — kitchens,
+              bathrooms, bedrooms, and living areas — so nothing gets skipped
+              and your home is always in great shape.
             </p>
             <Link
               href="/checklist"
@@ -579,10 +575,9 @@ export default function GeneralCleanPage() {
               Book Regular House Cleaning Sydney Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Enjoy a consistently clean home with our professional{" "}
-              <strong>general cleaning services Sydney</strong>. Flexible{" "}
-              <strong>house cleaning</strong> schedules available weekly,
-              fortnightly, or monthly. Call now for a free quote!
+              Our Sydney team keeps your home fresh and tidy on your schedule
+              — weekly, fortnightly, or monthly. Same cleaner every visit, no
+              lock-in contracts. Call now for a free quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

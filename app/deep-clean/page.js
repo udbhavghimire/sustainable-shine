@@ -205,12 +205,10 @@ export default function DeepCleanPage() {
               </h1>
 
               <p className="text-xl text-gray-600 leading-relaxed">
-                Intensive <strong>deep cleaning services Sydney</strong> for
-                homes and apartments. Our professional{" "}
-                <strong>deep clean</strong> service includes oven cleaning,
-                grout scrubbing, and sanitization. Hospital-grade{" "}
-                <strong>spring cleaning Sydney</strong> perfect for thorough
-                home maintenance.
+                We tackle every corner your regular clean misses — inside
+                ovens, grout lines, rangehoods, light fittings, and skirting
+                boards. Hospital-grade products, fully insured, and done right
+                every time.
               </p>
 
               {/* CTA Buttons */}
@@ -278,10 +276,9 @@ export default function DeepCleanPage() {
               Why Choose Our Professional Deep Cleaning Sydney?
             </h2>
             <p className="text-xl text-gray-600">
-              More than surface cleaning - our comprehensive{" "}
-              <strong>deep house cleaning</strong> service transforms your space
-              with hospital-grade sanitization and intensive{" "}
-              <strong>deep cleaning</strong> techniques.
+              More than surface cleaning — we work through every room
+              systematically, using hospital-grade sanitization to reach the
+              spots that regularly get overlooked.
             </p>
           </div>
 
@@ -315,10 +312,9 @@ export default function DeepCleanPage() {
               What's Included in Our Deep Cleaning Service Sydney
             </h2>
             <p className="text-xl text-gray-600">
-              Comprehensive <strong>deep cleaning checklist</strong> covering
-              every room. Professional kitchen deep clean, bathroom
-              sanitization, and intensive floor-to-ceiling cleaning for Sydney
-              homes.
+              Every room, top to bottom. Kitchen oven and rangehood, bathroom
+              tiles and grout, walls, skirting boards — everything covered so
+              nothing gets missed.
             </p>
             <Link
               href="/checklist"
@@ -403,10 +399,9 @@ export default function DeepCleanPage() {
               Book Professional Deep Cleaning Sydney Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Experience the difference with expert{" "}
-              <strong>deep cleaning services Sydney</strong>. Our professional{" "}
-              <strong>deep house cleaning</strong> includes oven cleaning, grout
-              scrubbing, and complete sanitization. Call now for a free quote!
+              Our Sydney team scrubs, sanitises, and refreshes every room from
+              ceiling to floor — ovens, grout, mould, and everything in
+              between. Call now for a free, no-obligation quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

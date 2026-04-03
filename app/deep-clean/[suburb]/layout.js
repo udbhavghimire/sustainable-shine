@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
     metadataBase: new URL("https://sustainableshine.com.au"),
 
     title: `Deep Cleaning ${suburbData.name} | Professional House Cleaning | Book Now`,
-    description: `Professional deep cleaning ${suburbData.name} for homes & apartments. Expert deep clean includes oven cleaning, grout scrubbing & sanitization. Trusted spring cleaning ${suburbData.name}. Book today!`,
+    description: `We deep clean homes and apartments in ${suburbData.name} — ovens, grout, rangehoods, and every corner your regular clean misses. Fully insured, hospital-grade products. Book online for a free quote.`,
     keywords: `deep cleaning ${suburbData.name}, deep cleaning services ${suburbData.name}, deep clean ${suburbData.name}, house deep cleaning ${suburbData.name}, spring cleaning ${suburbData.name}, deep house cleaning, professional deep clean, intensive cleaning, deep cleaners ${suburbData.name}`,
 
     authors: [{ name: "Sustainable Shine" }],

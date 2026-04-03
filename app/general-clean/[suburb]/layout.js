@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
     metadataBase: new URL("https://sustainableshine.com.au"),
     
     title: `General Cleaning ${suburbData.name} | House Cleaning | Book Now`,
-    description: `Reliable general cleaning ${suburbData.name} for homes & apartments. Professional house cleaning weekly, fortnightly or monthly. Trusted regular cleaning for busy ${suburbData.name} residents. Book today!`,
+    description: `Regular house cleaning in ${suburbData.name} on a schedule that suits you — weekly, fortnightly, or monthly visits with the same trusted cleaner every time. Get a free quote today.`,
     keywords: `general cleaning ${suburbData.name}, house cleaning ${suburbData.name}, regular cleaning ${suburbData.name}, general cleaning services, house cleaners ${suburbData.name}, home cleaning, weekly cleaning service, regular house cleaning, domestic cleaning`,
     
     authors: [{ name: "Sustainable Shine" }],
