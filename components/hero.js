@@ -103,13 +103,13 @@ export default function Hero({ city }) {
             <div className="flex  sm:flex-row gap-4 relative z-10">
               <a
                 href="/booking"
-                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 text-center"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold md:px-8 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 text-center"
               >
                 Get a Free Quote
               </a>
               <a
                 href="#services"
-                className="bg-white hover:bg-gray-50 text-emerald-500 font-semibold px-8 py-3 rounded-lg border-2 border-emerald-500 transition-all duration-300 text-center"
+                className="bg-white hover:bg-gray-50 text-emerald-500 font-semibold md:px-8 px-4 py-3 rounded-lg border-2 border-emerald-500 transition-all duration-300 text-center"
               >
                 View Services
               </a>

@@ -41,19 +41,19 @@ export default function Navbar() {
               <img
                 src="/sustainable logo.png"
                 alt="Sustainable Shine Logo"
-                className="w-36 md:w-[200px]"
+                className="w-32 md:w-[200px]"
               />
             </Link>
 
             {/* Phone Icon and Book Now - Mobile Only */}
-            <div className="flex items-center space-x-2 md:hidden ms-7">
+            <div className="flex items-center space-x-2 md:hidden ms-5">
               <a
                 href="tel:+61 452 422 059"
                 className="hover:opacity-80 transition-opacity"
                 aria-label="Call us"
               >
                 <svg
-                  className="w-8 h-8 text-emerald-500"
+                  className="w-7 h-7 text-emerald-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -68,7 +68,7 @@ export default function Navbar() {
               </a>
               <a
                 href="/booking"
-                className="mx-3 px-3 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                className="px-3 mx-2 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
               >
                 Book Now
               </a>
