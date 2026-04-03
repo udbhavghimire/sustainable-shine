@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getSuburbData, getAllSuburbSlugs } from "@/data/suburbs";
 import HowItWorks from "@/components/how-it-works";
 import Reviews from "@/components/reviews";
@@ -19,10 +20,10 @@ export async function generateStaticParams() {
 
 export default async function EndOfLeaseCleaningSuburbPage({ params }) {
   const resolvedParams = await params;
-  const suburbData = getSuburbData(resolvedParams.suburb);
+  const suburbData = getSuburbData(resolvedParams.suburb.toLowerCase());
 
   if (!suburbData) {
-    return <div>Suburb not found</div>;
+    notFound();
   }
 
   const pageUrl = `https://sustainableshine.com.au/end-of-lease-cleaning/${resolvedParams.suburb}`;
@@ -163,13 +164,10 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Professional{" "}
-              <strong>end of lease cleaning {suburbData.name}</strong> for
-              apartments, houses, and units. Expert{" "}
-              <strong>bond cleaning {suburbData.name}</strong> service with 100%
-              guarantee. Get your full bond back with trusted{" "}
-              <strong>move out cleaning</strong> in {suburbData.name}. Local
-              cleaners familiar with {suburbData.name} property standards.
+              We help {suburbData.name} tenants get their full bond back. Our
+              team follows the REIQ cleaning checklist and knows exactly what
+              local property managers look for — so your final inspection
+              passes first time.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -216,9 +214,9 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
               Why Choose Our End of Lease Cleaning {suburbData.name}?
             </h2>
             <p className="text-xl text-gray-600">
-              Professional <strong>bond cleaning {suburbData.name}</strong> with
-              guaranteed results. Trusted <strong>end of lease cleaners</strong>{" "}
-              familiar with {suburbData.name} property requirements.
+              We know what {suburbData.name} property managers expect and
+              deliver results that hold up to the strictest final inspections
+              — backed by our bond-back guarantee.
             </p>
           </div>
 
@@ -248,9 +246,8 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
                 End of Lease Cleaning Checklist {suburbData.name}
               </h2>
               <p className="text-xl text-gray-600">
-                Comprehensive <strong>bond cleaning checklist</strong> for{" "}
-                {suburbData.name} properties. Every detail covered for
-                guaranteed bond return.
+                We work through every room on the full REIQ checklist. Here's
+                what's included in every {suburbData.name} end of lease clean.
               </p>
               <Link
                 href="/checklist"
@@ -320,24 +317,22 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
                 </h2>
                 <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
                   <p>
-                    Our <strong>end of lease cleaning {suburbData.name}</strong>{" "}
-                    team specializes in preparing rental properties for final
-                    inspections. We understand {suburbData.name} real estate
-                    standards and ensure every detail meets property manager
-                    requirements.
+                    Our {suburbData.name} team prepares rental properties for
+                    final inspection. We understand local real estate standards
+                    and make sure every detail — from oven racks to fly
+                    screens — meets property manager requirements.
                   </p>
                   <p>
-                    Whether you're moving out of an apartment, house, or unit in{" "}
-                    {suburbData.name}, we provide thorough, professional
-                    cleaning that guarantees your bond back. We're familiar with
-                    local property management companies and their specific
-                    requirements.
+                    Whether you're vacating an apartment, house, or unit, we
+                    provide a thorough, documented clean that gives you
+                    confidence going into the inspection. We're familiar with
+                    the property management companies common in{" "}
+                    {suburbData.name} and their specific expectations.
                   </p>
                   <p>
-                    Our {suburbData.name} end of lease cleaning service covers
-                    everything from kitchen deep cleans to bathroom
-                    sanitization, carpet cleaning, and more. Trust us to make
-                    your move-out stress-free.
+                    From kitchen deep cleans to bathroom sanitisation and
+                    carpet cleaning, everything is covered. Move out with
+                    confidence knowing your bond is protected.
                   </p>
                 </div>
 
@@ -481,11 +476,9 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
               Book End of Lease Cleaning {suburbData.name} Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Get your full bond back with expert{" "}
-              <strong>bond cleaning {suburbData.name}</strong>. Professional{" "}
-              <strong>end of lease cleaners</strong> available for same-day
-              service. Call now for a free quote on{" "}
-              <strong>move out cleaning</strong> in {suburbData.name}!
+              Our {suburbData.name} team is available for same-day and weekend
+              bookings. We follow the full REIQ checklist and back every clean
+              with our bond-back guarantee. Call now for a free quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

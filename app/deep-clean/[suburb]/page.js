@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getSuburbData, getAllSuburbSlugs } from "@/data/suburbs";
 import HowItWorks from "@/components/how-it-works";
 import Reviews from "@/components/reviews";
@@ -19,10 +20,10 @@ export async function generateStaticParams() {
 
 export default async function DeepCleanSuburbPage({ params }) {
   const resolvedParams = await params;
-  const suburbData = getSuburbData(resolvedParams.suburb);
+  const suburbData = getSuburbData(resolvedParams.suburb.toLowerCase());
 
   if (!suburbData) {
-    return <div>Suburb not found</div>;
+    notFound();
   }
 
   const pageUrl = `https://sustainableshine.com.au/deep-clean/${resolvedParams.suburb}`;
@@ -191,12 +192,10 @@ export default async function DeepCleanSuburbPage({ params }) {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Intensive <strong>deep cleaning {suburbData.name}</strong> for
-              homes and apartments. Professional <strong>deep clean</strong>{" "}
-              service includes oven cleaning, grout scrubbing, and sanitization.
-              Expert <strong>spring cleaning {suburbData.name}</strong> for
-              thorough home maintenance. Local cleaners familiar with{" "}
-              {suburbData.name} properties.
+              Our {suburbData.name} team tackles the jobs regular cleaning
+              leaves behind — inside ovens, grout lines, rangehoods, light
+              fittings, and every corner others miss. Hospital-grade products,
+              fully insured, and done right the first time.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -243,10 +242,9 @@ export default async function DeepCleanSuburbPage({ params }) {
               Why Choose Our Deep Cleaning Services {suburbData.name}?
             </h2>
             <p className="text-xl text-gray-600">
-              Professional <strong>deep cleaners {suburbData.name}</strong> with
-              intensive cleaning techniques. Expert{" "}
-              <strong>spring cleaning</strong> for {suburbData.name} homes and
-              apartments.
+              Our {suburbData.name} cleaners use hospital-grade products and a
+              systematic room-by-room method that leaves every surface spotless
+              — including the spots you never usually see.
             </p>
           </div>
 
@@ -275,9 +273,8 @@ export default async function DeepCleanSuburbPage({ params }) {
               Deep Cleaning Checklist {suburbData.name}
             </h2>
             <p className="text-xl text-gray-600">
-              Comprehensive <strong>deep clean</strong> covering every room in
-              your {suburbData.name} property. Hospital-grade sanitization and
-              intensive cleaning.
+              Every room, top to bottom. Here's exactly what our{" "}
+              {suburbData.name} team works through on every visit.
             </p>
             <Link
               href="/checklist"
@@ -353,22 +350,20 @@ export default async function DeepCleanSuburbPage({ params }) {
                 </h2>
                 <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
                   <p>
-                    Our <strong>deep cleaning {suburbData.name}</strong> team
-                    specializes in intensive house cleaning with hospital-grade
-                    products. We provide thorough{" "}
-                    <strong>spring cleaning</strong> services for{" "}
-                    {suburbData.name} properties, reaching areas others miss.
+                    Our {suburbData.name} team uses hospital-grade products to
+                    work through every room methodically — behind appliances,
+                    inside cabinetry, grout lines, and ceiling fixtures that
+                    get skipped in regular cleans.
                   </p>
                   <p>
-                    Whether you're preparing for a special event, doing spring
-                    cleaning, or simply want to maintain a pristine home in{" "}
-                    {suburbData.name}, our professional team delivers
-                    exceptional results every time.
+                    Whether you're preparing for a rental inspection, settling
+                    into a new home, or just want a genuinely thorough clean,
+                    we deliver consistent results with no shortcuts.
                   </p>
                   <p>
-                    Our {suburbData.name} deep cleaning goes beyond surface
-                    cleaning to sanitize and refresh every corner of your
-                    property, leaving it spotless and healthy.
+                    We're familiar with the property types common in{" "}
+                    {suburbData.name} — from apartments to family homes — and
+                    tailor the clean to suit the space.
                   </p>
                 </div>
 
@@ -510,11 +505,9 @@ export default async function DeepCleanSuburbPage({ params }) {
               Book Deep Cleaning {suburbData.name} Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Transform your home with expert{" "}
-              <strong>deep cleaning services {suburbData.name}</strong>.
-              Professional <strong>deep house cleaning</strong> includes oven
-              cleaning, grout scrubbing, and complete sanitization. Call now for
-              a free quote!
+              Our {suburbData.name} team scrubs, sanitises, and refreshes
+              every room from ceiling to floor — ovens, grout, mould, and
+              everything in between. Call now for a free, no-obligation quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

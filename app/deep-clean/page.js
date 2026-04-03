@@ -4,6 +4,11 @@ import Reviews from "@/components/reviews";
 import OurWork from "@/components/our-work";
 import AreasWeServe from "@/components/areas-we-serve";
 import FAQSection from "@/components/faq-section";
+import {
+  HomePageLocalBusinessSchema,
+  ServicePageSchema,
+  BreadcrumbSchema,
+} from "@/components/schema-markup";
 
 export default function DeepCleanPage() {
 
@@ -420,6 +425,44 @@ export default function DeepCleanPage() {
           </div>
         </div>
       </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(HomePageLocalBusinessSchema()),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            ServicePageSchema({
+              serviceType: "Deep Cleaning",
+              serviceName: "Deep Cleaning Services Sydney",
+              description:
+                "Intensive deep cleaning services for Sydney homes and apartments. Includes oven cleaning, grout scrubbing, sanitization and all areas others miss.",
+              pageUrl: "https://sustainableshine.com.au/deep-clean",
+              priceFrom: "349",
+            }),
+          ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            BreadcrumbSchema({
+              items: [
+                { name: "Home", url: "https://sustainableshine.com.au" },
+                {
+                  name: "Deep Clean",
+                  url: "https://sustainableshine.com.au/deep-clean",
+                },
+              ],
+            }),
+          ),
+        }}
+      />
     </main>
   );
 }

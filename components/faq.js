@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FAQPageSchema } from "@/components/schema-markup";
 
 export default function FAQ({ city }) {
   const [openIndex, setOpenIndex] = useState(0);
@@ -77,6 +78,12 @@ export default function FAQ({ city }) {
 
   return (
     <section className="section-padding bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(FAQPageSchema({ faqs })),
+        }}
+      />
       <div className="container-custom">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">

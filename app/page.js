@@ -9,9 +9,13 @@ import Reviews from "@/components/reviews";
 import AreasWeServe from "@/components/areas-we-serve";
 import Blogs from "@/components/blogs";
 import FAQ from "@/components/faq";
-
 import CTA from "@/components/cta";
 import FloatingBookingButton from "@/components/floating-booking-button";
+import {
+  OrganizationSchema,
+  WebSiteSchema,
+  HomePageLocalBusinessSchema,
+} from "@/components/schema-markup";
 
 export default async function Home() {
   return (
@@ -25,12 +29,29 @@ export default async function Home() {
       <ServiceChecklist />
       <AreasWeServe />
       <OurWork />
-
       <Blogs />
       <FAQ />
-
       <CTA />
       <FloatingBookingButton />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(OrganizationSchema()),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(WebSiteSchema()),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(HomePageLocalBusinessSchema()),
+        }}
+      />
     </main>
   );
 }

@@ -9,7 +9,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const suburbData = getSuburbData(resolvedParams.suburb);
+  const suburbData = getSuburbData(resolvedParams.suburb.toLowerCase());
 
   if (!suburbData) {
     return {

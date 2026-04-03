@@ -4,6 +4,11 @@ import Reviews from "@/components/reviews";
 import OurWork from "@/components/our-work";
 import AreasWeServe from "@/components/areas-we-serve";
 import FAQSection from "@/components/faq-section";
+import {
+  HomePageLocalBusinessSchema,
+  ServicePageSchema,
+  BreadcrumbSchema,
+} from "@/components/schema-markup";
 
 export default function GeneralCleanPage() {
 
@@ -596,6 +601,44 @@ export default function GeneralCleanPage() {
           </div>
         </div>
       </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(HomePageLocalBusinessSchema()),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            ServicePageSchema({
+              serviceType: "General Cleaning",
+              serviceName: "General House Cleaning Services Sydney",
+              description:
+                "Professional general house cleaning services in Sydney. Regular weekly, fortnightly, and monthly cleaning for homes and apartments. Eco-friendly products and trusted cleaners.",
+              pageUrl: "https://sustainableshine.com.au/general-clean",
+              priceFrom: "149",
+            }),
+          ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            BreadcrumbSchema({
+              items: [
+                { name: "Home", url: "https://sustainableshine.com.au" },
+                {
+                  name: "General Clean",
+                  url: "https://sustainableshine.com.au/general-clean",
+                },
+              ],
+            }),
+          ),
+        }}
+      />
     </main>
   );
 }

@@ -9,6 +9,11 @@ import FAQ from "@/components/faq";
 import BookingForm from "@/components/booking-form";
 import CTA from "@/components/cta";
 import FloatingBookingButton from "@/components/floating-booking-button";
+import {
+  LocalBusinessSchema,
+  ServicePageSchema,
+  BreadcrumbSchema,
+} from "@/components/schema-markup";
 
 import {
   getSuburbData,
@@ -143,57 +148,43 @@ export default async function CityPage({ params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            name: `Sustainable Shine - ${suburbData.name}`,
-            description: suburbData.description,
-            image: "https://sustainableshine.com.au/hero2.jpeg",
-            "@id": `https://sustainableshine.com.au/${resolvedParams.city}`,
-            url: `https://sustainableshine.com.au/${resolvedParams.city}`,
-            telephone: "+61-XXX-XXX-XXX",
-            priceRange: "$$",
-            address: {
-              "@type": "PostalAddress",
-              streetAddress: suburbData.name,
-              addressLocality: suburbData.name,
-              addressRegion: "NSW",
-              postalCode: suburbData.postcode,
-              addressCountry: "AU",
-            },
-            geo: {
-              "@type": "GeoCoordinates",
-              latitude: "",
-              longitude: "",
-            },
-            areaServed: {
-              "@type": "City",
-              name: suburbData.name,
-            },
-            sameAs: [
-              "https://www.facebook.com/sustainableshine",
-              "https://www.instagram.com/sustainableshine",
-            ],
-            openingHoursSpecification: {
-              "@type": "OpeningHoursSpecification",
-              dayOfWeek: [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
+          __html: JSON.stringify(
+            LocalBusinessSchema({
+              suburbData,
+              serviceType: "House Cleaning",
+              pageUrl: `https://sustainableshine.com.au/${resolvedParams.city}`,
+            }),
+          ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            ServicePageSchema({
+              serviceType: "House Cleaning",
+              serviceName: `House Cleaning Services ${suburbData.name}`,
+              description: `Professional house cleaning services in ${suburbData.name}, Sydney. General cleaning, deep cleaning, and end of lease cleaning by trusted local cleaners.`,
+              pageUrl: `https://sustainableshine.com.au/${resolvedParams.city}`,
+              priceFrom: "149",
+            }),
+          ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            BreadcrumbSchema({
+              items: [
+                { name: "Home", url: "https://sustainableshine.com.au" },
+                {
+                  name: suburbData.name,
+                  url: `https://sustainableshine.com.au/${resolvedParams.city}`,
+                },
               ],
-              opens: "07:00",
-              closes: "19:00",
-            },
-            aggregateRating: {
-              "@type": "AggregateRating",
-              ratingValue: "4.9",
-              reviewCount: "5000",
-            },
-          }),
+            }),
+          ),
         }}
       />
     </main>

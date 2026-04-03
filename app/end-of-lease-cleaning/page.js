@@ -4,6 +4,11 @@ import Reviews from "@/components/reviews";
 import OurWork from "@/components/our-work";
 import AreasWeServe from "@/components/areas-we-serve";
 import FAQSection from "@/components/faq-section";
+import {
+  HomePageLocalBusinessSchema,
+  ServicePageSchema,
+  BreadcrumbSchema,
+} from "@/components/schema-markup";
 
 export default function EndOfLeaseCleaningPage() {
 
@@ -441,6 +446,45 @@ export default function EndOfLeaseCleaningPage() {
           </div>
         </div>
       </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(HomePageLocalBusinessSchema()),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            ServicePageSchema({
+              serviceType: "End of Lease Cleaning",
+              serviceName: "End of Lease Cleaning Services Sydney",
+              description:
+                "Professional end of lease cleaning services Sydney with 100% bond back guarantee. REIQ-approved checklist, fully insured, same-day availability.",
+              pageUrl:
+                "https://sustainableshine.com.au/end-of-lease-cleaning",
+              priceFrom: "299",
+            }),
+          ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            BreadcrumbSchema({
+              items: [
+                { name: "Home", url: "https://sustainableshine.com.au" },
+                {
+                  name: "End of Lease Cleaning",
+                  url: "https://sustainableshine.com.au/end-of-lease-cleaning",
+                },
+              ],
+            }),
+          ),
+        }}
+      />
     </main>
   );
 }

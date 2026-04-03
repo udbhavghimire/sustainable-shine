@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getSuburbData, getAllSuburbSlugs } from "@/data/suburbs";
 import HowItWorks from "@/components/how-it-works";
 import Reviews from "@/components/reviews";
@@ -19,10 +20,10 @@ export async function generateStaticParams() {
 
 export default async function GeneralCleanSuburbPage({ params }) {
   const resolvedParams = await params;
-  const suburbData = getSuburbData(resolvedParams.suburb);
+  const suburbData = getSuburbData(resolvedParams.suburb.toLowerCase());
 
   if (!suburbData) {
-    return <div>Suburb not found</div>;
+    notFound();
   }
 
   const pageUrl = `https://sustainableshine.com.au/general-clean/${resolvedParams.suburb}`;
@@ -191,12 +192,10 @@ export default async function GeneralCleanSuburbPage({ params }) {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Reliable <strong>general cleaning {suburbData.name}</strong> for
-              homes and apartments. Professional <strong>house cleaning</strong>{" "}
-              available weekly, fortnightly, or monthly. Trusted{" "}
-              <strong>regular cleaning services</strong> for busy{" "}
-              {suburbData.name} families and professionals. Local cleaners you
-              can count on.
+              Keep your {suburbData.name} home consistently clean without the
+              effort. We offer weekly, fortnightly, and monthly visits — always
+              with the same trained cleaner who knows your home and your
+              preferences.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -243,10 +242,9 @@ export default async function GeneralCleanSuburbPage({ params }) {
               Why Choose Our General Cleaning Services {suburbData.name}?
             </h2>
             <p className="text-xl text-gray-600">
-              Consistent quality{" "}
-              <strong>house cleaning {suburbData.name}</strong> service.
-              Professional <strong>regular cleaning</strong> for maintaining a
-              spotless home.
+              Trusted {suburbData.name} cleaners who treat your home with the
+              same care they'd give their own — consistent, reliable, and
+              thorough every single visit.
             </p>
           </div>
 
@@ -275,9 +273,9 @@ export default async function GeneralCleanSuburbPage({ params }) {
               General Cleaning Checklist {suburbData.name}
             </h2>
             <p className="text-xl text-gray-600">
-              Complete <strong>house cleaning</strong> covering all living
-              spaces in your {suburbData.name} property. Regular maintenance for
-              a consistently clean home.
+              Every visit covers the same thorough checklist — so nothing
+              gets skipped and your {suburbData.name} home is always in great
+              shape.
             </p>
             <Link
               href="/checklist"
@@ -437,21 +435,21 @@ export default async function GeneralCleanSuburbPage({ params }) {
                 </h2>
                 <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
                   <p>
-                    Our <strong>general cleaning {suburbData.name}</strong> team
-                    provides reliable, professional{" "}
-                    <strong>house cleaning services</strong>. We offer flexible
-                    weekly, fortnightly, or monthly cleaning schedules to
-                    maintain your {suburbData.name} home consistently clean.
+                    Our {suburbData.name} cleaners work on a schedule that
+                    suits you — weekly, fortnightly, or monthly — with the
+                    same person every visit so they learn your home and your
+                    preferences.
                   </p>
                   <p>
-                    Whether you're a young professional, a family, or anyone in
-                    between, our regular cleaning service keeps your{" "}
-                    {suburbData.name} home fresh, tidy, and welcoming.
+                    Whether you're a busy professional, a growing family, or
+                    simply someone who'd rather spend their weekend doing
+                    something else, we keep your home fresh, tidy, and
+                    welcoming without you having to think about it.
                   </p>
                   <p>
-                    Our {suburbData.name} team is familiar with local property
-                    types and the cleaning needs of the community. We're here to
-                    make your life easier.
+                    We're familiar with the apartments, townhouses, and family
+                    homes common across {suburbData.name} and adjust our
+                    approach to each property.
                   </p>
                 </div>
 
@@ -591,10 +589,9 @@ export default async function GeneralCleanSuburbPage({ params }) {
               Book House Cleaning {suburbData.name} Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Enjoy a consistently clean home with professional{" "}
-              <strong>general cleaning services {suburbData.name}</strong>.
-              Flexible <strong>house cleaning</strong> schedules available
-              weekly, fortnightly, or monthly. Call now for a free quote!
+              Our {suburbData.name} team keeps your home clean on your
+              schedule — weekly, fortnightly, or monthly. Same cleaner every
+              visit, no lock-in contracts. Call now for a free quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
