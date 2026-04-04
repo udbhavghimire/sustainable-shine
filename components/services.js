@@ -18,7 +18,7 @@ export default function Services({ city }) {
       ],
       price: "From $150",
       popular: false,
-      image: "/general clean.png",
+      image: "/general-clean.png",
       serviceType: "general",
       link: "/general-clean",
     },
@@ -35,7 +35,7 @@ export default function Services({ city }) {
       ],
       price: "From $220",
       popular: true,
-      image: "/deep cleaning.jpg",
+      image: "/deep-cleaning.jpg",
       serviceType: "deep",
       link: "/deep-clean",
     },
@@ -52,7 +52,7 @@ export default function Services({ city }) {
       ],
       price: "From $320",
       popular: false,
-      image: "/end of lease.jpg",
+      image: "/end-of-lease.jpg",
       serviceType: "endOfLease",
       link: "/end-of-lease-cleaning",
     },
@@ -84,7 +84,11 @@ export default function Services({ city }) {
               className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
             >
               {/* Image - Clickable */}
-              <Link href={service.link} className="block">
+              <Link
+                href={service.link}
+                className="block"
+                aria-label={`View ${service.title} service`}
+              >
                 <div className="relative h-48 mb-6 -mx-8 -mt-8 rounded-t-2xl overflow-hidden cursor-pointer">
                   <img
                     src={service.image}
@@ -136,12 +140,14 @@ export default function Services({ city }) {
                   <Link
                     href={service.link}
                     className="flex-1 text-center py-3 px-6 rounded-lg font-semibold border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 transition-all duration-300"
+                    aria-label={`Learn more about ${service.title}`}
                   >
                     Learn More
                   </Link>
                   <a
                     href={`/booking?service=${service.serviceType}`}
                     className="flex-1 text-center py-3 px-6 rounded-lg font-semibold transition-all duration-300 bg-emerald-500 hover:bg-emerald-600 text-white"
+                    aria-label={`Book ${service.title}`}
                   >
                     Book Now
                   </a>
