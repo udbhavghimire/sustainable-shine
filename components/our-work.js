@@ -1,7 +1,54 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
+// Lightbox Modal Component
+function Lightbox({ src, alt, onClose }) {
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={src}
+          alt={alt}
+          className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
+        />
+        <button
+          onClick={onClose}
+          className="absolute -top-4 -right-4 bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors font-bold text-lg"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+        <div className="absolute bottom-0 left-0 right-0 text-center pb-3">
+          <span className="text-white/80 text-sm bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+            {alt}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Individual Before/After Comparison Component
-function BeforeAfterComparison({ before, after, title, location, index }) {
+function BeforeAfterComparison({ before, after, title, location, index, onImageClick }) {
   return (
     <div className="relative group">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
@@ -13,7 +60,8 @@ function BeforeAfterComparison({ before, after, title, location, index }) {
               <img
                 src={before}
                 alt={`${title} - Before cleaning`}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105 cursor-zoom-in"
+                onClick={() => onImageClick(before, `${title} - Before cleaning`)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
 
@@ -34,6 +82,16 @@ function BeforeAfterComparison({ before, after, title, location, index }) {
                   Before
                 </span>
               </div>
+
+              {/* Expand hint */}
+              <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="bg-black/50 text-white p-1.5 rounded-lg backdrop-blur-sm flex items-center gap-1 text-xs">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                  Expand
+                </span>
+              </div>
             </div>
           </div>
 
@@ -43,7 +101,8 @@ function BeforeAfterComparison({ before, after, title, location, index }) {
               <img
                 src={after}
                 alt={`${title} - After cleaning`}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105 cursor-zoom-in"
+                onClick={() => onImageClick(after, `${title} - After cleaning`)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
 
@@ -62,6 +121,16 @@ function BeforeAfterComparison({ before, after, title, location, index }) {
                     />
                   </svg>
                   After
+                </span>
+              </div>
+
+              {/* Expand hint */}
+              <div className="absolute bottom-3 left-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="bg-black/50 text-white p-1.5 rounded-lg backdrop-blur-sm flex items-center gap-1 text-xs">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                  Expand
                 </span>
               </div>
             </div>
@@ -98,6 +167,7 @@ function BeforeAfterComparison({ before, after, title, location, index }) {
 
 export default function OurWork({ city }) {
   const cityName = city?.name || "Sydney";
+  const [lightbox, setLightbox] = useState(null);
   const projects = [
     {
       title: "Window Cleaning",
@@ -127,6 +197,13 @@ export default function OurWork({ city }) {
 
   return (
     <section className="bg-gradient-to-br from-gray-50 to-white">
+      {lightbox && (
+        <Lightbox
+          src={lightbox.src}
+          alt={lightbox.alt}
+          onClose={() => setLightbox(null)}
+        />
+      )}
       <div className="container-custom">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -153,6 +230,7 @@ export default function OurWork({ city }) {
                 title={project.title}
                 location={project.location}
                 index={index}
+                onImageClick={(src, alt) => setLightbox({ src, alt })}
               />
             ))}
           </div>

@@ -108,10 +108,10 @@ export default function Hero({ city }) {
                 Get a Free Quote
               </a>
               <a
-                href="#services"
-                className="bg-white hover:bg-gray-50 text-emerald-500 font-semibold md:px-8 px-4 py-3 rounded-lg border-2 border-emerald-500 transition-all duration-300 text-center"
+                href="tel:+61 452 422 059"
+                className="btn-secondary text-center"
               >
-                View Services
+                Call +61 452 422 059
               </a>
             </div>
 

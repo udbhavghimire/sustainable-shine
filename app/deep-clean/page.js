@@ -211,10 +211,13 @@ export default function DeepCleanPage() {
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/booking" className="btn-primary text-center">
-                  Get Free Quote
-                </Link>
+              <div className="flex  sm:flex-row gap-4 relative z-10">
+                <a
+                  href="/booking"
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold md:px-8 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 text-center"
+                >
+                  Get a Free Quote
+                </a>
                 <a
                   href="tel:+61 452 422 059"
                   className="btn-secondary text-center"
