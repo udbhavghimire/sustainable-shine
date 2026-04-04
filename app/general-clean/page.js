@@ -11,7 +11,6 @@ import {
 } from "@/components/schema-markup";
 
 export default function GeneralCleanPage() {
-
   const features = [
     {
       icon: (
@@ -205,9 +204,9 @@ export default function GeneralCleanPage() {
               </h1>
 
               <p className="text-xl text-gray-600 leading-relaxed">
-                We keep Sydney homes consistently clean on a schedule that
-                works for you — weekly, fortnightly, or monthly visits with
-                the same trusted cleaner every time. No lock-in contracts.
+                We keep Sydney homes consistently clean on a schedule that works
+                for you — weekly, fortnightly, or monthly visits with the same
+                trusted cleaner every time. No lock-in contracts.
               </p>
 
               {/* CTA Buttons */}
@@ -250,7 +249,7 @@ export default function GeneralCleanPage() {
             <div className="relative">
               <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/general clean.png"
+                  src="/general-clean.png"
                   alt="General Cleaning Services"
                   className="w-full h-full object-cover"
                 />
@@ -575,8 +574,8 @@ export default function GeneralCleanPage() {
               Book Regular House Cleaning Sydney Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Our Sydney team keeps your home fresh and tidy on your schedule
-              — weekly, fortnightly, or monthly. Same cleaner every visit, no
+              Our Sydney team keeps your home fresh and tidy on your schedule —
+              weekly, fortnightly, or monthly. Same cleaner every visit, no
               lock-in contracts. Call now for a free quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

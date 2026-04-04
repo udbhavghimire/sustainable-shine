@@ -11,7 +11,10 @@ export const metadata = {
     description:
       "Terms and Conditions governing the use of Sustainable Shine Cleaning Services.",
     type: "website",
-    url: "https://sustainableshine.com.au/terms",
+    url: "https://sustainableshine.com.au/terms-conditions",
+  },
+  alternates: {
+    canonical: "https://sustainableshine.com.au/terms-conditions",
   },
 };
 

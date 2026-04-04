@@ -11,7 +11,10 @@ export const metadata = {
     description:
       "Learn how Sustainable Shine Cleaning Services protects your privacy and handles your personal information.",
     type: "website",
-    url: "https://sustainableshine.com.au/privacy",
+    url: "https://sustainableshine.com.au/privacy-policy",
+  },
+  alternates: {
+    canonical: "https://sustainableshine.com.au/privacy-policy",
   },
 };
 

@@ -39,7 +39,7 @@ export default function Navbar() {
           <div className="flex items-center space-x-3">
             <Link href="/" className="flex items-center">
               <img
-                src="/sustainable logo.png"
+                src="/sustainable-shine-logo.png"
                 alt="Sustainable Shine Logo"
                 className="w-32 md:w-[200px]"
               />

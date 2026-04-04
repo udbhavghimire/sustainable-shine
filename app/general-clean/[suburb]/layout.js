@@ -89,8 +89,8 @@ export async function generateMetadata({ params }) {
     
     other: {
       "geo.region": "AU-NSW",
-      "geo.placename": suburbData.name,
-      "geo.position": "",
+      "geo.placename": `${suburbData.name}, NSW, Australia`,
+      "geo.country": "AU",
     },
   };
 }

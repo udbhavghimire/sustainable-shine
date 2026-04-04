@@ -11,7 +11,6 @@ import {
 } from "@/components/schema-markup";
 
 export default function EndOfLeaseCleaningPage() {
-
   const features = [
     {
       icon: (
@@ -218,9 +217,9 @@ export default function EndOfLeaseCleaningPage() {
 
               <p className="text-xl text-gray-600 leading-relaxed">
                 We help Sydney tenants get their full bond back. Our team
-                follows the REIQ cleaning checklist and knows exactly what
-                local property managers look for — so your final inspection
-                passes first time. Trusted by 5000+ Sydney tenants.
+                follows the REIQ cleaning checklist and knows exactly what local
+                property managers look for — so your final inspection passes
+                first time. Trusted by 5000+ Sydney tenants.
               </p>
 
               {/* CTA Buttons */}
@@ -263,7 +262,7 @@ export default function EndOfLeaseCleaningPage() {
             <div className="relative">
               <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/end of lease.jpg"
+                  src="/end-of-lease.jpg"
                   alt="End of Lease Cleaning"
                   className="w-full h-full object-cover"
                 />
@@ -325,9 +324,9 @@ export default function EndOfLeaseCleaningPage() {
                 Complete End of Lease Cleaning Checklist Sydney
               </h2>
               <p className="text-xl text-gray-600">
-                We work through every room on the full REIQ checklist —
-                kitchen oven and rangehood, bathrooms, walls, windows, carpets,
-                and cupboards — to meet the standard property managers actually
+                We work through every room on the full REIQ checklist — kitchen
+                oven and rangehood, bathrooms, walls, windows, carpets, and
+                cupboards — to meet the standard property managers actually
                 check.
               </p>
               <Link
@@ -418,9 +417,9 @@ export default function EndOfLeaseCleaningPage() {
               Book Professional End of Lease Cleaning Sydney Today
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
-              Our Sydney team is available for same-day and weekend bookings.
-              We follow the full REIQ checklist and back every clean with our
-              bond back guarantee. Call now for a free quote.
+              Our Sydney team is available for same-day and weekend bookings. We
+              follow the full REIQ checklist and back every clean with our bond
+              back guarantee. Call now for a free quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -455,8 +454,7 @@ export default function EndOfLeaseCleaningPage() {
               serviceName: "End of Lease Cleaning Services Sydney",
               description:
                 "Professional end of lease cleaning services Sydney with 100% bond back guarantee. REIQ-approved checklist, fully insured, same-day availability.",
-              pageUrl:
-                "https://sustainableshine.com.au/end-of-lease-cleaning",
+              pageUrl: "https://sustainableshine.com.au/end-of-lease-cleaning",
               priceFrom: "299",
             }),
           ),

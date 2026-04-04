@@ -11,7 +11,6 @@ import {
 } from "@/components/schema-markup";
 
 export default function DeepCleanPage() {
-
   const features = [
     {
       icon: (
@@ -205,10 +204,10 @@ export default function DeepCleanPage() {
               </h1>
 
               <p className="text-xl text-gray-600 leading-relaxed">
-                We tackle every corner your regular clean misses — inside
-                ovens, grout lines, rangehoods, light fittings, and skirting
-                boards. Hospital-grade products, fully insured, and done right
-                every time.
+                We tackle every corner your regular clean misses — inside ovens,
+                grout lines, rangehoods, light fittings, and skirting boards.
+                Hospital-grade products, fully insured, and done right every
+                time.
               </p>
 
               {/* CTA Buttons */}
@@ -251,7 +250,7 @@ export default function DeepCleanPage() {
             <div className="relative">
               <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/deep cleaning.jpg"
+                  src="/deep-cleaning.jpg"
                   alt="Deep Cleaning Services"
                   className="w-full h-full object-cover"
                 />
@@ -400,8 +399,8 @@ export default function DeepCleanPage() {
             </h2>
             <p className="text-xl mb-8 text-emerald-50">
               Our Sydney team scrubs, sanitises, and refreshes every room from
-              ceiling to floor — ovens, grout, mould, and everything in
-              between. Call now for a free, no-obligation quote.
+              ceiling to floor — ovens, grout, mould, and everything in between.
+              Call now for a free, no-obligation quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

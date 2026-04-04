@@ -43,7 +43,7 @@ export const metadata = {
     url: "https://sustainableshine.com.au",
     images: [
       {
-        url: "https://sustainableshine.com.au/Sustainable Shine Logo.avif",
+        url: "https://sustainableshine.com.au/hero2.jpeg",
         width: 1200,
         height: 630,
         alt: "Sustainable Shine Cleaning - Professional Eco-Friendly Cleaning Services Sydney",
@@ -57,7 +57,7 @@ export const metadata = {
     title: "Sustainable Shine Cleaning | Professional Cleaning Services Sydney",
     description:
       "Top-rated eco-friendly cleaning services in Sydney. 5000+ happy clients. Book your free quote today!",
-    images: ["https://sustainableshine.com.au/Sustainable Shine Logo.avif"],
+    images: ["https://sustainableshine.com.au/hero2.jpeg"],
     creator: "@SustainableShine",
     site: "@SustainableShine",
   },
@@ -75,10 +75,9 @@ export const metadata = {
     },
   },
 
-  // Verification and other metadata
   verification: {
-    // google: "your-google-verification-code", // Add when available
-    // bing: "your-bing-verification-code", // Add when available
+    google:
+      "google-site-verification=bDdo7is2EUFv4QqZS9CjGLV7mgaxmO-lJqDlU2OPerM",
   },
 
   alternates: {
@@ -86,21 +85,24 @@ export const metadata = {
   },
 
   category: "Cleaning Services",
-  
+
   // Additional metadata for better indexing
   metadataBase: new URL("https://sustainableshine.com.au"),
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en-AU">
       <head>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="any" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/favicon.ico" />
         <meta name="theme-color" content="#10b981" />
         {/* Google Analytics */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-8Q8F2KPZVM"></script>
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-8Q8F2KPZVM"
+        ></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -115,7 +117,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-         <Navbar />
+        <Navbar />
         {children}
         <Footer />
       </body>
