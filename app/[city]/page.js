@@ -6,7 +6,7 @@ import About from "@/components/about";
 import OurWork from "@/components/our-work";
 import Reviews from "@/components/reviews";
 import FAQ from "@/components/faq";
-import BookingForm from "@/components/booking-form";
+
 import CTA from "@/components/cta";
 import FloatingBookingButton from "@/components/floating-booking-button";
 import {
@@ -47,15 +47,15 @@ export async function generateMetadata({ params }) {
 
   return {
     metadataBase: new URL("https://sustainableshine.com.au"),
-    
+
     title: suburbData.metaTitle,
     description: suburbData.metaDescription,
     keywords: suburbData.keywords,
-    
+
     authors: [{ name: "Sustainable Shine" }],
     creator: "Sustainable Shine",
     publisher: "Sustainable Shine",
-    
+
     // Favicon and Icons
     icons: {
       icon: [
@@ -66,7 +66,7 @@ export async function generateMetadata({ params }) {
       shortcut: "/favicon.ico",
       apple: "/favicon.ico",
     },
-    
+
     openGraph: {
       title: suburbData.metaTitle,
       description: suburbData.metaDescription,
@@ -83,7 +83,7 @@ export async function generateMetadata({ params }) {
         },
       ],
     },
-    
+
     twitter: {
       card: "summary_large_image",
       title: suburbData.metaTitle,
@@ -92,11 +92,11 @@ export async function generateMetadata({ params }) {
       creator: "@sustainableshine",
       site: "@sustainableshine",
     },
-    
+
     alternates: {
       canonical: pageUrl,
     },
-    
+
     robots: {
       index: true,
       follow: true,
@@ -109,9 +109,9 @@ export async function generateMetadata({ params }) {
         "max-snippet": -1,
       },
     },
-    
+
     category: "Cleaning Services",
-    
+
     other: {
       "geo.region": "AU-NSW",
       "geo.placename": suburbData.name,
@@ -140,7 +140,6 @@ export default async function CityPage({ params }) {
       <OurWork city={suburbData} />
       <Reviews city={suburbData} />
       <FAQ city={suburbData} />
-      <BookingForm city={suburbData} />
       <CTA city={suburbData} />
       <FloatingBookingButton />
 
