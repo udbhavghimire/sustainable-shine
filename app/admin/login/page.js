@@ -21,7 +21,10 @@ export default function AdminLogin() {
     try {
       // For now, using simple client-side auth
       // In production, you'd want to use proper authentication with your Django backend
-      if (formData.username === "admin" && formData.password === "admin123") {
+      if (
+        formData.username === "admin" &&
+        formData.password === "Admin@Sustainableshine!"
+      ) {
         // Store auth token in localStorage
         localStorage.setItem("adminAuth", "true");
         localStorage.setItem("adminUser", formData.username);
