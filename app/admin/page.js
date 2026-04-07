@@ -8,26 +8,7 @@ import LeadsSection from "@/components/admin/leads-section";
 import Navbar from "@/components/navbar";
 
 const API_BASE_URL = "https://api.sustainableshine.com.au/api";
-
-// Helper function to get CSRF token from cookies
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-
-function getCSRFToken() {
-  return getCookie('csrftoken');
-}
+const BLOG_PROXY_URL = "/api/blog";
 
 function AdminDashboardContent() {
   const router = useRouter();
@@ -166,7 +147,7 @@ function AdminDashboardContent() {
   const fetchBlogs = async () => {
     setIsLoadingBlogs(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/blog/`, {
+      const response = await fetch(BLOG_PROXY_URL, {
         headers: {
           Accept: "application/json",
         },
@@ -195,30 +176,17 @@ function AdminDashboardContent() {
   const saveBlog = async (blogData, isFormData = false) => {
     try {
       const url = editingBlog
-        ? `${API_BASE_URL}/blog/${editingBlog.slug}/`
-        : `${API_BASE_URL}/blog/`;
+        ? `${BLOG_PROXY_URL}/${editingBlog.slug}`
+        : BLOG_PROXY_URL;
 
       const method = editingBlog ? "PATCH" : "POST";
 
-      // Get CSRF token
-      const csrftoken = getCSRFToken();
-
-      // Set up headers and body based on whether we're sending FormData or JSON
-      const fetchOptions = {
-        method,
-        credentials: "include", // Include cookies for authentication
-        headers: {
-          'X-CSRFToken': csrftoken, // Add CSRF token header
-        },
-      };
+      const fetchOptions = { method };
 
       if (isFormData && blogData instanceof FormData) {
-        // For FormData, let the browser set Content-Type with boundary
-        // Don't set Content-Type header manually - browser will set it with boundary
         fetchOptions.body = blogData;
       } else {
-        // For JSON data
-        fetchOptions.headers['Content-Type'] = 'application/json';
+        fetchOptions.headers = { "Content-Type": "application/json" };
         fetchOptions.body = JSON.stringify(blogData);
       }
 
@@ -269,13 +237,8 @@ function AdminDashboardContent() {
 
   const deleteBlog = async (slug) => {
     try {
-      const csrftoken = getCSRFToken();
-      const response = await fetch(`${API_BASE_URL}/blog/${slug}/`, {
+      const response = await fetch(`${BLOG_PROXY_URL}/${slug}`, {
         method: "DELETE",
-        credentials: "include", // Include cookies for authentication
-        headers: {
-          'X-CSRFToken': csrftoken,
-        },
       });
 
       if (!response.ok) {
@@ -292,18 +255,12 @@ function AdminDashboardContent() {
 
   const changeBlogStatus = async (slug, newStatus) => {
     try {
-      const csrftoken = getCSRFToken();
-      const endpoint = newStatus === "published" ? "publish" : "unpublish";
-      const response = await fetch(
-        `${API_BASE_URL}/blog/${slug}/${endpoint}/`,
-        {
-          method: "PATCH",
-          credentials: "include", // Include cookies for authentication
-          headers: {
-            'X-CSRFToken': csrftoken,
-          },
-        },
-      );
+      const action = newStatus === "published" ? "publish" : "unpublish";
+      const response = await fetch(`${BLOG_PROXY_URL}/${slug}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to ${endpoint} blog post`);
@@ -343,8 +300,8 @@ function AdminDashboardContent() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json",
-            'X-CSRFToken': csrftoken,
+            Accept: "application/json",
+            "X-CSRFToken": csrftoken,
           },
           credentials: "include", // Include cookies for authentication
           body: JSON.stringify({
@@ -408,8 +365,8 @@ function AdminDashboardContent() {
         {
           method: "DELETE",
           headers: {
-            "Accept": "application/json",
-            'X-CSRFToken': csrftoken,
+            Accept: "application/json",
+            "X-CSRFToken": csrftoken,
           },
           credentials: "include", // Include cookies for authentication
         },
