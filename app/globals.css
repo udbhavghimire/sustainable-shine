@@ -732,3 +732,8 @@ body {
   border-top: 2px solid #e5e7eb;
   margin: 2rem 0;
 }
+
+/* Hide Elfsight free plan branding badge */
+a[href*="elfsight.com/google-reviews-widget"] {
+  display: none !important;
+}
