@@ -26,9 +26,9 @@ export const metadata = {
 export default function BookingPage() {
   return (
     <main className="min-h-screen">
-      <Navbar />
+    
       <BookingCalculator />
-      <Footer />
+     
     </main>
   );
 }
