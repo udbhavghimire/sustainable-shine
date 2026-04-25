@@ -143,9 +143,7 @@ export default function LeadsSection({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+              
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -241,20 +239,7 @@ export default function LeadsSection({
                         <option value="cancelled">Cancelled</option>
                       </select>
                     </td>
-                    <td
-                      className="px-6 py-4 whitespace-nowrap text-sm font-medium"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteBooking(booking.id);
-                        }}
-                        className="text-red-600 hover:text-red-900 hover:underline transition-colors"
-                      >
-                        Delete
-                      </button>
-                    </td>
+           
                   </tr>
                 ))
               )}
