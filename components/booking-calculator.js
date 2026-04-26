@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import PropertyDetails, { addOnsData } from "./property-details";
 import CustomerDetails from "./customer-details";
+import posthog from "posthog-js";
 
 // Calendar Picker Component
 function CalendarPicker({ selectedDate, onDateSelect }) {
@@ -269,6 +270,14 @@ export default function BookingCalculator() {
 
   const toggleAddOn = (id) => {
     const addOn = addOnsData.find((a) => a.id === id);
+    const isSelecting = !selectedAddOns[id];
+    posthog.capture("booking_add_on_selected", {
+      add_on_id: id,
+      add_on_name: addOn?.name,
+      add_on_price: addOn?.price,
+      selected: isSelecting,
+      service_type: serviceType,
+    });
     setSelectedAddOns((prev) => ({
       ...prev,
       [id]: !prev[id],
@@ -607,6 +616,15 @@ export default function BookingCalculator() {
 
       if (result.success) {
         console.log("✅ API call successful!");
+        posthog.capture("booking_submitted", {
+          service_type: serviceType,
+          frequency,
+          bedrooms,
+          bathrooms,
+          suburb,
+          total_price: priceDetails?.total || 0,
+          hear_about_us: hearAboutUs,
+        });
         setSubmitSuccess(true);
 
         // Show success alert
@@ -1045,7 +1063,7 @@ export default function BookingCalculator() {
                   {serviceTypes.map((type) => (
                     <button
                       key={type.value}
-                      onClick={() => setServiceType(type.value)}
+                      onClick={() => { setServiceType(type.value); posthog.capture("booking_service_selected", { service_type: type.value, service_label: type.label }); }}
                       className={`p-6 rounded-xl border-2 transition-all duration-200 hover:shadow-md ${
                         serviceType === type.value
                           ? "border-emerald-500 bg-emerald-50 shadow-md"

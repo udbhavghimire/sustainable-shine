@@ -54,7 +54,7 @@ export default function Reviews({ city }) {
               bottom: 0,
               left: 0,
               right: 0,
-              height: "40px",
+              height: "45px",
               backgroundColor: "#f9fafb",
               zIndex: 10,
             }}

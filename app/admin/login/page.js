@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import posthog from "posthog-js";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -28,6 +29,8 @@ export default function AdminLogin() {
         // Store auth token in localStorage
         localStorage.setItem("adminAuth", "true");
         localStorage.setItem("adminUser", formData.username);
+        posthog.identify(formData.username, { username: formData.username, role: "admin" });
+        posthog.capture("admin_login_success", { username: formData.username });
         router.push("/admin");
       } else {
         setError("Invalid username or password");

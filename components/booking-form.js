@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import posthog from "posthog-js";
 
 export default function BookingForm({ city }) {
   const cityName = city?.name || "Sydney";
@@ -32,6 +33,12 @@ export default function BookingForm({ city }) {
 
     // Simulate form submission
     setTimeout(() => {
+      posthog.capture("quote_form_submitted", {
+        service: formData.service,
+        property_type: formData.propertyType,
+        bedrooms: formData.bedrooms,
+        city: cityName,
+      });
       setIsSubmitting(false);
       setSubmitStatus("success");
       setFormData({

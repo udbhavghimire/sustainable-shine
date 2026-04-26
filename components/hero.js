@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import posthog from "posthog-js";
 
 export default function Hero({ city }) {
   // Default to Sydney if no city provided
@@ -104,12 +105,14 @@ export default function Hero({ city }) {
               <a
                 href="/booking"
                 className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold md:px-8 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 text-center"
+                onClick={() => posthog.capture("hero_cta_clicked", { cta_type: "get_free_quote", city: cityName })}
               >
                 Get a Free Quote
               </a>
               <a
                 href="tel:+61 452 422 059"
                 className="btn-secondary text-center"
+                onClick={() => posthog.capture("hero_cta_clicked", { cta_type: "call", city: cityName })}
               >
                 Call +61 452 422 059
               </a>

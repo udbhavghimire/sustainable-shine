@@ -1,5 +1,7 @@
 "use client";
 
+import posthog from "posthog-js";
+
 export default function CTA({ city }) {
   const cityName = city?.name || "Sydney";
   return (
@@ -44,6 +46,7 @@ export default function CTA({ city }) {
             <a
               href="#booking"
               className="bg-white text-emerald-600 hover:bg-emerald-50 font-semibold py-4 px-10 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              onClick={() => posthog.capture("cta_book_now_clicked", { city: cityName })}
             >
               Book Now - Get Free Quote
             </a>
