@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getSuburbData, getAllSuburbSlugs } from "@/data/suburbs";
 import HowItWorks from "@/components/how-it-works";
@@ -36,19 +37,19 @@ export default async function DeepCleanSuburbPage({ params }) {
     priceRange: [
       {
         "@type": "PriceSpecification",
-        price: "349",
+        price: "233",
         priceCurrency: "AUD",
         name: "2BR apartment",
       },
       {
         "@type": "PriceSpecification",
-        price: "499",
+        price: "268",
         priceCurrency: "AUD",
         name: "3BR house",
       },
       {
         "@type": "PriceSpecification",
-        price: "649",
+        price: "372",
         priceCurrency: "AUD",
         name: "4BR house",
       },
@@ -162,75 +163,104 @@ export default async function DeepCleanSuburbPage({ params }) {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-emerald-50 via-white to-green-50 py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* Breadcrumbs */}
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-6">
-              <Link
-                href="/"
-                className="hover:text-emerald-600 transition-colors"
-              >
-                Home
-              </Link>
-              <span>/</span>
-              <Link
-                href="/deep-clean"
-                className="hover:text-emerald-600 transition-colors"
-              >
-                Deep Clean
-              </Link>
-              <span>/</span>
-              <span className="text-emerald-600 font-semibold">
-                {suburbData.name}
-              </span>
+      {/* Hero Section — split layout */}
+      <section className="relative bg-white overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 min-h-[600px] items-center gap-0">
+
+            {/* Left — text */}
+            <div className="py-24 lg:py-30 lg:pr-12">
+              {/* Breadcrumbs */}
+              <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+                <Link href="/" className="hover:text-emerald-600 transition-colors">Home</Link>
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                <Link href="/deep-clean" className="hover:text-emerald-600 transition-colors">Deep Clean</Link>
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                <span className="text-emerald-600 font-medium">{suburbData.name}</span>
+              </nav>
+
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
+                Deep Cleaning<br />
+                <span className="text-emerald-600">{suburbData.name}</span>
+              </h1>
+
+              <p className="text-lg text-gray-500 leading-relaxed mb-8 max-w-lg">
+              Professional deep cleaning service in {suburbData.name}. Intensive house cleaning including oven cleaning, grout scrubbing, and complete sanitization for homes and apartments.
+              </p>
+
+              {/* Mini trust stats */}
+              <div className="flex flex-wrap gap-6 mb-10">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="font-medium">Hospital-grade products</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="font-medium">Eco-friendly solutions</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="font-medium">Insured &amp; vetted team</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/booking"
+                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-7 py-4 rounded-xl font-semibold text-base hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  Get Free Quote
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+                <a
+                  href="tel:+61452422059"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-gray-800 px-7 py-4 rounded-xl font-semibold text-base border border-gray-200 hover:border-emerald-400 hover:text-emerald-700 transition-all duration-200 shadow-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  0452 422 059
+                </a>
+              </div>
             </div>
 
-            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6">
-              Deep Cleaning {suburbData.name} - Professional House Deep Clean
-            </h1>
-
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Our {suburbData.name} team tackles the jobs regular cleaning
-              leaves behind — inside ovens, grout lines, rangehoods, light
-              fittings, and every corner others miss. Hospital-grade products,
-              fully insured, and done right the first time.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link
-                href="/booking"
-                className="bg-emerald-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                Get Free Quote for {suburbData.name}
-              </Link>
-              <a
-                href="tel:+61 452 422 059"
-                className="bg-white text-emerald-600 px-8 py-4 rounded-full font-bold text-lg border-2 border-emerald-500 hover:bg-emerald-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
-              >
-                Call +61 452 422 059
-              </a>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="mt-12 flex flex-wrap justify-center gap-8 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">📍</span>
-                <span className="font-semibold">
-                  Servicing {suburbData.name}
-                </span>
+            {/* Right — image */}
+            <div className="relative hidden lg:block h-full min-h-[600px]">
+              <div className="absolute inset-0 rounded-bl-[80px]">
+                <Image
+                  src="/deep-cleaning.jpg"
+                  alt={`Deep cleaning service in ${suburbData.name}`}
+                  fill
+                  className="object-cover rounded-bl-[80px]"
+                  priority
+                />
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🧼</span>
-                <span className="font-semibold">Hospital-Grade Clean</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🌿</span>
-                <span className="font-semibold">Eco-Friendly</span>
+              {/* Floating stat card */}
+              <div className="absolute bottom-10 left-[-28px] bg-white rounded-2xl shadow-xl p-5 w-52">
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Starting from</p>
+                <p className="text-3xl font-bold text-emerald-600">$233</p>
+                <p className="text-sm text-gray-500">per visit · 2BR apartment</p>
               </div>
             </div>
+
           </div>
         </div>
       </section>
@@ -404,15 +434,15 @@ export default async function DeepCleanSuburbPage({ params }) {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center border-b border-emerald-400 pb-2">
                       <span>2BR apartment:</span>
-                      <span className="font-bold">From $349</span>
+                      <span className="font-bold">From $233</span>
                     </div>
                     <div className="flex justify-between items-center border-b border-emerald-400 pb-2">
                       <span>3BR house:</span>
-                      <span className="font-bold">From $499</span>
+                      <span className="font-bold">From $268</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span>4BR house:</span>
-                      <span className="font-bold">From $649</span>
+                      <span className="font-bold">From $372</span>
                     </div>
                   </div>
                   <p className="text-sm text-emerald-100 mt-4">
