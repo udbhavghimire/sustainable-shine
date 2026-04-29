@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import StatCard from "./stat-card";
 import BookingDetailsModal from "./booking-details-modal";
+
+const PAGE_SIZE = 20;
 
 export default function LeadsSection({
   bookings,
@@ -17,6 +20,19 @@ export default function LeadsSection({
   handleViewBooking,
   refreshData,
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset to page 1 whenever the filtered list changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [bookings.length, bookings[0]?.id]);
+
+  const totalPages = Math.ceil(bookings.length / PAGE_SIZE);
+  const paginatedBookings = bookings.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
   return (
     <div className="space-y-6">
       {/* Statistics Cards */}
@@ -157,7 +173,7 @@ export default function LeadsSection({
                   </td>
                 </tr>
               ) : (
-                bookings.map((booking) => (
+                paginatedBookings.map((booking) => (
                   <tr
                     key={booking.id}
                     className="hover:bg-gray-50 cursor-pointer"
@@ -247,6 +263,86 @@ export default function LeadsSection({
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between bg-white rounded-lg shadow-sm border border-gray-200 px-6 py-4">
+          <p className="text-sm text-gray-600">
+            Showing{" "}
+            <span className="font-medium">
+              {(currentPage - 1) * PAGE_SIZE + 1}
+            </span>{" "}
+            –{" "}
+            <span className="font-medium">
+              {Math.min(currentPage * PAGE_SIZE, bookings.length)}
+            </span>{" "}
+            of <span className="font-medium">{bookings.length}</span> results
+          </p>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="px-2 py-1 rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              «
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => p - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ‹ Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(
+                (p) =>
+                  p === 1 ||
+                  p === totalPages ||
+                  Math.abs(p - currentPage) <= 2,
+              )
+              .reduce((acc, p, idx, arr) => {
+                if (idx > 0 && p - arr[idx - 1] > 1) {
+                  acc.push("...");
+                }
+                acc.push(p);
+                return acc;
+              }, [])
+              .map((item, idx) =>
+                item === "..." ? (
+                  <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={item}
+                    onClick={() => setCurrentPage(item)}
+                    className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                      currentPage === item
+                        ? "bg-emerald-600 text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ),
+              )}
+            <button
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next ›
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="px-2 py-1 rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              »
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Booking Details Modal */}
       {selectedBooking && (

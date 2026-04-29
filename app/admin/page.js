@@ -71,21 +71,26 @@ function AdminDashboardContent() {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch(
-        "https://api.sustainableshine.com.au/api/bookings/",
-        {
+      let allBookings = [];
+      let nextUrl = "https://api.sustainableshine.com.au/api/bookings/";
+
+      while (nextUrl) {
+        const response = await fetch(nextUrl, {
           headers: {
             Accept: "application/json",
           },
-        },
-      );
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        allBookings = allBookings.concat(data.results || []);
+        nextUrl = data.next || null;
       }
 
-      const data = await response.json();
-      setBookings(data.results || []);
+      setBookings(allBookings);
       setApiError(false);
     } catch (error) {
       console.error("Error fetching bookings:", error);
