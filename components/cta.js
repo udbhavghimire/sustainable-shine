@@ -51,7 +51,7 @@ export default function CTA({ city }) {
               Book Now - Get Free Quote
             </a>
             <a
-              href="tel:+61234567890"
+              href="tel:+61452422059"
               className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-emerald-600 font-semibold py-4 px-10 rounded-lg transition-all duration-300 flex items-center"
             >
               <svg
