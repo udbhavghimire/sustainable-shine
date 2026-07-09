@@ -9,9 +9,6 @@ export default function Footer({ city }) {
     "General Cleaning",
     "Deep Cleaning",
     "End of Lease Cleaning",
-    "Office Cleaning",
-    "Window Cleaning",
-    "Carpet & Upholstery",
   ];
 
   const quickLinks = [
@@ -247,12 +244,12 @@ export default function Footer({ city }) {
                 </li>
               ))}
             </ul>
-            <Link
+            {/* <Link
               href="/#booking"
               className="inline-block mt-4 text-emerald-400 hover:text-emerald-300 font-semibold"
             >
               View All Areas →
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
