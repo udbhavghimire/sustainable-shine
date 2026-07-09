@@ -77,7 +77,7 @@ export default function FAQ({ city }) {
   };
 
   return (
-    <section className="section-padding bg-gray-50">
+    <section id="faq" className="section-padding bg-gray-50">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

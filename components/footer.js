@@ -204,7 +204,7 @@ export default function Footer({ city }) {
               ))}
               <li>
                 <a
-                  href="#"
+                  href="#faq"
                   className="hover:text-emerald-400 transition-colors duration-300"
                 >
                   FAQ
