@@ -277,9 +277,14 @@ export default function TermsAndConditions() {
                 End-of-Lease Cleaning
               </h2>
               <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                <li>
+                {/* <li>
                   Our end-of-lease cleaning does not guarantee bond return as
                   final decisions are made by landlords or agents.
+                </li> */}
+                <li>
+                  Our guarantee covers cleaning quality only.
+                  If the cleaner has not completed the agreed work or
+                  the cleaning is below standard, we will re-clean the affected areas.
                 </li>
                 <li>
                   Re-cleans are provided only according to the original
@@ -472,7 +477,7 @@ export default function TermsAndConditions() {
             Back to Home
           </Link>
           <Link
-            href="/privacy"
+            href="/privacy-policy"
             className="inline-flex items-center px-6 py-3 bg-white text-emerald-600 border-2 border-emerald-600 rounded-lg font-medium hover:bg-emerald-50 transition-all shadow-sm hover:shadow-md"
           >
             View Privacy Policy
