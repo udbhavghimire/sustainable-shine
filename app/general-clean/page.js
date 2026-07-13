@@ -92,47 +92,45 @@ export default function GeneralCleanPage() {
 
   const services = [
     {
+      title: "Bedrooms & Living Areas",
+      items: [
+        "Tidy beds",
+        "Dust & wipe down furniture",
+        "Dust & wipe down electronics",
+        "Tidy up shoes, clothes & toys",
+      ],
+    },
+    {
+      title: "Bathroom & Laundry",
+      items: [
+        "Scrub & sanitise toilet",
+        "Clean & sanitise bathtub & shower",
+        "Wipe down cabinet exteriors",
+        "Wipe down benchtops",
+        "Polish sink & taps",
+      ],
+    },
+    {
       title: "Kitchen",
       items: [
-        "Wipe down all surfaces and countertops",
-        "Clean stovetop and exterior of appliances",
-        "Clean sink and taps",
-        "Sweep and mop floors",
-        "Empty bins and replace liners",
-        "Wipe cabinet doors and handles",
+        "Stack & run dishwasher",
+        "Wipe down exteriors of appliances",
+        "Clean stovetop & oven exterior",
+        "Wipe cabinet exteriors",
+        "Clean microwave",
+        "Sanitise splashback & benchtop",
+        "Polish sink and taps",
       ],
     },
     {
-      title: "Bathrooms",
+      title: "All Areas",
       items: [
-        "Clean and sanitize toilet",
-        "Wipe down shower and bath",
-        "Clean vanity and mirrors",
-        "Wipe down tiles",
-        "Sweep and mop floors",
-        "Empty bins and replace liners",
-      ],
-    },
-    {
-      title: "Living Areas & Bedrooms",
-      items: [
-        "Dust all surfaces and furniture",
-        "Vacuum carpets and rugs",
-        "Mop hard floors",
-        "Make beds (if requested)",
-        // "Wipe light switches and door handles",
-        "Empty bins",
-      ],
-    },
-    {
-      title: "General",
-      items: [
-        "Dust skirting boards",
-        "Wipe window sills",
-        "Vacuum all floors",
-        // "Spot clean walls and doors",
-        "Tidy and organize (basic)",
-        "Take out rubbish",
+        "Dusting",
+        "Vacuum carpets",
+        "Sweep & mop floors",
+        "Clean mirrors",
+        "Empty rubbish bins",
+        "Remove cobwebs",
       ],
     },
   ];
