@@ -97,7 +97,8 @@ export default function DeepCleanPage() {
         "Tidy beds",
         "Dust & wipe down furniture",
         "Dust & wipe down electronics",
-        "Tidy up shoes, clothes & toys",
+        "Vacuum carpets",
+        "Sweep & mop floors",
       ],
     },
     {
@@ -109,6 +110,7 @@ export default function DeepCleanPage() {
         "Wipe down benchtops",
         "Polish sink & taps",
         "Scrub mineral deposits & mould",
+        "Sweep & mop floors",
       ],
     },
     {
@@ -120,7 +122,8 @@ export default function DeepCleanPage() {
         "Wipe cabinet exteriors",
         "Clean microwave",
         "Sanitise splashback & benchtop",
-        "Polish sink and taps",
+        "Polish sink & taps",
+        "Sweep & mop floors",
       ],
     },
     {
