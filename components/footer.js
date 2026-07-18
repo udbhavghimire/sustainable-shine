@@ -15,6 +15,7 @@ export default function Footer({ city }) {
     { name: "About Us", href: "#about" },
     { name: "Services", href: "#services" },
     { name: "Reviews", href: "#reviews" },
+    { name: "Service Areas", href: "/service-areas" },
     { name: "Book Now", href: "/booking" },
   ];
 

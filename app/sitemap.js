@@ -79,6 +79,12 @@ export default async function sitemap() {
       priority: 1,
     },
     {
+      url: `${baseUrl}/service-areas`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/end-of-lease-cleaning`,
       lastModified: currentDate,
       changeFrequency: "weekly",
