@@ -214,26 +214,11 @@ const regions = [
   },
 ];
 
-// three service types — each gets its own colour so they're easy to tell apart at a glance
+// three service types — shared neutral style for a clean, professional look
 const services = [
-  {
-    label: "General Cleaning",
-    path: "general-clean",
-    style: "text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 hover:border-emerald-400",
-    dot: "bg-emerald-500",
-  },
-  {
-    label: "Deep Cleaning",
-    path: "deep-clean",
-    style: "text-sky-700 bg-sky-50 hover:bg-sky-100 border-sky-200 hover:border-sky-400",
-    dot: "bg-sky-500",
-  },
-  {
-    label: "End of Lease",
-    path: "end-of-lease-cleaning",
-    style: "text-violet-700 bg-violet-50 hover:bg-violet-100 border-violet-200 hover:border-violet-400",
-    dot: "bg-violet-500",
-  },
+  { label: "General Cleaning", path: "general-clean" },
+  { label: "Deep Cleaning", path: "deep-clean" },
+  { label: "End of Lease", path: "end-of-lease-cleaning" },
 ];
 
 // ── Page ─────────────────────────────────────────────────────────────────────
@@ -271,6 +256,8 @@ export default function ServiceAreasPage() {
           {/* back link */}
           <Link
             href="/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-emerald-100 hover:text-white text-sm font-medium mb-10 transition-colors group"
           >
             <svg
@@ -338,20 +325,6 @@ export default function ServiceAreasPage() {
         </div>
       </section>
 
-      {/* colour key so people know what each dot means before they scroll */}
-      <div className="container-custom py-8">
-        <div className="bg-white rounded-xl border border-gray-200 px-6 py-4 flex flex-wrap items-center gap-6">
-          <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">Services</span>
-          <div className="h-4 w-px bg-gray-200 hidden sm:block" />
-          {services.map((svc) => (
-            <div key={svc.path} className="flex items-center gap-2">
-              <span className={`w-2.5 h-2.5 rounded-full ${svc.dot}`} />
-              <span className="text-sm font-medium text-gray-700">{svc.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* ── Quick Jump ───────────────────────────────────────────────────── */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="container-custom">
@@ -404,37 +377,35 @@ export default function ServiceAreasPage() {
                 {region.suburbs.map((suburb) => (
                   <div
                     key={suburb.slug}
-                    className="bg-white rounded-xl border border-gray-200 hover:border-emerald-300 hover:shadow-sm transition-all duration-200 group overflow-hidden"
+                    className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 group overflow-hidden"
                   >
-                    {/* Card title row */}
-                    <div className="flex items-center justify-between px-4 pt-4 pb-3">
-                      <h3 className="text-sm font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors leading-snug">
-                        House Cleaning in {suburb.name}
+                    {/* Card title — text itself is the link */}
+                    <div className="px-4 pt-4 pb-3">
+                      <h3 className="text-sm font-semibold leading-snug">
+                        <Link
+                          href={`/${suburb.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-900 hover:text-emerald-700 transition-colors"
+                        >
+                          House Cleaning in {suburb.name}
+                        </Link>
                       </h3>
-                      <Link
-                        href={`/${suburb.slug}`}
-                        title={`View all services in ${suburb.name}`}
-                        className="text-gray-300 hover:text-emerald-500 transition-colors ml-2 flex-shrink-0"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </Link>
                     </div>
 
                     {/* Divider */}
                     <div className="mx-4 border-t border-gray-100" />
 
-                    {/* Service links */}
+                    {/* Service links — single muted style */}
                     <div className="px-3 py-3 space-y-1.5">
                       {services.map((svc) => (
                         <Link
                           key={svc.path}
                           href={`/${svc.path}/${suburb.slug}`}
-                          className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border text-xs font-medium transition-all duration-150 ${svc.style}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-emerald-800 text-xs font-medium transition-all duration-150"
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${svc.dot}`} />
                           <span className="flex-1">{svc.label} in {suburb.name}</span>
                           <svg className="w-3 h-3 opacity-40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -468,6 +439,8 @@ export default function ServiceAreasPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/booking"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-7 py-3 rounded-lg transition-all duration-200 hover:shadow-md hover:-translate-y-px text-sm"
             >
               Get a Free Quote
