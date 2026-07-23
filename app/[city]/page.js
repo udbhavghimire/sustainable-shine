@@ -6,6 +6,7 @@ import About from "@/components/about";
 import OurWork from "@/components/our-work";
 import Reviews from "@/components/reviews";
 import FAQ from "@/components/faq";
+import Blogs from "@/components/blogs";
 
 import CTA from "@/components/cta";
 import FloatingBookingButton from "@/components/floating-booking-button";
@@ -139,6 +140,7 @@ export default async function CityPage({ params }) {
       <ServiceChecklist city={suburbData} />
       <OurWork city={suburbData} />
       <Reviews city={suburbData} />
+      <Blogs city={suburbData} suburbSlug={resolvedParams.city} />
       <FAQ city={suburbData} />
       <CTA city={suburbData} />
       <FloatingBookingButton />

@@ -1,24 +1,9 @@
 import { getAllSuburbSlugs } from "@/data/suburbs";
-
-const API_BASE_URL = "https://api.sustainableshine.com.au/api";
+import { fetchPublishedBlogs } from "@/lib/blogs";
 
 async function fetchBlogPosts() {
   try {
-    const response = await fetch(`${API_BASE_URL}/blog/`, {
-      headers: {
-        Accept: "application/json",
-      },
-      next: { revalidate: 3600 }, // Revalidate every hour
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const data = await response.json();
-    return (data.results || data || []).filter(
-      (blog) => blog.status === "published"
-    );
+    return await fetchPublishedBlogs({ revalidate: 60 });
   } catch (error) {
     console.error("Error fetching blog posts for sitemap:", error);
     return [];

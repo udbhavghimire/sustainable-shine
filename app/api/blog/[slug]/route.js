@@ -1,6 +1,17 @@
 import { NextResponse } from "next/server";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 const DJANGO_API_URL = "https://api.sustainableshine.com.au/api";
+
+function revalidateBlogPages(slug) {
+  // Expire immediately so newly published posts show on the next request
+  revalidateTag("blogs", { expire: 0 });
+  revalidatePath("/blog");
+  revalidatePath("/");
+  if (slug) {
+    revalidatePath(`/blog/${slug}`);
+  }
+}
 
 export async function GET(request, { params }) {
   try {
@@ -8,6 +19,7 @@ export async function GET(request, { params }) {
 
     const response = await fetch(`${DJANGO_API_URL}/blog/${slug}/`, {
       headers: { Accept: "application/json" },
+      cache: "no-store",
     });
 
     const data = await response.json();
@@ -37,6 +49,9 @@ export async function PATCH(request, { params }) {
           { method: "PATCH" },
         );
         const data = await response.json().catch(() => ({}));
+        if (response.ok) {
+          revalidateBlogPages(slug);
+        }
         return NextResponse.json(data, { status: response.status });
       }
 
@@ -47,6 +62,9 @@ export async function PATCH(request, { params }) {
         body: JSON.stringify(rest),
       });
       const data = await response.json();
+      if (response.ok) {
+        revalidateBlogPages(data.slug || slug);
+      }
       return NextResponse.json(data, { status: response.status });
     }
 
@@ -57,6 +75,9 @@ export async function PATCH(request, { params }) {
       body: formData,
     });
     const data = await response.json();
+    if (response.ok) {
+      revalidateBlogPages(data.slug || slug);
+    }
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Proxy PATCH /blog/[slug] error:", error);
@@ -74,6 +95,10 @@ export async function DELETE(request, { params }) {
     const response = await fetch(`${DJANGO_API_URL}/blog/${slug}/`, {
       method: "DELETE",
     });
+
+    if (response.ok || response.status === 204) {
+      revalidateBlogPages(slug);
+    }
 
     if (response.status === 204) {
       return new NextResponse(null, { status: 204 });

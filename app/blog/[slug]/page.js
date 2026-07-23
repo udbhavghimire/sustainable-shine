@@ -1,26 +1,12 @@
 import BlogPostClient from "./blog-post-client";
+import { fetchPublishedBlogs } from "@/lib/blogs";
 
 const API_BASE_URL = "https://api.sustainableshine.com.au/api";
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
   try {
-    const response = await fetch(`${API_BASE_URL}/blog/`, {
-      headers: {
-        Accept: "application/json",
-      },
-      next: { revalidate: 3600 },
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const data = await response.json();
-    const publishedBlogs = (data.results || data || []).filter(
-      (blog) => blog.status === "published"
-    );
-
+    const publishedBlogs = await fetchPublishedBlogs({ revalidate: 60 });
     return publishedBlogs.map((blog) => ({
       slug: blog.slug,
     }));
@@ -41,7 +27,7 @@ export async function generateMetadata({ params }) {
         headers: {
           Accept: "application/json",
         },
-        next: { revalidate: 3600 }, // Revalidate every hour
+        next: { revalidate: 60, tags: ["blogs"] },
       },
     );
 
@@ -56,8 +42,11 @@ export async function generateMetadata({ params }) {
 
       const description =
         blog.meta_description ||
+        blog.excerpt ||
         stripHtml(blog.content) ||
         "Read our latest blog post";
+
+      const author = blog.author_name || blog.author;
 
       return {
         title: blog.title || "Blog Post | Sustainable Shine",
@@ -68,7 +57,7 @@ export async function generateMetadata({ params }) {
           description: description,
           type: "article",
           publishedTime: blog.published_date || blog.created_at,
-          authors: blog.author ? [blog.author] : [],
+          authors: author ? [author] : [],
           images: blog.featured_image
             ? [
                 {

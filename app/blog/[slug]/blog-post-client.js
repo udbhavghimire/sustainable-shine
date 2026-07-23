@@ -199,7 +199,7 @@ export default function BlogPostClient({ params }) {
             </h1>
 
             {/* Author */}
-            {blog.author && (
+            {(blog.author_name || blog.author) && (
               <div className="flex items-center space-x-2 mb-8 text-gray-600">
                 <svg
                   className="w-5 h-5"
@@ -212,7 +212,7 @@ export default function BlogPostClient({ params }) {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>By {blog.author}</span>
+                <span>By {blog.author_name || blog.author}</span>
               </div>
             )}
 

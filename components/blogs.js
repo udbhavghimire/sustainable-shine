@@ -1,26 +1,15 @@
 import Link from "next/link";
 import BlogImage from "./blog-image";
+import {
+  fetchPublishedBlogs,
+  fetchPublishedBlogsBySuburb,
+} from "@/lib/blogs";
 
-const API_BASE_URL = "https://api.sustainableshine.com.au/api";
-
-async function fetchBlogs() {
+async function fetchBlogs(suburbSlug) {
   try {
-    const response = await fetch(`${API_BASE_URL}/blog/`, {
-      headers: {
-        Accept: "application/json",
-      },
-      next: { revalidate: 3600 }, // Revalidate every hour
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const publishedBlogs = (data.results || data || []).filter(
-      (blog) => blog.status === "published"
-    );
-    
+    const publishedBlogs = suburbSlug
+      ? await fetchPublishedBlogsBySuburb(suburbSlug, { revalidate: 60 })
+      : await fetchPublishedBlogs({ revalidate: 60 });
     // Get only the 4 most recent blogs
     return publishedBlogs.slice(0, 4);
   } catch (error) {
@@ -46,9 +35,12 @@ function getExcerpt(content, maxLength = 120) {
     : text;
 }
 
-export default async function Blogs() {
-  const blogs = await fetchBlogs();
+export default async function Blogs({ city, suburbSlug } = {}) {
+  const slug = suburbSlug || city?.slug;
+  const cityName = city?.name;
+  const blogs = await fetchBlogs(slug);
 
+  // Hide the section entirely when filtering by suburb and nothing matches
   if (blogs.length === 0) {
     return null;
   }
@@ -58,10 +50,14 @@ export default async function Blogs() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Latest from Our Blog
+            {cityName
+              ? `Check out Cleaning Tips and Tricks for ${cityName}`
+              : "Latest from Our Blog"}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Stay updated with cleaning tips, eco-friendly advice, and home care insights
+            {cityName
+              ? `Local cleaning advice and home care insights for ${cityName} residents`
+              : "Stay updated with cleaning tips, eco-friendly advice, and home care insights"}
           </p>
         </div>
 
@@ -109,7 +105,7 @@ export default async function Blogs() {
                     {blog.title}
                   </h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
-                    {getExcerpt(blog.content)}
+                    {blog.excerpt || getExcerpt(blog.content)}
                   </p>
                   <div className="inline-flex items-center text-emerald-600 group-hover:text-emerald-700 font-medium text-sm mt-auto">
                     Read more
