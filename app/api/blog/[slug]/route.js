@@ -2,6 +2,25 @@ import { NextResponse } from "next/server";
 
 const DJANGO_API_URL = "https://api.sustainableshine.com.au/api";
 
+export async function GET(request, { params }) {
+  try {
+    const { slug } = await params;
+
+    const response = await fetch(`${DJANGO_API_URL}/blog/${slug}/`, {
+      headers: { Accept: "application/json" },
+    });
+
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
+  } catch (error) {
+    console.error("Proxy GET /blog/[slug] error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch blog post" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function PATCH(request, { params }) {
   try {
     const { slug } = await params;

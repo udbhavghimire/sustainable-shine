@@ -52,16 +52,13 @@ function AdminDashboardContent() {
       setActiveTab(tab);
     }
 
-    if (blogSlug && blogs.length > 0) {
-      const blogToEdit = blogs.find((b) => b.slug === blogSlug);
-      if (blogToEdit) {
-        console.log("Loading blog for editing:", blogToEdit);
-        setEditingBlog(blogToEdit);
-        setShowBlogEditor(true);
-        setActiveTab("blogs");
-      }
+    if (blogSlug) {
+      setActiveTab("blogs");
+      // Always load the detail endpoint (list payload omits content)
+      loadBlogForEdit(blogSlug);
     }
-  }, [searchParams, blogs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handleLogout = () => {
     localStorage.removeItem("adminAuth");
@@ -281,12 +278,34 @@ function AdminDashboardContent() {
     }
   };
 
+  const loadBlogForEdit = async (slug) => {
+    try {
+      setIsLoadingBlogs(true);
+      const response = await fetch(`${BLOG_PROXY_URL}/${slug}`, {
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to load blog post (${response.status})`);
+      }
+
+      const fullBlog = await response.json();
+      setEditingBlog(fullBlog);
+      setShowBlogEditor(true);
+    } catch (error) {
+      console.error("Error loading blog for edit:", error);
+      alert("Failed to load blog post for editing. Please try again.");
+      setShowBlogEditor(false);
+      setEditingBlog(null);
+      router.push("/admin?tab=blogs");
+    } finally {
+      setIsLoadingBlogs(false);
+    }
+  };
+
   const handleEditBlog = (blog) => {
-    console.log("Editing blog:", blog);
-    setEditingBlog(blog);
-    setShowBlogEditor(true);
-    // Update URL to reflect editing state
-    router.push(`/admin?tab=blogs&edit=${blog.slug}`, { shallow: true });
+    // Detail fetch is driven by the ?edit= URL param (list API omits content)
+    router.push(`/admin?tab=blogs&edit=${blog.slug}`);
   };
 
   const handleCancelBlogEdit = () => {

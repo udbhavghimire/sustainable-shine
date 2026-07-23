@@ -35,12 +35,13 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
   const [imageFile, setImageFile] = useState(null); // Store the actual File object
+  // TipTap only reliably picks up initial content on mount — wait until form is hydrated
+  const [editorReady, setEditorReady] = useState(!blog);
 
   useEffect(() => {
     if (blog) {
-      console.log('BlogEditor received blog:', blog);
-      console.log('Blog content:', blog.content);
-      
+      setEditorReady(false);
+
       // Handle tags - could be array (tags_list) or string (tags)
       let tagsString = "";
       if (Array.isArray(blog.tags_list)) {
@@ -68,17 +69,17 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
         meta_description: blog.meta_description || blog.excerpt || "",
       };
       
-      console.log('Setting form data:', newFormData);
       setFormData(newFormData);
       
       // Set image preview to the featured_image URL from API
       setImagePreview(blog.featured_image || "");
       setImageFile(null); // Reset file when loading existing blog
+      setEditorReady(true);
     } else {
       // Reset all states when creating new blog
-      console.log('Creating new blog - resetting form');
       setImageFile(null);
       setImagePreview("");
+      setEditorReady(true);
     }
   }, [blog]);
 
@@ -276,14 +277,17 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
             Content *
           </label>
           <div className="border border-gray-300 rounded-lg overflow-hidden">
-            <RichTextEditor
-              key={blog?.slug || blog?.id || `new-blog-${Date.now()}`}
-              content={formData.content}
-              onChange={(content) => {
-                console.log('Content changed in editor:', content.substring(0, 100));
-                setFormData({ ...formData, content });
-              }}
-            />
+            {editorReady ? (
+              <RichTextEditor
+                key={blog?.slug || blog?.id || "new-blog"}
+                content={formData.content}
+                onChange={(content) => {
+                  setFormData((prev) => ({ ...prev, content }));
+                }}
+              />
+            ) : (
+              <p className="p-4 text-gray-500">Loading content...</p>
+            )}
           </div>
           <p className="mt-1 text-xs text-gray-500">
             Use the toolbar to format your content with headings, lists, links, and more
