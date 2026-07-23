@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { getAllSuburbs } from "@/data/suburbs";
 
 // Dynamically import the rich text editor to avoid SSR issues
 const RichTextEditor = dynamic(() => import("@/components/admin/rich-text-editor"), {
   ssr: false,
   loading: () => <p className="p-4 text-gray-500">Loading editor...</p>,
 });
+
+const suburbs = getAllSuburbs().sort((a, b) => a.name.localeCompare(b.name));
 
 export default function BlogEditor({ blog, onSave, onCancel }) {
   const [formData, setFormData] = useState({
@@ -22,6 +25,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
     author: "",
     status: "draft",
     featured: false,
+    suburb: "",
     meta_title: "",
     meta_description: "",
   });
@@ -59,6 +63,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
         author: blog.author_name || blog.author || "",
         status: blog.status || "draft",
         featured: blog.featured || false,
+        suburb: blog.suburb || "",
         meta_title: blog.meta_title || blog.title || "",
         meta_description: blog.meta_description || blog.excerpt || "",
       };
@@ -179,6 +184,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
         formDataToSend.append("author_name", formData.author || "");
         formDataToSend.append("status", formData.status);
         formDataToSend.append("featured", formData.featured);
+        formDataToSend.append("suburb", formData.suburb || "");
         formDataToSend.append("meta_title", formData.meta_title || "");
         formDataToSend.append("meta_description", formData.meta_description || "");
         
@@ -200,6 +206,7 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
           author_name: formData.author || "",
           status: formData.status,
           featured: formData.featured,
+          suburb: formData.suburb || "",
           meta_title: formData.meta_title || "",
           meta_description: formData.meta_description || "",
         };
@@ -323,6 +330,30 @@ export default function BlogEditor({ blog, onSave, onCancel }) {
               Separate tags with commas
             </p>
           </div>
+        </div>
+
+        {/* Suburb */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Suburb Page
+          </label>
+          <select
+            value={formData.suburb}
+            onChange={(e) =>
+              setFormData({ ...formData, suburb: e.target.value })
+            }
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          >
+            <option value="">None (General — blog page only)</option>
+            {suburbs.map((suburb) => (
+              <option key={suburb.slug} value={suburb.slug}>
+                {suburb.name} ({suburb.postcode})
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-500">
+            Select a suburb to show this post on that suburb&apos;s page. Leave as None to keep it on the general blog only.
+          </p>
         </div>
 
         {/* Featured Image Upload */}
