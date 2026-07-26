@@ -105,10 +105,6 @@ export default function CTA({ city }) {
             </div>
           </div>
 
-          {/* Special Offer */}
-          <div className="mt-12 inline-block bg-yellow-400 text-gray-900 px-6 py-3 rounded-full font-bold text-lg animate-pulse">
-            🎉 Special Offer: 15% OFF First-Time Customers!
-          </div>
         </div>
       </div>
     </section>
