@@ -291,10 +291,9 @@ export default function ServiceAreasPage() {
               {/* quick stats keep these honest and up to date */}
               <div className="flex flex-wrap gap-10">
                 {[
-                  { value: `${totalSuburbs}+`, label: "Suburbs" },
                   { value: "3", label: "Services" },
-                  { value: "5,000+", label: "Happy Clients" },
-                  { value: "4.9 / 5", label: "Rating" },
+                  { value: "500+", label: "Happy Clients" },
+                  { value: "5 / 5", label: "Rating" },
                 ].map((s) => (
                   <div key={s.label}>
                     <div className="text-2xl font-bold text-white">{s.value}</div>
