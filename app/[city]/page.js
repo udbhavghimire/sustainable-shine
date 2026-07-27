@@ -44,7 +44,7 @@ export async function generateMetadata({ params }) {
   }
 
   const pageUrl = `https://sustainableshine.com.au/${resolvedParams.city}`;
-  const imageUrl = "https://sustainableshine.com.au/hero2.jpeg";
+  const imageUrl = "https://sustainableshine.com.au/hero2.webp";
 
   return {
     metadataBase: new URL("https://sustainableshine.com.au"),

@@ -262,7 +262,7 @@ export default async function GeneralCleanSuburbPage({ params }) {
             <div className="relative hidden lg:block h-full min-h-[600px]">
               <div className="absolute inset-0  rounded-bl-[80px]">
                 <Image
-                  src="/general-clean.png"
+                  src="/general-clean.webp"
                   alt={`General cleaning service in ${suburbData.name}`}
                   fill
                   className="object-cover rounded-bl-[80px]"

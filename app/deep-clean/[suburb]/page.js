@@ -246,7 +246,7 @@ export default async function DeepCleanSuburbPage({ params }) {
             <div className="relative hidden lg:block h-full min-h-[600px]">
               <div className="absolute inset-0 rounded-bl-[80px]">
                 <Image
-                  src="/deep-cleaning.jpg"
+                  src="/deep-cleaning.webp"
                   alt={`Deep cleaning service in ${suburbData.name}`}
                   fill
                   className="object-cover rounded-bl-[80px]"

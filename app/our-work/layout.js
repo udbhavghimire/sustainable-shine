@@ -15,7 +15,7 @@ export const metadata = {
     url: "https://sustainableshine.com.au/our-work",
     images: [
       {
-        url: "https://sustainableshine.com.au/hero2.jpeg",
+        url: "https://sustainableshine.com.au/hero2.webp",
         width: 1200,
         height: 630,
         alt: "Before and After Professional Cleaning - Sustainable Shine Sydney",
@@ -28,7 +28,7 @@ export const metadata = {
     title: "Our Work - Before & After Cleaning Transformations | Sustainable Shine",
     description:
       "Real before and after cleaning photos from Sydney homes. See the Sustainable Shine difference.",
-    images: ["https://sustainableshine.com.au/hero2.jpeg"],
+    images: ["https://sustainableshine.com.au/hero2.webp"],
   },
 
   alternates: {

@@ -2,7 +2,7 @@ const BUSINESS_NAME = "Sustainable Shine";
 const PHONE = "+61452422059";
 const BASE_URL = "https://sustainableshine.com.au";
 const LOGO = `${BASE_URL}/sustainable%20logo.png`;
-const HERO_IMAGE = `${BASE_URL}/hero2.jpeg`;
+const HERO_IMAGE = `${BASE_URL}/hero2.webp`;
 
 const OPENING_HOURS = [
   {

@@ -250,7 +250,7 @@ export default function GeneralCleanPage() {
             <div className="relative">
               <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/general-clean.png"
+                  src="/general-clean.webp"
                   alt="General Cleaning Services"
                   className="w-full h-full object-cover"
                 />

@@ -257,7 +257,7 @@ export default function DeepCleanPage() {
             <div className="relative">
               <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/deep-cleaning.jpg"
+                  src="/deep-cleaning.webp"
                   alt="Deep Cleaning Services"
                   className="w-full h-full object-cover"
                 />

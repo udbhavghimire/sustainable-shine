@@ -139,7 +139,7 @@ export default function Hero({ city }) {
           <div className="relative">
             <div className="relative h-[500px] md:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="/hero2.jpeg"
+                src="/hero2.webp"
                 alt={`Professional cleaning service in ${cityName}`}
                 className="w-full h-full object-cover"
               />

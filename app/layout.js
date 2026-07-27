@@ -43,7 +43,7 @@ export const metadata = {
     url: "https://sustainableshine.com.au",
     images: [
       {
-        url: "https://sustainableshine.com.au/hero2.jpeg",
+        url: "https://sustainableshine.com.au/hero2.webp",
         width: 1200,
         height: 630,
         alt: "Sustainable Shine Cleaning - Professional Eco-Friendly Cleaning Services Sydney",
@@ -57,7 +57,7 @@ export const metadata = {
     title: "Sustainable Shine Cleaning | Professional Cleaning Services Sydney",
     description:
       "Top-rated eco-friendly cleaning services in Sydney. 5000+ happy clients. Book your free quote today!",
-    images: ["https://sustainableshine.com.au/hero2.jpeg"],
+    images: ["https://sustainableshine.com.au/hero2.webp"],
     creator: "@SustainableShine",
     site: "@SustainableShine",
   },

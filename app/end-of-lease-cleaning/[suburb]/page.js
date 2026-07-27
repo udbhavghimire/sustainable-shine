@@ -218,7 +218,7 @@ export default async function EndOfLeaseCleaningSuburbPage({ params }) {
             <div className="relative hidden lg:block h-full min-h-[600px]">
               <div className="absolute inset-0 rounded-bl-[80px]">
                 <Image
-                  src="/end-of-lease.jpg"
+                  src="/end-of-lease.webp"
                   alt={`End of lease cleaning service in ${suburbData.name}`}
                   fill
                   className="object-cover rounded-bl-[80px]"

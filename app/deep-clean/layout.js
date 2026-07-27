@@ -1,5 +1,5 @@
 const pageUrl = "https://sustainableshine.com.au/deep-clean";
-const imageUrl = "https://sustainableshine.com.au/hero2.jpeg";
+const imageUrl = "https://sustainableshine.com.au/hero2.webp";
 
 export const metadata = {
   metadataBase: new URL("https://sustainableshine.com.au"),

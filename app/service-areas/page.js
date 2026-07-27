@@ -309,13 +309,12 @@ export default function ServiceAreasPage() {
               <div className="absolute inset-0 rounded-2xl bg-emerald-400 opacity-20 blur-2xl scale-95" />
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 aspect-[4/3]">
                 <Image
-                  src="/hero2.jpeg"
+                  src="/hero2.webp"
                   alt="Professional house cleaning service in Sydney"
                   fill
                   className="object-cover"
                   priority
                 />
-                {/* dark gradient at the bottom so it doesn't feel too harsh */}
                 <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/30 to-transparent" />
               </div>
             </div>
