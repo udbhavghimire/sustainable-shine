@@ -139,10 +139,10 @@ export default function Services({ city }) {
                 <div className="flex gap-3">
                   <Link
                     href={service.link}
-                    className="flex-1 text-center py-3 px-6 rounded-lg font-semibold border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 transition-all duration-300"
                     aria-label={`Learn more about ${service.title}`}
+                    className="flex-1 text-center py-3 px-4 rounded-lg font-semibold border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 transition-all duration-300 text-sm sm:text-base"
                   >
-                    Learn More
+                     Learn More 
                   </Link>
                   <a
                     href={`/booking?service=${service.serviceType}`}
