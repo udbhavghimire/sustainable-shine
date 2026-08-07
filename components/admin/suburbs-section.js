@@ -100,7 +100,7 @@ export default function SuburbsSection() {
       }
     }
 
-    return list;
+    return list.sort((a, b) => a.name.localeCompare(b.name));
   }, [staticSuburbs, backendMap]);
 
   // Filter suburbs by search query and status filter
