@@ -518,7 +518,7 @@ export default function SuburbsSection() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider flex justify-between items-center">
             <span>Showing {filteredSuburbs.length} suburbs</span>
-            <span>Data source: data/suburbs.js & Backend API</span>
+          
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
