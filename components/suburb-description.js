@@ -21,12 +21,10 @@ export default function SuburbDescription({ description, cityName }) {
 
           {/* Description content */}
           <div
-            className="prose prose-lg max-w-none text-center text-gray-600 leading-relaxed
-              prose-headings:text-gray-900 prose-headings:font-bold prose-headings:text-center
-              prose-p:text-center
+            className="prose prose-lg max-w-none text-gray-600 leading-relaxed
+              prose-headings:text-gray-900 prose-headings:font-bold
               prose-a:text-emerald-600 prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-gray-800
-              prose-ul:mx-auto prose-ol:mx-auto prose-ul:list-inside prose-ol:list-inside"
+              prose-strong:text-gray-800"
             dangerouslySetInnerHTML={{ __html: description }}
           />
         </div>
