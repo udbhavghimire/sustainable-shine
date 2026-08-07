@@ -7,6 +7,7 @@ import OurWork from "@/components/our-work";
 import Reviews from "@/components/reviews";
 import FAQ from "@/components/faq";
 import Blogs from "@/components/blogs";
+import SuburbDescription from "@/components/suburb-description";
 
 import CTA from "@/components/cta";
 import FloatingBookingButton from "@/components/floating-booking-button";
@@ -131,6 +132,21 @@ export default async function CityPage({ params }) {
 
   const suburbData = getSuburbData(resolvedParams.city);
 
+  // Fetch suburb description from backend (returns null if not found)
+  let suburbDescription = null;
+  try {
+    const res = await fetch(
+      `https://api.sustainableshine.com.au/api/suburbs/${resolvedParams.city}/`,
+      { next: { revalidate: 60 }, headers: { Accept: "application/json" } }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      suburbDescription = data?.description || null;
+    }
+  } catch {
+    // Backend unavailable — silently skip description
+  }
+
   return (
     <main className="min-h-screen">
       <Navbar />
@@ -142,6 +158,10 @@ export default async function CityPage({ params }) {
       <Reviews city={suburbData} />
       <Blogs city={suburbData} suburbSlug={resolvedParams.city} />
       <FAQ city={suburbData} />
+      <SuburbDescription
+        description={suburbDescription}
+        cityName={suburbData.name}
+      />
       <CTA city={suburbData} />
       <FloatingBookingButton />
 
