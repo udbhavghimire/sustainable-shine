@@ -1,7 +1,20 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { getAllSuburbs } from "@/data/suburbs";
+
+const TinyMCEEditor = dynamic(() => import("@/components/admin/tinymce-editor"), {
+  ssr: false,
+  loading: () => (
+    <div className="border border-gray-300 rounded-lg p-4 text-sm text-gray-500">
+      Loading editor…
+    </div>
+  ),
+});
+
+const stripHtml = (html) =>
+  (html || "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
 
 const SUBURBS_API = "/api/suburbs";
 
@@ -22,6 +35,7 @@ export default function SuburbsSection() {
     is_active: true,
   });
   const [error, setError] = useState(null);
+  const [editorReady, setEditorReady] = useState(false);
 
   useEffect(() => {
     fetchBackendSuburbs();
@@ -115,12 +129,14 @@ export default function SuburbsSection() {
     setEditingSuburb(null);
     setForm({ slug: "", name: "", description: "", is_active: true });
     setError(null);
+    setEditorReady(true);
     setShowForm(true);
   };
 
   const openEdit = async (suburb) => {
     setIsSaving(true);
     setError(null);
+    setEditorReady(false);
 
     let currentDescription = "";
     let isActiveStatus = true;
@@ -151,11 +167,12 @@ export default function SuburbsSection() {
       is_active: isActiveStatus,
     });
     setShowForm(true);
+    setEditorReady(true);
     setIsSaving(false);
   };
 
   const handleSave = async () => {
-    if (!form.slug.trim() || !form.name.trim() || !form.description.trim()) {
+    if (!form.slug.trim() || !form.name.trim() || !stripHtml(form.description)) {
       setError("Slug, name, and description are all required.");
       return;
     }
@@ -352,6 +369,7 @@ export default function SuburbsSection() {
                 setShowForm(false);
                 setEditingSuburb(null);
                 setError(null);
+                setEditorReady(false);
               }}
               className="text-gray-400 hover:text-gray-600 text-sm"
             >
@@ -441,19 +459,24 @@ export default function SuburbsSection() {
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Suburb Description (HTML supported) <span className="text-red-500">*</span>
+              Suburb Description <span className="text-red-500">*</span>
             </label>
-            <textarea
-              value={form.description}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, description: e.target.value }))
-              }
-              rows={12}
-              placeholder="Write custom content for this suburb page. HTML tags like <p>, <h3>, <ul>, <li>, <strong> are supported."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono leading-relaxed"
-            />
+            <div className="border border-gray-300 rounded-lg overflow-hidden">
+              {editorReady ? (
+                <TinyMCEEditor
+                  key={editingSuburb?.slug || form.slug || "new-suburb"}
+                  content={form.description}
+                  onChange={(description) =>
+                    setForm((p) => ({ ...p, description }))
+                  }
+                />
+              ) : (
+                <div className="p-4 text-sm text-gray-500">Loading description…</div>
+              )}
+            </div>
             <p className="text-xs text-gray-500 mt-1">
-              Supports HTML formatting. This section will be displayed directly below FAQ on <code>/{form.slug}</code>.
+              Use the toolbar to format content. This section will be displayed directly below FAQ on{" "}
+              <code>/{form.slug || "suburb"}</code>.
             </p>
           </div>
 
@@ -471,6 +494,7 @@ export default function SuburbsSection() {
                 setShowForm(false);
                 setEditingSuburb(null);
                 setError(null);
+                setEditorReady(false);
               }}
               className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all text-sm"
             >
