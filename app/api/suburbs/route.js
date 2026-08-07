@@ -1,34 +1,66 @@
 import { NextResponse } from "next/server";
 
-const BACKEND_BASE = "https://api.sustainableshine.com.au/api/suburbs";
+const DJANGO_API_URL = "https://api.sustainableshine.com.au/api";
 
 export async function GET() {
   try {
-    const res = await fetch(`${BACKEND_BASE}/`, {
-      cache: "no-store",
-      headers: { Accept: "application/json" },
+    const allSuburbs = [];
+    let url = `${DJANGO_API_URL}/suburbs/`;
+
+    while (url) {
+      const response = await fetch(url, {
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        return NextResponse.json(data, { status: response.status });
+      }
+      allSuburbs.push(...(data.results || (Array.isArray(data) ? data : [])));
+      url = data.next || null;
+    }
+
+    return NextResponse.json({
+      count: allSuburbs.length,
+      next: null,
+      previous: null,
+      results: allSuburbs,
     });
-    const data = await res.json();
-    return NextResponse.json(data, { status: res.status });
   } catch (error) {
     console.error("Proxy GET /suburbs error:", error);
-    return NextResponse.json({ error: "Backend unavailable" }, { status: 502 });
+    return NextResponse.json(
+      { error: "Failed to fetch suburbs" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request) {
   try {
-    const body = await request.text();
-    const res = await fetch(`${BACKEND_BASE}/`, {
+    const contentType = request.headers.get("content-type") || "";
+    let body;
+    const headers = {};
+
+    if (contentType.includes("multipart/form-data")) {
+      body = await request.formData();
+    } else {
+      body = await request.text();
+      headers["Content-Type"] = "application/json";
+    }
+
+    const response = await fetch(`${DJANGO_API_URL}/suburbs/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body,
     });
 
-    const data = await res.json().catch(() => ({}));
-    return NextResponse.json(data, { status: res.status });
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Proxy POST /suburbs error:", error);
-    return NextResponse.json({ error: "Backend unavailable" }, { status: 502 });
+    return NextResponse.json(
+      { error: "Failed to create suburb description" },
+      { status: 500 },
+    );
   }
 }

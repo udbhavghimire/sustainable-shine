@@ -1,63 +1,57 @@
 import { NextResponse } from "next/server";
 
-const BACKEND_BASE = "https://api.sustainableshine.com.au/api/suburbs";
+const DJANGO_API_URL = "https://api.sustainableshine.com.au/api";
 
 export async function GET(request, { params }) {
-  const { slug } = await params;
-
   try {
-    const res = await fetch(`${BACKEND_BASE}/${slug}/`, {
-      cache: "no-store",
+    const { slug } = await params;
+
+    const response = await fetch(`${DJANGO_API_URL}/suburbs/${slug}/`, {
       headers: { Accept: "application/json" },
+      cache: "no-store",
     });
 
-    if (res.status === 404) {
-      return NextResponse.json(null, { status: 404 });
-    }
-
-    const data = await res.json();
-    return NextResponse.json(data, { status: res.status });
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Proxy GET /suburbs/[slug] error:", error);
-    return NextResponse.json(null, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch suburb description" },
+      { status: 500 },
+    );
   }
 }
 
 export async function PATCH(request, { params }) {
   try {
     const { slug } = await params;
-    const body = await request.text();
+    const contentType = request.headers.get("content-type") || "";
+    let body;
+    const headers = {};
 
-    const res = await fetch(`${BACKEND_BASE}/${slug}/`, {
+    if (contentType.includes("application/json")) {
+      const jsonBody = await request.json();
+      body = JSON.stringify(jsonBody);
+      headers["Content-Type"] = "application/json";
+    } else {
+      body = await request.text();
+      headers["Content-Type"] = "application/json";
+    }
+
+    const response = await fetch(`${DJANGO_API_URL}/suburbs/${slug}/`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body,
     });
 
-    const data = await res.json().catch(() => ({}));
-    return NextResponse.json(data, { status: res.status });
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Proxy PATCH /suburbs/[slug] error:", error);
-    return NextResponse.json({ error: "Backend unavailable" }, { status: 502 });
-  }
-}
-
-export async function PUT(request, { params }) {
-  try {
-    const { slug } = await params;
-    const body = await request.text();
-
-    const res = await fetch(`${BACKEND_BASE}/${slug}/`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body,
-    });
-
-    const data = await res.json().catch(() => ({}));
-    return NextResponse.json(data, { status: res.status });
-  } catch (error) {
-    console.error("Proxy PUT /suburbs/[slug] error:", error);
-    return NextResponse.json({ error: "Backend unavailable" }, { status: 502 });
+    return NextResponse.json(
+      { error: "Failed to update suburb description" },
+      { status: 500 },
+    );
   }
 }
 
@@ -65,18 +59,21 @@ export async function DELETE(request, { params }) {
   try {
     const { slug } = await params;
 
-    const res = await fetch(`${BACKEND_BASE}/${slug}/`, {
+    const response = await fetch(`${DJANGO_API_URL}/suburbs/${slug}/`, {
       method: "DELETE",
     });
 
-    if (res.ok || res.status === 204) {
+    if (response.ok || response.status === 204) {
       return new NextResponse(null, { status: 204 });
     }
 
-    const data = await res.json().catch(() => ({}));
-    return NextResponse.json(data, { status: res.status });
+    const data = await response.json().catch(() => ({}));
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Proxy DELETE /suburbs/[slug] error:", error);
-    return NextResponse.json({ error: "Backend unavailable" }, { status: 502 });
+    return NextResponse.json(
+      { error: "Failed to delete suburb description" },
+      { status: 500 },
+    );
   }
 }

@@ -30,7 +30,7 @@ export default function SuburbsSection() {
       });
       if (!res.ok) throw new Error("Failed to fetch suburbs");
       const data = await res.json();
-      setSuburbs(data.results || data || []);
+      setSuburbs(data.results || (Array.isArray(data) ? data : []));
     } catch (err) {
       console.error(err);
       setSuburbs([]);
@@ -46,16 +46,28 @@ export default function SuburbsSection() {
     setShowForm(true);
   };
 
-  const openEdit = (suburb) => {
-    setEditingSuburb(suburb);
-    setForm({
-      slug: suburb.slug,
-      name: suburb.name,
-      description: suburb.description || "",
-      is_active: suburb.is_active,
-    });
+  const openEdit = async (suburb) => {
+    setIsSaving(true);
     setError(null);
-    setShowForm(true);
+    try {
+      const res = await fetch(`${SUBURBS_API}/${suburb.slug}`, {
+        headers: { Accept: "application/json" },
+      });
+      if (!res.ok) throw new Error("Failed to load suburb details");
+      const fullData = await res.json();
+      setEditingSuburb(fullData);
+      setForm({
+        slug: fullData.slug || suburb.slug,
+        name: fullData.name || suburb.name,
+        description: fullData.description || "",
+        is_active: fullData.is_active !== undefined ? fullData.is_active : true,
+      });
+      setShowForm(true);
+    } catch (err) {
+      alert("Failed to load details: " + err.message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Auto-generate slug from name (only when creating)
@@ -66,7 +78,12 @@ export default function SuburbsSection() {
       name,
       ...(editingSuburb
         ? {}
-        : { slug: name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") }),
+        : {
+            slug: name
+              .toLowerCase()
+              .replace(/\s+/g, "-")
+              .replace(/[^a-z0-9-]/g, ""),
+          }),
     }));
   };
 
@@ -88,21 +105,42 @@ export default function SuburbsSection() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          slug: form.slug.trim(),
+          name: form.name.trim(),
+          description: form.description,
+          is_active: form.is_active,
+        }),
       });
 
+      const responseData = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        const msg = Object.entries(errData)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
-          .join(" | ");
-        throw new Error(msg || "Failed to save suburb description");
+        let errorMessage = "Failed to save suburb description";
+        if (responseData.message) {
+          errorMessage = responseData.message;
+        } else if (typeof responseData === "object") {
+          const fieldErrors = Object.entries(responseData)
+            .map(([field, errors]) => {
+              const errorList = Array.isArray(errors) ? errors : [errors];
+              return `${field}: ${errorList.join(", ")}`;
+            })
+            .join("; ");
+          if (fieldErrors) errorMessage = fieldErrors;
+        }
+        throw new Error(errorMessage);
       }
 
       await fetchSuburbs();
       setShowForm(false);
       setEditingSuburb(null);
+      alert(
+        editingSuburb
+          ? "Suburb description updated successfully!"
+          : "Suburb description created successfully!"
+      );
     } catch (err) {
+      console.error("Error saving suburb:", err);
       setError(err.message);
     } finally {
       setIsSaving(false);
@@ -110,12 +148,18 @@ export default function SuburbsSection() {
   };
 
   const handleDelete = async (slug) => {
-    if (!confirm(`Delete suburb description for "${slug}"? This cannot be undone.`)) return;
+    if (
+      !confirm(
+        `Delete suburb description for "${slug}"? This cannot be undone.`
+      )
+    )
+      return;
 
     try {
       const res = await fetch(`${SUBURBS_API}/${slug}`, { method: "DELETE" });
       if (!res.ok && res.status !== 204) throw new Error("Delete failed");
       await fetchSuburbs();
+      alert("Suburb description deleted successfully.");
     } catch (err) {
       alert("Failed to delete: " + err.message);
     }
@@ -140,9 +184,12 @@ export default function SuburbsSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Suburb Descriptions</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Suburb Descriptions
+          </h2>
           <p className="text-gray-600 mt-1">
-            Manage suburb-specific content shown below the FAQ on each suburb page.
+            Manage suburb-specific content shown below the FAQ on each suburb
+            page.
           </p>
         </div>
         {!showForm && (
@@ -150,8 +197,18 @@ export default function SuburbsSection() {
             onClick={openCreate}
             className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-all flex items-center space-x-2"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             <span>Add Suburb</span>
           </button>
@@ -162,7 +219,9 @@ export default function SuburbsSection() {
       {showForm && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
           <h3 className="text-lg font-semibold text-gray-900">
-            {editingSuburb ? `Editing: ${editingSuburb.name}` : "New Suburb Description"}
+            {editingSuburb
+              ? `Editing: ${editingSuburb.name}`
+              : "New Suburb Description"}
           </h3>
 
           {error && (
@@ -194,7 +253,9 @@ export default function SuburbsSection() {
               <input
                 type="text"
                 value={form.slug}
-                onChange={(e) => setForm((p) => ({ ...p, slug: e.target.value }))}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, slug: e.target.value }))
+                }
                 placeholder="e.g. bondi-beach"
                 disabled={!!editingSuburb}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-50 disabled:text-gray-500"
@@ -209,7 +270,9 @@ export default function SuburbsSection() {
           <div className="flex items-center space-x-3">
             <button
               type="button"
-              onClick={() => setForm((p) => ({ ...p, is_active: !p.is_active }))}
+              onClick={() =>
+                setForm((p) => ({ ...p, is_active: !p.is_active }))
+              }
               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
                 form.is_active ? "bg-emerald-500" : "bg-gray-200"
               }`}
@@ -221,7 +284,9 @@ export default function SuburbsSection() {
               />
             </button>
             <span className="text-sm text-gray-700">
-              {form.is_active ? "Active — visible on suburb page" : "Inactive — hidden from public"}
+              {form.is_active
+                ? "Active — visible on suburb page"
+                : "Inactive — hidden from public"}
             </span>
           </div>
 
@@ -232,13 +297,16 @@ export default function SuburbsSection() {
             </label>
             <textarea
               value={form.description}
-              onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, description: e.target.value }))
+              }
               rows={10}
               placeholder="Enter the suburb description. HTML is supported."
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
             />
             <p className="text-xs text-gray-500 mt-1">
-              HTML is supported (e.g. &lt;p&gt;, &lt;h3&gt;, &lt;ul&gt;, &lt;strong&gt;).
+              HTML is supported (e.g. &lt;p&gt;, &lt;h3&gt;, &lt;ul&gt;,
+              &lt;strong&gt;).
             </p>
           </div>
 
@@ -274,16 +342,32 @@ export default function SuburbsSection() {
       ) : suburbs.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
           <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            <svg
+              className="w-8 h-8 text-emerald-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No suburb descriptions yet</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            No suburb descriptions yet
+          </h3>
           <p className="text-gray-500 text-sm">
-            Add a suburb description to display custom content below the FAQ on suburb pages.
+            Add a suburb description to display custom content below the FAQ on
+            suburb pages.
           </p>
         </div>
       ) : (
@@ -291,18 +375,33 @@ export default function SuburbsSection() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Suburb</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Suburb
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Slug
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Last Updated
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {suburbs.map((suburb) => (
-                <tr key={suburb.slug} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={suburb.slug}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-semibold text-gray-900">{suburb.name}</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {suburb.name}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <code className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded font-mono">
@@ -318,7 +417,11 @@ export default function SuburbsSection() {
                           : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                       }`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${suburb.is_active ? "bg-emerald-500" : "bg-gray-400"}`} />
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                          suburb.is_active ? "bg-emerald-500" : "bg-gray-400"
+                        }`}
+                      />
                       {suburb.is_active ? "Active" : "Inactive"}
                     </button>
                   </td>
