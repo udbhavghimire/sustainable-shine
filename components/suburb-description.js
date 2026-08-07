@@ -16,17 +16,17 @@ export default function SuburbDescription({ description, cityName }) {
             <span className="text-emerald-500 font-semibold text-sm uppercase tracking-wide">
               About the Area
             </span>
-            <h2 className="heading-2 text-gray-900 mt-4">
-              Cleaning Services in {cityName}
-            </h2>
+           
           </div>
 
           {/* Description content */}
           <div
-            className="prose prose-lg max-w-none text-gray-600 leading-relaxed
-              prose-headings:text-gray-900 prose-headings:font-bold
+            className="prose prose-lg max-w-none text-center text-gray-600 leading-relaxed
+              prose-headings:text-gray-900 prose-headings:font-bold prose-headings:text-center
+              prose-p:text-center
               prose-a:text-emerald-600 prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-gray-800"
+              prose-strong:text-gray-800
+              prose-ul:mx-auto prose-ol:mx-auto prose-ul:list-inside prose-ol:list-inside"
             dangerouslySetInnerHTML={{ __html: description }}
           />
         </div>
