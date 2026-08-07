@@ -7,7 +7,7 @@ export async function GET(request, { params }) {
 
   try {
     const res = await fetch(`${BACKEND_BASE}/${slug}/`, {
-      next: { revalidate: 60 }, // cache for 60s, re-validate in background
+      cache: "no-store",
       headers: { Accept: "application/json" },
     });
 
@@ -15,58 +15,68 @@ export async function GET(request, { params }) {
       return NextResponse.json(null, { status: 404 });
     }
 
-    if (!res.ok) {
-      return NextResponse.json(null, { status: res.status });
-    }
-
     const data = await res.json();
-    return NextResponse.json(data);
-  } catch {
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("Proxy GET /suburbs/[slug] error:", error);
     return NextResponse.json(null, { status: 500 });
   }
 }
 
-export async function POST(request, { params }) {
-  const { slug } = await params;
-  const body = await request.text();
-  return _proxy("POST", slug, body, request.headers);
-}
-
 export async function PATCH(request, { params }) {
-  const { slug } = await params;
-  const body = await request.text();
-  return _proxy("PATCH", slug, body, request.headers);
+  try {
+    const { slug } = await params;
+    const body = await request.text();
+
+    const res = await fetch(`${BACKEND_BASE}/${slug}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body,
+    });
+
+    const data = await res.json().catch(() => ({}));
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("Proxy PATCH /suburbs/[slug] error:", error);
+    return NextResponse.json({ error: "Backend unavailable" }, { status: 502 });
+  }
 }
 
 export async function PUT(request, { params }) {
-  const { slug } = await params;
-  const body = await request.text();
-  return _proxy("PUT", slug, body, request.headers);
+  try {
+    const { slug } = await params;
+    const body = await request.text();
+
+    const res = await fetch(`${BACKEND_BASE}/${slug}/`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body,
+    });
+
+    const data = await res.json().catch(() => ({}));
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("Proxy PUT /suburbs/[slug] error:", error);
+    return NextResponse.json({ error: "Backend unavailable" }, { status: 502 });
+  }
 }
 
 export async function DELETE(request, { params }) {
-  const { slug } = await params;
-  return _proxy("DELETE", slug, null, request.headers);
-}
-
-async function _proxy(method, slug, body, inHeaders) {
-  const headers = { "Content-Type": "application/json" };
-  const cookie = inHeaders.get("cookie");
-  if (cookie) headers["Cookie"] = cookie;
-  const csrf = inHeaders.get("x-csrftoken");
-  if (csrf) headers["X-CSRFToken"] = csrf;
-
-  const options = { method, headers, credentials: "include" };
-  if (body) options.body = body;
-
   try {
-    const res = await fetch(`${BACKEND_BASE}/${slug}/`, options);
-    const text = await res.text();
-    return new NextResponse(text, {
-      status: res.status,
-      headers: { "Content-Type": "application/json" },
+    const { slug } = await params;
+
+    const res = await fetch(`${BACKEND_BASE}/${slug}/`, {
+      method: "DELETE",
     });
-  } catch {
+
+    if (res.ok || res.status === 204) {
+      return new NextResponse(null, { status: 204 });
+    }
+
+    const data = await res.json().catch(() => ({}));
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("Proxy DELETE /suburbs/[slug] error:", error);
     return NextResponse.json({ error: "Backend unavailable" }, { status: 502 });
   }
 }
