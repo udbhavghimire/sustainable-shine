@@ -13,9 +13,7 @@ export default function SuburbDescription({ description, cityName }) {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <span className="text-emerald-500 font-semibold text-sm uppercase tracking-wide">
-              About the Area
-            </span>
+            
            
           </div>
 
