@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { getAllSuburbs } from "@/data/suburbs";
 
@@ -36,10 +36,17 @@ export default function SuburbsSection() {
   });
   const [error, setError] = useState(null);
   const [editorReady, setEditorReady] = useState(false);
+  const formRef = useRef(null);
 
   useEffect(() => {
     fetchBackendSuburbs();
   }, []);
+
+  useEffect(() => {
+    if (showForm && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showForm]);
 
   const fetchBackendSuburbs = async () => {
     setIsLoading(true);
@@ -355,9 +362,12 @@ export default function SuburbsSection() {
         </div>
       )}
 
-      {/* Editor Modal / Form */}
+      {/* Editor — replaces list while editing (same pattern as blog editor) */}
       {showForm && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
+        <div
+          ref={formRef}
+          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5"
+        >
           <div className="flex justify-between items-center border-b border-gray-100 pb-3">
             <h3 className="text-lg font-semibold text-gray-900">
               {editingSuburb
@@ -504,17 +514,17 @@ export default function SuburbsSection() {
         </div>
       )}
 
-      {/* Suburbs Table */}
-      {isLoading ? (
+      {/* Suburbs Table — hidden while editor is open */}
+      {!showForm && isLoading ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mx-auto" />
           <p className="mt-4 text-gray-600 text-sm">Loading suburb list from data/suburbs.js…</p>
         </div>
-      ) : filteredSuburbs.length === 0 ? (
+      ) : !showForm && filteredSuburbs.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
           <p className="text-gray-500 text-sm">No suburbs found matching your search query.</p>
         </div>
-      ) : (
+      ) : !showForm ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider flex justify-between items-center">
             <span>Showing {filteredSuburbs.length} suburbs</span>
@@ -605,7 +615,7 @@ export default function SuburbsSection() {
             </table>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
