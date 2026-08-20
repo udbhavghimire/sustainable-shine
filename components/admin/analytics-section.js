@@ -38,9 +38,9 @@ function normalizeTopEvents(topEvents) {
       return { label: item, count: null, event_type: null };
     }
     const label =
+      item.label ||
       item.element_text ||
       item.element_id ||
-      item.label ||
       item.name ||
       item.event_type ||
       "—";
@@ -60,10 +60,12 @@ function normalizeDevices(devices) {
       count: item.count ?? item.views ?? 0,
     }));
   }
-  return Object.entries(devices).map(([type, count]) => ({
-    type,
-    count: typeof count === "object" ? count.count ?? count.views ?? 0 : count,
-  }));
+  return Object.entries(devices)
+    .map(([type, count]) => ({
+      type,
+      count: typeof count === "object" ? count.count ?? count.views ?? 0 : count,
+    }))
+    .filter((d) => Number(d.count) > 0);
 }
 
 function normalizeDaily(daily) {
@@ -98,6 +100,11 @@ export default function AnalyticsSection() {
       );
 
       if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error(
+            "Analytics API not found (404). Redeploy sustainable-shine-backend so /api/analytics/ is live, then run migrations.",
+          );
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -107,7 +114,8 @@ export default function AnalyticsSection() {
       console.error("Error fetching analytics dashboard:", err);
       setData(null);
       setError(
-        "Unable to load analytics. The backend might be starting up — try again shortly.",
+        err?.message ||
+          "Unable to load analytics. The backend might be starting up — try again shortly.",
       );
     } finally {
       setIsLoading(false);

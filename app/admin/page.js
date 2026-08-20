@@ -31,6 +31,7 @@ function AdminDashboardContent() {
   const [isLoadingBlogs, setIsLoadingBlogs] = useState(false);
   const [showBlogEditor, setShowBlogEditor] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
+  const [adminUser, setAdminUser] = useState("");
 
   // Check authentication
   useEffect(() => {
@@ -38,6 +39,7 @@ function AdminDashboardContent() {
     if (!isAuth) {
       router.push("/admin/login");
     } else {
+      setAdminUser(localStorage.getItem("adminUser") || "admin");
       setIsLoading(false);
       fetchBookings();
       fetchStatistics();
@@ -514,7 +516,7 @@ function AdminDashboardContent() {
 
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">
-                Welcome, {localStorage.getItem("adminUser")}
+                Welcome, {adminUser}
               </span>
               <button
                 onClick={handleLogout}

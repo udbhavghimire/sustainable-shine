@@ -4,7 +4,7 @@ import { sendCustomerConfirmationEmail } from "@/components/email/customer-confi
 import { sendBusinessNotificationEmail } from "@/components/email/business-notification-email";
 import { getPostHogClient } from "@/lib/posthog-server";
 
-const resend = new Resend("re_BQqTwxtN_J62Yv9DuT9Qy5R2azym6TmKZ");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request) {
   try {
@@ -140,30 +140,32 @@ export async function POST(request) {
     }
 
     const posthog = getPostHogClient();
-    const distinctId = bookingData.email || "anonymous";
-    posthog.capture({
-      distinctId,
-      event: "booking_api_completed",
-      properties: {
-        service_type: bookingData.serviceType,
-        suburb: bookingData.suburb,
-        bedrooms: bookingData.bedrooms,
-        bathrooms: bookingData.bathrooms,
-        frequency: bookingData.frequency || "once",
-        total_price: bookingData.priceDetails?.total || 0,
-        django_saved: djangoSaved,
-        hear_about_us: bookingData.hearAboutUs || "",
-      },
-    });
-    posthog.identify({
-      distinctId,
-      properties: {
-        email: bookingData.email,
-        name: `${bookingData.firstName} ${bookingData.lastName}`.trim(),
-        phone: bookingData.phone,
-      },
-    });
-    await posthog.shutdown();
+    if (posthog) {
+      const distinctId = bookingData.email || "anonymous";
+      posthog.capture({
+        distinctId,
+        event: "booking_api_completed",
+        properties: {
+          service_type: bookingData.serviceType,
+          suburb: bookingData.suburb,
+          bedrooms: bookingData.bedrooms,
+          bathrooms: bookingData.bathrooms,
+          frequency: bookingData.frequency || "once",
+          total_price: bookingData.priceDetails?.total || 0,
+          django_saved: djangoSaved,
+          hear_about_us: bookingData.hearAboutUs || "",
+        },
+      });
+      posthog.identify({
+        distinctId,
+        properties: {
+          email: bookingData.email,
+          name: `${bookingData.firstName} ${bookingData.lastName}`.trim(),
+          phone: bookingData.phone,
+        },
+      });
+      await posthog.shutdown();
+    }
 
     return NextResponse.json({
       success: true,
@@ -176,12 +178,14 @@ export async function POST(request) {
     console.error("Error sending email:", error);
     try {
       const posthog = getPostHogClient();
-      posthog.capture({
-        distinctId: "server",
-        event: "booking_api_failed",
-        properties: { error: error.message },
-      });
-      await posthog.shutdown();
+      if (posthog) {
+        posthog.capture({
+          distinctId: "server",
+          event: "booking_api_failed",
+          properties: { error: error.message },
+        });
+        await posthog.shutdown();
+      }
     } catch (_) {}
     return NextResponse.json(
       { success: false, error: error.message },
