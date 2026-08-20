@@ -6,6 +6,7 @@ import BlogEditor from "@/components/admin/blog-editor";
 import BlogList from "@/components/admin/blog-list";
 import LeadsSection from "@/components/admin/leads-section";
 import SuburbsSection from "@/components/admin/suburbs-section";
+import AnalyticsSection from "@/components/admin/analytics-section";
 import Navbar from "@/components/navbar";
 
 const API_BASE_URL = "https://api.sustainableshine.com.au/api";
@@ -560,6 +561,16 @@ function AdminDashboardContent() {
             >
               Suburbs
             </button>
+            <button
+              onClick={() => setActiveTab("analytics")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "analytics"
+                  ? "border-emerald-500 text-emerald-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Analytics
+            </button>
           </nav>
         </div>
       </div>
@@ -687,6 +698,7 @@ function AdminDashboardContent() {
           </>
         )}
         {activeTab === "suburbs" && <SuburbsSection />}
+        {activeTab === "analytics" && <AnalyticsSection />}
       </main>
     </div>
   );

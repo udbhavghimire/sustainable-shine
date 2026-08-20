@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import PropertyDetails, { addOnsData } from "./property-details";
 import CustomerDetails from "./customer-details";
 import posthog from "posthog-js";
+import { trackBookingSubmit } from "@/lib/analytics";
 
 // Calendar Picker Component
 function CalendarPicker({ selectedDate, onDateSelect }) {
@@ -616,6 +617,7 @@ export default function BookingCalculator() {
 
       if (result.success) {
         console.log("✅ API call successful!");
+        trackBookingSubmit("/booking");
         posthog.capture("booking_submitted", {
           service_type: serviceType,
           frequency,
