@@ -31,6 +31,9 @@ function CalendarPicker({ selectedDate, onDateSelect }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  const earliestBookableDate = new Date(today);
+  earliestBookableDate.setDate(today.getDate() + 3);
+
   // Get days in month
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -63,8 +66,8 @@ function CalendarPicker({ selectedDate, onDateSelect }) {
     const clickedDate = new Date(year, month, day);
     clickedDate.setHours(0, 0, 0, 0);
 
-    // Don't allow selecting past dates
-    if (clickedDate < today) return;
+    // Don't allow selecting past dates or dates within the next 2 days
+    if (clickedDate < earliestBookableDate) return;
 
     // Format date as YYYY-MM-DD for input compatibility
     const formattedDate = `${year}-${String(month + 1).padStart(
@@ -97,11 +100,56 @@ function CalendarPicker({ selectedDate, onDateSelect }) {
     );
   };
 
-  const isDateDisabled = (day) => {
-    if (!day) return true;
+  const getDateForDay = (day) => {
+    if (!day) return null;
     const date = new Date(year, month, day);
     date.setHours(0, 0, 0, 0);
-    return date < today;
+    return date;
+  };
+
+  const isPastDate = (day) => {
+    const date = getDateForDay(day);
+    return date && date < today;
+  };
+
+  const isWithinBookingBuffer = (day) => {
+    const date = getDateForDay(day);
+    return date && date >= today && date < earliestBookableDate;
+  };
+
+  const isToday = (day) =>
+    day === today.getDate() &&
+    month === today.getMonth() &&
+    year === today.getFullYear();
+
+  const getDayClasses = (day) => {
+    if (!day) return "invisible";
+
+    const base = "aspect-square p-1 text-xs transition-colors";
+
+    if (isDateSelected(day)) {
+      return `${base} cursor-pointer bg-emerald-500 text-white font-semibold hover:bg-emerald-600`;
+    }
+
+    if (isPastDate(day)) {
+      return `${base} text-gray-300 cursor-not-allowed bg-gray-50/40`;
+    }
+
+    if (isWithinBookingBuffer(day)) {
+      return `${base} text-emerald-800 cursor-not-allowed bg-emerald-50 font-medium${
+        isToday(day) ? " font-semibold" : ""
+      }`;
+    }
+
+    return `${base} hover:bg-emerald-100 cursor-pointer text-gray-700 bg-white${
+      isToday(day) ? " font-semibold text-emerald-600" : ""
+    }`;
+  };
+
+  const isDateDisabled = (day) => {
+    if (!day) return true;
+    const date = getDateForDay(day);
+    return date < earliestBookableDate;
   };
 
   const canGoPrevious = () => {
@@ -189,30 +237,7 @@ function CalendarPicker({ selectedDate, onDateSelect }) {
               key={index}
               onClick={() => day && handleDateClick(day)}
               disabled={isDateDisabled(day)}
-              className={`
-                aspect-square p-1 text-xs transition-colors
-                ${!day ? "invisible" : ""}
-                ${
-                  isDateDisabled(day)
-                    ? "text-gray-300 cursor-not-allowed bg-gray-100"
-                    : isDateSelected(day)
-                      ? "cursor-pointer"
-                      : "hover:bg-emerald-100 cursor-pointer"
-                }
-                ${
-                  isDateSelected(day)
-                    ? "bg-emerald-500 text-white font-semibold hover:bg-emerald-600"
-                    : "text-gray-700"
-                }
-                ${
-                  day === today.getDate() &&
-                  month === today.getMonth() &&
-                  year === today.getFullYear() &&
-                  !isDateSelected(day)
-                    ? "font-semibold text-emerald-600"
-                    : ""
-                }
-              `}
+              className={getDayClasses(day)}
             >
               {day}
             </button>
@@ -1479,6 +1504,16 @@ export default function BookingCalculator() {
                       selectedDate={selectedDate}
                       onDateSelect={setSelectedDate}
                     />
+                    <p className="text-xs text-gray-600 mt-3">
+                    For urgent bookings, please email us at {" "}
+                      <a
+                        href="mailto:info@sustainableshine.com.au"
+                        className="text-emerald-600 hover:underline"
+                      >
+                        info@sustainableshine.com.au
+                      </a>{" "}
+                      so we can confirm availability and assist you as soon as possible.
+                    </p>
                   </div>
 
                   {/* Time Selection - Right Side */}
