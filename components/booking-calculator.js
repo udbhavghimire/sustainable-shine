@@ -567,6 +567,24 @@ export default function BookingCalculator() {
     }
 
     console.log("✅ Form validation passed");
+
+    const confirmation = await Swal.fire({
+      icon: "question",
+      title: "Confirm Your CleaningBooking Request",
+      html: "Please ensure all details are correct. Would you like to proceed with submitting your cleaning booking request?",
+      showCancelButton: true,
+      confirmButtonColor: "#059669",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Submit Booking Request",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (!confirmation.isConfirmed) {
+      console.log("ℹ️ Booking submission cancelled by user");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
