@@ -325,7 +325,7 @@ export default function TermsAndConditions() {
                 We respect your privacy. All personal information is handled in
                 accordance with our{" "}
                 <Link
-                  href="/privacy"
+                  href="/privacy-policy"
                   className="text-emerald-600 hover:text-emerald-700 font-medium underline"
                 >
                   Privacy Policy
