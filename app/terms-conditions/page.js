@@ -349,7 +349,7 @@ export default function TermsAndConditions() {
               </p>
             </section>
 
-            {/* Section 15 */}
+           
             <section className="mb-10">
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 font-bold text-sm mr-3">
