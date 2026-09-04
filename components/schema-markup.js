@@ -291,3 +291,86 @@ export function BreadcrumbSchema({ items }) {
     })),
   };
 }
+
+export function BlogListingSchema({ blogs = [] }) {
+  const pageUrl = `${BASE_URL}/blog`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${pageUrl}#collection`,
+    name: "Blog | Sustainable Shine - Cleaning Tips & Insights",
+    description:
+      "Expert advice, eco-friendly cleaning tips, and insights to keep your home sparkling clean.",
+    url: pageUrl,
+    isPartOf: {
+      "@id": `${BASE_URL}/#website`,
+    },
+    about: {
+      "@type": "Thing",
+      name: "House cleaning and eco-friendly home care",
+    },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: blogs.length,
+      itemListElement: blogs.map((blog, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${BASE_URL}/blog/${blog.slug}`,
+        name: blog.title,
+      })),
+    },
+  };
+}
+
+export function BlogPostingSchema({ blog }) {
+  const pageUrl = `${BASE_URL}/blog/${blog.slug}`;
+  const stripHtml = (html) =>
+    html ? String(html).replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim() : "";
+  const description =
+    blog.meta_description ||
+    blog.excerpt ||
+    stripHtml(blog.content).slice(0, 160) ||
+    "Read our latest blog post from Sustainable Shine.";
+  const authorName = blog.author_name || blog.author || BUSINESS_NAME;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${pageUrl}#article`,
+    headline: blog.title,
+    description,
+    url: pageUrl,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": pageUrl,
+    },
+    datePublished: blog.published_date || blog.created_at,
+    dateModified: blog.updated_at || blog.published_date || blog.created_at,
+    author: {
+      "@type": "Person",
+      name: authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
+      name: BUSINESS_NAME,
+      logo: {
+        "@type": "ImageObject",
+        url: LOGO,
+      },
+    },
+    ...(blog.featured_image && {
+      image: {
+        "@type": "ImageObject",
+        url: blog.featured_image,
+      },
+    }),
+    ...(blog.category && { articleSection: blog.category }),
+    ...(Array.isArray(blog.tags) && blog.tags.length > 0
+      ? { keywords: blog.tags.join(", ") }
+      : blog.tags
+        ? { keywords: String(blog.tags) }
+        : {}),
+  };
+}

@@ -8,6 +8,7 @@ import {
   HomePageLocalBusinessSchema,
   ServicePageSchema,
   BreadcrumbSchema,
+  FAQPageSchema,
 } from "@/components/schema-markup";
 
 export default function DeepCleanPage() {
@@ -462,6 +463,12 @@ export default function DeepCleanPage() {
               ],
             }),
           ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(FAQPageSchema({ faqs })),
         }}
       />
     </main>

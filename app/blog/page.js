@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { fetchPublishedBlogs } from "@/lib/blogs";
 import { getSuburbData } from "@/data/suburbs";
+import {
+  BlogListingSchema,
+  BreadcrumbSchema,
+} from "@/components/schema-markup";
 
 async function fetchBlogs() {
   try {
@@ -164,6 +168,29 @@ export default async function Blog() {
           </div>
         )}
       </div>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(BlogListingSchema({ blogs })),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            BreadcrumbSchema({
+              items: [
+                { name: "Home", url: "https://sustainableshine.com.au" },
+                {
+                  name: "Blog",
+                  url: "https://sustainableshine.com.au/blog",
+                },
+              ],
+            }),
+          ),
+        }}
+      />
     </div>
   );
 }
