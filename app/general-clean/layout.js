@@ -46,7 +46,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "General Cleaning Services Sydney | Regular House Cleaning",
     description:
-      "Regular, reliable house cleaning Sydney. Professional cleaners for busy families and professionals. Flexible weekly, fortnightly, or monthly service.",
+      "Professional general cleaning services Sydney for homes and apartments, weekly, fortnightly, or monthly service. Book your house cleaners today!",
     images: [imageUrl],
     creator: "@sustainableshine",
     site: "@sustainableshine",

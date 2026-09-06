@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
     metadataBase: new URL("https://sustainableshine.com.au"),
 
     title: `End of Lease Cleaning ${suburbData.name} | Bond Back Guarantee`,
-    description: `Leaving a rental in ${suburbData.name}? We clean to the full REIQ checklist, covering every item your property manager will check. Backed by our 100% bond back guarantee.`,
+    description: `Professional end of lease cleaning service in ${suburbData.name} with 100% bond back guarantee. Expert bond cleaners for apartments, houses, and units.`,
     keywords: `end of lease cleaning ${suburbData.name}, bond cleaning ${suburbData.name}, move out cleaning ${suburbData.name}, exit cleaning ${suburbData.name}, rental cleaning ${suburbData.name}, end of lease cleaners ${suburbData.name}, bond back guarantee, vacate cleaning, lease cleaning`,
 
     authors: [{ name: "Sustainable Shine" }],

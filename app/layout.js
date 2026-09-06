@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Sustainable Shine Cleaning | Professional Cleaning Services Sydney",
   description:
-    "Top-rated cleaning services in Sydney. Offering general cleaning, deep cleaning, end of lease cleaning, and more. Eco-friendly solutions for homes and offices. Book now!",
+    "Professional cleaning services in Sydney. Offering general cleaning, deep cleaning, end of lease cleaning, and more. Book now!",
   keywords:
     "cleaning services Sydney, house cleaning Sydney, deep cleaning Sydney, end of lease cleaning Sydney, office cleaning Sydney, eco-friendly cleaning, professional cleaners Sydney",
   authors: [{ name: "Sustainable Shine Cleaning" }],

@@ -5,7 +5,7 @@ export const metadata = {
   metadataBase: new URL("https://sustainableshine.com.au"),
   
   title: "Deep Cleaning Sydney | Professional House Deep Clean Services",
-  description: "Intensive deep cleaning services Sydney for homes and apartments. Professional deep clean includes oven cleaning, grout scrubbing, and sanitization. Hospital-grade spring cleaning perfect for thorough maintenance. Book your deep house cleaning today!",
+  description: "Professional deep cleaning services Sydney for homes and apartments. Transform your home with our professional deep cleaning services. Book today!",
   keywords: "deep cleaning Sydney, deep cleaning services Sydney, deep clean Sydney, house deep cleaning, spring cleaning Sydney, deep house cleaning, professional deep clean, intensive cleaning Sydney, deep cleaners Sydney, deep cleaning service",
   
   authors: [{ name: "Sustainable Shine" }],
